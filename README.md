@@ -4,12 +4,12 @@
 Hệ thống quản lý bán giày trực tuyến 
 
 ### 🛠 Công nghệ sử dụng
-- **Backend:** Java 17, Spring Boot 3, Spring Data JPA, MySQL.
+- **Backend:** Java 21, Spring Boot 3, Spring Data JPA, MySQL.
 - **Frontend:** ReactJS, Vite, Tailwind CSS (hoặc Bootstrap).
 - **Công cụ:** Git, Maven, Node.js, Postman, Docker.
 
 ### 📂 Cấu trúc dự án
-- /docs: Chứa tài liệu thiết kế (Use Case, ERD - Sẽ cập nhật sau).
+- /docs: Chứa tài liệu thiết kế.
 - /backend: Mã nguồn phía máy chủ (Spring Boot).
 - /frontend: Mã nguồn phía người dùng (ReactJS).
 
