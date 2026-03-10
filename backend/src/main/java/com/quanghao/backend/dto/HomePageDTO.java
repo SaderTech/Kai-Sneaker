@@ -2,12 +2,17 @@ package com.quanghao.backend.dto;
 
 import com.quanghao.backend.entity.Brand;
 import com.quanghao.backend.entity.Category;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class HomePageDTO {
 // Dữ liệu cho Narbar
     private List<BrandDTO> navbarBrands;
