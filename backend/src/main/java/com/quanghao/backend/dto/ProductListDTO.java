@@ -3,6 +3,7 @@ package com.quanghao.backend.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -10,7 +11,7 @@ import java.util.List;
 public class ProductListDTO {
     private Long id;
     private String name;
-    private Double price;
+    private BigDecimal price;
     private String description;
     private String brandName;
     private String categoryName;

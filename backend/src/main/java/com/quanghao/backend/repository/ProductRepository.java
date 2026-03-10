@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -19,4 +20,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Lấy những đôi giày chưa bị xóa (is_deleted = false)
     List<Product> findByIsDeletedFalse();
+
+    Optional<Product> findById(Long id);
 }
