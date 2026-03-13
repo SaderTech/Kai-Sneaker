@@ -25,5 +25,7 @@ public class Brand {
     @Column(name = "description")
     private String description;
 
-
+    @OneToOne // Hoặc @ManyToOne tùy theo thiết kế của Hào
+    @JoinColumn(name = "image_id") // Tên cột khóa ngoại trong DB
+    private Image image;
 }

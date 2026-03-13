@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -48,5 +49,11 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "product_image",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<Image> images;
 }

@@ -1,11 +1,16 @@
 package com.quanghao.backend.dto;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import org.springframework.data.domain.Page;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class BrandDetailDTO extends BrandDTO{
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class BrandDetailDTO {
+    private Long id;
+    private String name;
     private String description;
-   // ...
+    private String imageUrl;
+    private Page<ProductListDTO> products;
 }

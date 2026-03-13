@@ -22,4 +22,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByIsDeletedFalse();
 
     Optional<Product> findById(Long id);
+
+    // Lay 8 doi giay moi nhap ve
+    List<Product> findTop8ByIsDeletedFalseOrderByCreatedAtDesc();
+
+    //Lay 8 doi giay noi bat nhat
+    List<Product> findTop8ByIsDeletedFalseOrderByPriceDesc();
 }
