@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -20,6 +23,10 @@ public class Image {
     @NotNull
     @Column(name = "image_url", nullable = false, length = 500)
     private String imageUrl;
+    @OneToOne(mappedBy = "image")
+    private Brand brands;
+    @ManyToMany(mappedBy = "images")
+    private Set<Product> products = new LinkedHashSet<>();
 
 
 }

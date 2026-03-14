@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -22,10 +25,12 @@ public class Brand {
     private String name;
 
     @Lob
-    @Column(name = "description")
+    @Column(name = "description",columnDefinition = "TEXT")
     private String description;
 
-    @OneToOne // Hoặc @ManyToOne tùy theo thiết kế của Hào
-    @JoinColumn(name = "image_id") // Tên cột khóa ngoại trong DB
+    @OneToOne
+    @JoinColumn(name = "image_id")
     private Image image;
+    @OneToMany(mappedBy = "brand")
+    private Set<Product> products = new LinkedHashSet<>();
 }

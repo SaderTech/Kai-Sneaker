@@ -9,7 +9,9 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,7 +29,7 @@ public class Product {
     private String name;
 
     @Lob
-    @Column(name = "description")
+    @Column(name = "description",columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "price", precision = 19, scale = 2)
@@ -49,11 +51,19 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_image",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
     private List<Image> images;
+    @OneToMany
+    @JoinColumn(name = "product_id")
+    private Set<ProductVariant> productVariants = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "product")
+    private Set<Review> reviews = new LinkedHashSet<>();
+    @ManyToMany
+    @JoinTable(name = "wishlist", joinColumns = {@JoinColumn(name = "product_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    private Set<User> users = new LinkedHashSet<>();
 }

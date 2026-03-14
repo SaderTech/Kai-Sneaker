@@ -1,6 +1,8 @@
 package com.quanghao.backend.repository;
 
 import com.quanghao.backend.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -28,4 +30,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     //Lay 8 doi giay noi bat nhat
     List<Product> findTop8ByIsDeletedFalseOrderByPriceDesc();
+
+    List<Product> findTop4ByBrandIdAndIsDeletedFalseOrderByCreatedAtDesc(Long id);
+
+    Page<Product> findByNameContainingIgnoreCaseAndIsDeletedFalse(String name, Pageable pageable);
 }

@@ -29,7 +29,7 @@ public class Review {
     private Byte rating;
 
     @Lob
-    @Column(name = "comment")
+    @Column(name = "comment",columnDefinition = "TEXT")
     private String comment;
 
     @ColumnDefault("CURRENT_TIMESTAMP")

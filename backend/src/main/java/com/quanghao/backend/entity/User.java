@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -59,12 +61,22 @@ public class User {
 
     @ColumnDefault("'ACTIVE'")
     @Lob
-    @Column(name = "status")
+    @Column(name = "status" , length = 20)
     private String status;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
     private Instant createdAt;
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
+    @OneToMany(mappedBy = "user")
+    private Set<Order> orders = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "user")
+    private Set<Review> reviews = new LinkedHashSet<>();
+    @ManyToMany(mappedBy = "users")
+    private Set<Role> roles = new LinkedHashSet<>();
+    @ManyToMany(mappedBy = "users")
+    private Set<Product> products = new LinkedHashSet<>();
 
 
 }
