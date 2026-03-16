@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class HomeController {
     private final ProductService productService;
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<HomePageDTO> getHomePage(){
         HomePageDTO homeData = productService.getHomePageData();
         return ResponseEntity.ok(homeData);
     }
 
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<Page<ProductListDTO>>search(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,

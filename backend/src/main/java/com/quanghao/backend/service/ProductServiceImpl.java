@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,56 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductListDTO> searchProducts(String keyword, Pageable pageable){
         Page <Product> products = productRepository.findByNameContainingIgnoreCaseAndIsDeletedFalse(keyword,pageable);
         return products.map(this::convertToProductListDTO);
+    }
+
+
+    @Override
+    public BrandDetailDTO getBrandFullData(Long brandId, Long catId, String priceRange, String size, Pageable pageable) {
+
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hãng"));
+
+        BigDecimal min = null;
+        BigDecimal max = null;
+        if (priceRange != null) {
+            switch (priceRange) {
+                case "UNDER_1M" -> {
+                    min = BigDecimal.ZERO;
+                    max = new BigDecimal("1000000");
+                }
+                case "1M_2M" -> {
+                    min = new BigDecimal("1000000");
+                    max = new BigDecimal("2000000");
+                }
+                case "2M_4M" -> {
+                    min = new BigDecimal("2000000");
+                    max = new BigDecimal("4000000");
+                }
+                case "ABOVE_4M" -> {
+                    min = new BigDecimal("4000000");
+                    max = new BigDecimal("100000000");
+                }
+            }
+        }
+        Page<Product> productPage = productRepository.findByBrandAndFilters(brandId, catId, min, max, size, pageable);
+
+        List<PriceRangeOption> priceOptions = List.of(
+                new PriceRangeOption("Dưới 1 triệu", "UNDER_1M"),
+                new PriceRangeOption("1 - 2 triệu", "1M_2M"),
+                new PriceRangeOption("2 - 4 triệu", "2M_4M"),
+                new PriceRangeOption("Trên 4 triệu", "ABOVE_4M")
+        );
+
+        return BrandDetailDTO.builder()
+                .id(brand.getId())
+                .name(brand.getName())
+                .description(brand.getDescription())
+                .imageUrl(brand.getImage() != null ? brand.getImage().getImageUrl() : null)
+                .availableCategories(productRepository.findUniqueCategoriesByBrand(brandId))
+                .availableSizes(productRepository.findUniqueSizesByBrand(brandId))
+                .priceFilters(priceOptions)
+                .products(productPage.map(this::convertToProductListDTO))
+                .build();
     }
 
 }

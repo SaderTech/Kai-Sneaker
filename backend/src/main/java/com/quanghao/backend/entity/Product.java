@@ -58,12 +58,18 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
     private List<Image> images;
+
     @OneToMany
     @JoinColumn(name = "product_id")
     private Set<ProductVariant> productVariants = new LinkedHashSet<>();
+
     @OneToMany(mappedBy = "product")
     private Set<Review> reviews = new LinkedHashSet<>();
+
     @ManyToMany
     @JoinTable(name = "wishlist", joinColumns = {@JoinColumn(name = "product_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
     private Set<User> users = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductVariant> variants;
 }

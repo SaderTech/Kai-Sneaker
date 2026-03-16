@@ -1,11 +1,15 @@
 package com.quanghao.backend.repository;
 
+import com.quanghao.backend.dto.CategoryDTO;
 import com.quanghao.backend.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,12 +20,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Tìm giày theo danh mục (Running, Lifestyle...)
     List<Product> findByCategoryId(Long categoryId);
-
-    // Tìm kiếm giày theo tên (Dùng cho thanh Search của Hào)
-    List<Product> findByNameContainingIgnoreCase(String name);
-
-    // Lấy những đôi giày chưa bị xóa (is_deleted = false)
-    List<Product> findByIsDeletedFalse();
 
     Optional<Product> findById(Long id);
 
@@ -34,4 +32,28 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findTop4ByBrandIdAndIsDeletedFalseOrderByCreatedAtDesc(Long id);
 
     Page<Product> findByNameContainingIgnoreCaseAndIsDeletedFalse(String name, Pageable pageable);
-}
+
+    @Query("SELECT DISTINCT p FROM Product p " +
+            "JOIN p.variants v " +
+            "WHERE p.brand.id = :brandId " +
+            "AND (:catId IS NULL OR p.category.id = :catId) " +
+            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
+            "AND (:size IS NULL OR v.size = :size) " +
+            "AND p.isDeleted = false")
+    Page<Product> findByBrandAndFilters(
+            @Param("brandId") Long brandId,
+            @Param("catId") Long catId,
+            @Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice,
+            @Param("size") String size,
+            Pageable pageable
+    );
+
+    @Query("SELECT DISTINCT v.size FROM ProductVariant v WHERE v.product.brand.id = :brandId")
+    List<String> findUniqueSizesByBrand(@Param("brandId") Long brandId);
+
+    @Query("SELECT DISTINCT new com.quanghao.backend.dto.CategoryDTO(c.id, c.name) " +
+            "FROM Product p JOIN p.category c " +
+            "WHERE p.brand.id = :brandId AND p.isDeleted = false")
+    List<CategoryDTO> findUniqueCategoriesByBrand(@Param("brandId") Long brandId);}
