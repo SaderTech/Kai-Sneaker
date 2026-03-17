@@ -18,4 +18,7 @@ public class ProductDetailDTO {
     private String categoryName;
     private List<String> imageUrls;
     private List<VariantDTO> variants;
+    private Double averageRating;
+    private Integer totalReviews;
+    private List<ReviewDTO> reviews;
 }
