@@ -3,6 +3,7 @@ package com.quanghao.backend.service;
 import com.quanghao.backend.dto.*;
 import com.quanghao.backend.entity.Brand;
 import com.quanghao.backend.entity.Category;
+import com.quanghao.backend.entity.Image;
 import com.quanghao.backend.entity.Product;
 import com.quanghao.backend.repository.BrandRepository;
 import com.quanghao.backend.repository.CategoryRepository;
@@ -128,6 +129,37 @@ public class ProductServiceImpl implements ProductService {
                 .availableSizes(productRepository.findUniqueSizesByBrand(brandId))
                 .priceFilters(priceOptions)
                 .products(productPage.map(this::convertToProductListDTO))
+                .build();
+    }
+
+    @Override
+    public ProductDetailDTO getProductDetail(Long productId){
+        Product product = productRepository.findById(productId)
+                .filter(p -> !p.getIsDeleted())
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại hoặc đã bị xóa!"));
+
+        List<String> imageUrls = product.getImages().stream()
+                .map(Image::getImageUrl)
+                .collect(Collectors.toList());
+
+        List<VariantDTO> variantDTOs = product.getVariants().stream()
+                .map(variant -> VariantDTO.builder()
+                        .id(variant.getId())
+                        .size(variant.getSize())
+                        .color(variant.getColor())
+                        .quantity(variant.getInventory() != null ? variant.getInventory().getQuantity() : 0)
+                        .build())
+                .collect(Collectors.toList());
+
+        return ProductDetailDTO.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .brandName(product.getBrand() != null ? product.getBrand().getName() : null)
+                .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
+                .imageUrls(imageUrls)
+                .variants(variantDTOs)
                 .build();
     }
 
