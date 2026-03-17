@@ -56,4 +56,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT DISTINCT new com.quanghao.backend.dto.CategoryDTO(c.id, c.name) " +
             "FROM Product p JOIN p.category c " +
             "WHERE p.brand.id = :brandId AND p.isDeleted = false")
-    List<CategoryDTO> findUniqueCategoriesByBrand(@Param("brandId") Long brandId);}
+    List<CategoryDTO> findUniqueCategoriesByBrand(@Param("brandId") Long brandId);
+
+@Query("SELECT p FROM Product p " +
+        "WHERE p.category.id = :categoryId " +
+        "AND p.id != :productId " +
+        "AND p.isDeleted = false " +
+        "ORDER BY p.createdAt DESC")
+List<Product> findRelatedProducts(
+        @Param("categoryId") Long categoryId,
+        @Param("productId") Long productId,
+        Pageable pageable);
+}

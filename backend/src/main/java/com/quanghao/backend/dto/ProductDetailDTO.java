@@ -21,4 +21,5 @@ public class ProductDetailDTO {
     private Double averageRating;
     private Integer totalReviews;
     private List<ReviewDTO> reviews;
+    private List<ProductListDTO> relatedProducts;
 }

@@ -1,20 +1,21 @@
 package com.quanghao.backend.service;
 
 import com.quanghao.backend.dto.*;
-import com.quanghao.backend.entity.Brand;
-import com.quanghao.backend.entity.Category;
-import com.quanghao.backend.entity.Image;
-import com.quanghao.backend.entity.Product;
+import com.quanghao.backend.entity.*;
 import com.quanghao.backend.repository.BrandRepository;
 import com.quanghao.backend.repository.CategoryRepository;
 import com.quanghao.backend.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -138,6 +139,31 @@ public class ProductServiceImpl implements ProductService {
                 .filter(p -> !p.getIsDeleted())
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại hoặc đã bị xóa!"));
 
+        Set<Review> reviewSet = product.getReviews();
+        List<ReviewDTO> reviewDTOs = new ArrayList<>();
+        Double avgRating = 0.0;
+        Integer totalRev = 0;
+
+        if(reviewSet != null && !reviewSet.isEmpty()){
+            totalRev = reviewSet.size();
+            avgRating = reviewSet.stream()
+                    .mapToInt(rev -> rev.getRating() != null ? rev.getRating().intValue() : 0)
+                    .average()
+                    .orElse(0.0);
+            avgRating = Math.round(avgRating * 10.0) / 10.0;
+
+            reviewDTOs = reviewSet.stream()
+                    .map(rev -> ReviewDTO.builder()
+                            .id(rev.getId())
+                            .reviewerName(rev.getUser() != null && rev.getUser().getFullName() != null ? rev.getUser().getFullName() : "Khách hàng ẩn danh")
+                            .rating(rev.getRating() != null ? rev.getRating().intValue() : 0)
+                            .comment(rev.getComment())
+                            .createdAt(rev.getCreatedAt())
+                            .build())
+                    .sorted(Comparator.comparing(ReviewDTO::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder())).reversed())
+                    .collect(Collectors.toList());
+        }
+
         List<String> imageUrls = product.getImages().stream()
                 .map(Image::getImageUrl)
                 .collect(Collectors.toList());
@@ -151,6 +177,18 @@ public class ProductServiceImpl implements ProductService {
                         .build())
                 .collect(Collectors.toList());
 
+        List<ProductListDTO> relatedDTOs = new ArrayList<>();
+        if(product.getCategory() != null){
+            Pageable limit4 = PageRequest.of(0,4);
+            List<Product> relatedProducts = productRepository.findRelatedProducts(
+                    product.getCategory().getId(),
+                    product.getId(),
+                    limit4);
+            relatedDTOs = relatedProducts.stream()
+                    .map(this::convertToProductListDTO)
+                    .collect(Collectors.toList());
+        }
+
         return ProductDetailDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -160,6 +198,10 @@ public class ProductServiceImpl implements ProductService {
                 .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
                 .imageUrls(imageUrls)
                 .variants(variantDTOs)
+                .averageRating(avgRating)
+                .totalReviews(totalRev)
+                .reviews(reviewDTOs)
+                .relatedProducts(relatedDTOs)
                 .build();
     }
 
