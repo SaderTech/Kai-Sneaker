@@ -1,7 +1,9 @@
 package com.quanghao.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -10,6 +12,8 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "order_items")
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

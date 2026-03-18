@@ -193,10 +193,10 @@ INSERT INTO inventory (variant_id, quantity) VALUES
 -- Vans Old Skool Pig Suede (IDs 47 - 52)
 (47, 22), (48, 15), (49, 30), (50, 25), (51, 10), (52, 12);
 INSERT INTO roles (name) VALUES ('ADMIN'),('USER');
-INSERT INTO users (email,password_hash,full_name,status) VALUES
-('admin@sneaker.com','adminsneaker','Nguyễn Quang Hào','ACTIVE'),
-('user1@mail.com','username1','User One','ACTIVE'),
-('user2@mail.com','username2','User Two','ACTIVE');
+INSERT INTO users (email,password_hash,full_name,phone,status) VALUES
+('admin@sneaker.com','adminsneaker','Nguyễn Quang Hào','0366745129','ACTIVE'),
+('user1@mail.com','username1','User One','0998556741','ACTIVE'),
+('user2@mail.com','username2','User Two','0388545612','ACTIVE');
 INSERT INTO user_roles VALUES
 (1,1),
 (2,2),

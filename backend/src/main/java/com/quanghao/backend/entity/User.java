@@ -39,6 +39,9 @@ public class User {
     @Column(name = "gender", length = 10)
     private String gender;
 
+    @Column(name = "phone", length = 15)
+    private String phone;
+
     @Size(max = 500)
     @Column(name = "avatar_url", length = 500)
     private String avatarUrl;

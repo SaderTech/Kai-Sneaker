@@ -30,6 +30,7 @@ CREATE TABLE `users` (
   `password_hash` varchar(255) NOT NULL,
   `full_name` nvarchar(255),
   `gender` nvarchar(10),
+  `phone` varchar(15),
   `avatar_url` varchar(500),
   `province_city` nvarchar(100),
   `district` nvarchar(100),
