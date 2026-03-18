@@ -2,14 +2,13 @@ package com.quanghao.backend.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,6 +16,7 @@ import java.time.Instant;
 @Table(name = "orders")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +27,10 @@ public class Order {
     private BigDecimal totalAmount;
 
     @ColumnDefault("'PENDING'")
-    @Lob
     @Column(name = "order_status")
     private String orderStatus;
 
     @ColumnDefault("'UNPAID'")
-    @Lob
     @Column(name = "payment_status")
     private String paymentStatus;
 
@@ -47,9 +45,16 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    private String fullName;
+    private String phone;
+    private String note;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
-
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();
 }

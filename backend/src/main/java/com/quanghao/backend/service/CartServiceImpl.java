@@ -59,6 +59,7 @@ public class CartServiceImpl implements CartService{
                 throw new RuntimeException("Bạn không thể thêm quá số lượng tồn kho !");
             }
             existingItem.setQuantity(newQuantity);
+            cartItemRepository.save(existingItem);
         } else {
             CartItem newItem = CartItem.builder()
                     .cart(cart)
@@ -66,6 +67,7 @@ public class CartServiceImpl implements CartService{
                     .quantity(request.getQuantity())
                     .build();
             cart.getCartItems().add(newItem);
+            cartItemRepository.save(newItem);
         }
         cartRepository.save(cart);
         return getUserCart(userId);
@@ -80,6 +82,9 @@ public class CartServiceImpl implements CartService{
         List<CartItemDTO> itemDTOs = new ArrayList<>();
         for (CartItem item : cart.getCartItems()){
             ProductVariant variant = item.getVariant();
+            if (variant == null || variant.getProduct() == null) {
+                continue; // Bỏ qua món đồ lỗi, không tính tiền nó nữa
+            }
             BigDecimal price = variant.getProduct().getPrice();
             BigDecimal subTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));
 
