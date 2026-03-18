@@ -90,8 +90,20 @@ public class OrderServiceImpl implements OrderService{
         return convertToOrderDTO(savedOrder);
     }
 
+    @Override
+    public List<OrderDTO> getOrderHistory(Long userId) {
+        List<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        if(orders.isEmpty()){
+            return new ArrayList<>();
+        }
 
-        private OrderDTO convertToOrderDTO(Order order){
+        return orders.stream()
+                .map(this::convertToOrderDTO)
+                .toList();
+    }
+
+
+    private OrderDTO convertToOrderDTO(Order order){
             List<OrderItemDTO> itemDTOs = order.getOrderItems().stream().map(item -> {
                 String imageUrl = (item.getVariant().getProduct().getImages() != null && !item.getVariant().getProduct().getImages().isEmpty())
                         ? item.getVariant().getProduct().getImages().iterator().next().getImageUrl() : null;
