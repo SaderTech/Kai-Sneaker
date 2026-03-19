@@ -1,5 +1,6 @@
 package com.quanghao.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class ProductVariant {
     private String color;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
+    @JsonIgnore
     private Product product;
     @OneToMany(mappedBy = "variant")
     private Set<CartItem> cartItems = new LinkedHashSet<>();

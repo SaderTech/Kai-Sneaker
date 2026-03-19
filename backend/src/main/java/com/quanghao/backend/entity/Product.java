@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,9 +60,8 @@ public class Product {
     )
     private List<Image> images;
 
-    @OneToMany
-    @JoinColumn(name = "product_id")
-    private Set<ProductVariant> productVariants = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductVariant> variants = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
     private Set<Review> reviews = new LinkedHashSet<>();
@@ -70,7 +70,5 @@ public class Product {
     @JoinTable(name = "wishlist", joinColumns = {@JoinColumn(name = "product_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
     private Set<User> users = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "product")
-    private List<ProductVariant> variants;
 
 }

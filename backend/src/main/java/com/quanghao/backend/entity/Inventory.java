@@ -1,5 +1,6 @@
 package com.quanghao.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,7 @@ public class Inventory {
     private Instant updatedAt;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "variant_id")
+    @JsonIgnore
     private ProductVariant variant;
 
 

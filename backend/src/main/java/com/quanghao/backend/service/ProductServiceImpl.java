@@ -2,20 +2,23 @@ package com.quanghao.backend.service;
 
 import com.quanghao.backend.dto.*;
 import com.quanghao.backend.entity.*;
-import com.quanghao.backend.repository.BrandRepository;
-import com.quanghao.backend.repository.CategoryRepository;
-import com.quanghao.backend.repository.ProductRepository;
+import com.quanghao.backend.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,9 +28,12 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
+    private final ImageRepository imageRepository;
+    private final ProductVariantRepository productVariantRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Override
-    public HomePageDTO getHomePageData(){
+    public HomePageDTO getHomePageData() {
         List<Brand> brands = brandRepository.findAll();
         List<Category> categories = categoryRepository.findAll();
         List<Product> newArrival = productRepository.findTop8ByIsDeletedFalseOrderByCreatedAtDesc();
@@ -78,8 +84,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductListDTO> searchProducts(String keyword, Pageable pageable){
-        Page <Product> products = productRepository.findByNameContainingIgnoreCaseAndIsDeletedFalse(keyword,pageable);
+    public Page<ProductListDTO> searchProducts(String keyword, Pageable pageable) {
+        Page<Product> products = productRepository.findByNameContainingIgnoreCaseAndIsDeletedFalse(keyword, pageable);
         return products.map(this::convertToProductListDTO);
     }
 
@@ -134,7 +140,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDetailDTO getProductDetail(Long productId){
+    public ProductDetailDTO getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
                 .filter(p -> !p.getIsDeleted())
                 .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại hoặc đã bị xóa!"));
@@ -144,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
         Double avgRating = 0.0;
         Integer totalRev = 0;
 
-        if(reviewSet != null && !reviewSet.isEmpty()){
+        if (reviewSet != null && !reviewSet.isEmpty()) {
             totalRev = reviewSet.size();
             avgRating = reviewSet.stream()
                     .mapToInt(rev -> rev.getRating() != null ? rev.getRating().intValue() : 0)
@@ -178,8 +184,8 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
 
         List<ProductListDTO> relatedDTOs = new ArrayList<>();
-        if(product.getCategory() != null){
-            Pageable limit4 = PageRequest.of(0,4);
+        if (product.getCategory() != null) {
+            Pageable limit4 = PageRequest.of(0, 4);
             List<Product> relatedProducts = productRepository.findRelatedProducts(
                     product.getCategory().getId(),
                     product.getId(),
@@ -205,4 +211,143 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
+
+    @Transactional
+    @Override
+    public Product createProduct(ProductRequestDTO requestDTO) {
+        Brand brand = brandRepository.findById(requestDTO.getBrandId()).orElseThrow(() -> new RuntimeException("Thương hiệu không tồn tại !"));
+        Category category = categoryRepository.findById(requestDTO.getCategoryId()).orElseThrow(() -> new RuntimeException("Danh mục không tồn tại !"));
+
+        Product product = new Product();
+        product.setName(requestDTO.getName());
+        product.setDescription(requestDTO.getDescription());
+        product.setPrice(requestDTO.getPrice());
+        product.setBrand(brand);
+        product.setCategory(category);
+        product.setIsDeleted(false);
+        product.setCreatedAt(Instant.now());
+        product.setImages(new ArrayList<>());
+
+        String projectDir = System.getProperty("user.dir");
+        Path rootPath = Paths.get(projectDir, "uploads");
+
+        if (requestDTO.getImages() != null && !requestDTO.getImages().isEmpty()) {
+            try {
+                if (!Files.exists(rootPath)) {
+                    Files.createDirectories(rootPath);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Lỗi: Không thể tạo thư mục lưu ảnh !");
+            }
+
+            for (MultipartFile file : requestDTO.getImages()) {
+                if (file.isEmpty()) continue;
+
+                try {
+                    String originalFilename = file.getOriginalFilename();
+                    String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                    String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
+
+                    Path filePath = rootPath.resolve(uniqueFilename);
+                    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                    Image imageEntity = new Image();
+                    imageEntity.setImageUrl("/uploads/" + uniqueFilename);
+                    Image savedImage = imageRepository.save(imageEntity);
+                    product.getImages().add(savedImage);
+                } catch (IOException e) {
+                    throw new RuntimeException("Lỗi nghiêm trọng khi lưu file ảnh: " + file.getOriginalFilename());
+                }
+            }
+        }
+
+        return productRepository.save(product);
+    }
+
+    @Override
+    public Product updateProduct(Long productId, ProductRequestDTO request) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm có ID: " + productId));
+
+        Brand brand = brandRepository.findById(request.getBrandId())
+                .orElseThrow(() -> new RuntimeException("Thương hiệu không tồn tại!"));
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Danh mục không tồn tại!"));
+
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setBrand(brand);
+        product.setCategory(category);
+
+        return productRepository.save(product);
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm!"));
+
+        product.setIsDeleted(true);
+        productRepository.save(product);
+    }
+
+    @Transactional
+    @Override
+    public List<VariantDTO> bulkCreateVariants(Long productId, List<VariantRequestDTO> variantRequests) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm ID: " + productId));
+
+        List<VariantDTO> resultList = new ArrayList<>();
+
+        for (VariantRequestDTO dto : variantRequests) {
+            // 1. Tạo và lưu Variant TRƯỚC để nó có ID trong Database
+            ProductVariant variant = new ProductVariant();
+            variant.setProduct(product);
+            variant.setSize(dto.getSize());
+            variant.setColor(dto.getColor());
+            ProductVariant savedVariant = productVariantRepository.save(variant);
+
+            // 2. Tạo và lưu Inventory SAU (Lúc này savedVariant đã là hàng "Auth" có ID)
+            Inventory inventory = new Inventory();
+            inventory.setVariant(savedVariant);
+            inventory.setQuantity(dto.getQuantity() != null ? dto.getQuantity() : 0);
+            inventory.setUpdatedAt(Instant.now());
+            Inventory savedInventory = inventoryRepository.save(inventory);
+
+            // 3. Đóng gói vào DTO trả về cho ReactJS
+            resultList.add(VariantDTO.builder()
+                    .id(savedVariant.getId())
+                    .size(savedVariant.getSize())
+                    .color(savedVariant.getColor())
+                    .quantity(savedInventory.getQuantity())
+                    .build());
+        }
+
+        return resultList;
+    }
+
+    @Transactional
+    @Override
+    public VariantDTO updateVariantQuantity(Long variantId, Integer newQuantity) {
+        ProductVariant variant = productVariantRepository.findById(variantId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy biến thể có ID: " + variantId));
+
+        Inventory inventory = variant.getInventory();
+        if (inventory == null) {
+            inventory = new Inventory();
+            inventory.setVariant(variant);
+        }
+
+        inventory.setQuantity(newQuantity);
+        inventory.setUpdatedAt(Instant.now());
+
+        Inventory savedInventory = inventoryRepository.save(inventory);
+
+        return VariantDTO.builder()
+                .id(variant.getId())
+                .size(variant.getSize())
+                .color(variant.getColor())
+                .quantity(savedInventory.getQuantity())
+                .build();
+    }
 }

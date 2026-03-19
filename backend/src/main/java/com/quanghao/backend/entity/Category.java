@@ -1,5 +1,6 @@
 package com.quanghao.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -24,6 +25,7 @@ public class Category {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
     @OneToMany(mappedBy = "category")
+    @JsonIgnore
     private Set<Product> products = new LinkedHashSet<>();
 
 

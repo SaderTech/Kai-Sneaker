@@ -1,5 +1,6 @@
 package com.quanghao.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -29,8 +30,10 @@ public class Brand {
     private String description;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "image_id")
     private Image image;
     @OneToMany(mappedBy = "brand")
+    @JsonIgnore
     private Set<Product> products = new LinkedHashSet<>();
 }

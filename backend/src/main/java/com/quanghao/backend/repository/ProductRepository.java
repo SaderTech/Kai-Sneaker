@@ -69,4 +69,6 @@ List<Product> findRelatedProducts(
         Pageable pageable);
 
     long count();
+    boolean existsByCategoryId(Long categoryId);
+    boolean existsByBrandId(Long brandId);
 }
