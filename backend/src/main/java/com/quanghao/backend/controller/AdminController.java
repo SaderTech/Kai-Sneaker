@@ -1,0 +1,16 @@
+package com.quanghao.backend.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/kaisneaker/admin")
+public class AdminController {
+
+    @GetMapping("/test")
+    public ResponseEntity<String> testAdminAccess() {
+        return ResponseEntity.ok("Cửa đã mở! Chào mừng Sếp đến với trang Quản trị KaiSneaker 🚀");
+    }
+}
