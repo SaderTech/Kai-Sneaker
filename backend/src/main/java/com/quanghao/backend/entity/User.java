@@ -78,7 +78,10 @@ public class User {
     private Set<Order> orders = new LinkedHashSet<>();
     @OneToMany(mappedBy = "user")
     private Set<Review> reviews = new LinkedHashSet<>();
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> roles = new LinkedHashSet<>();
     @ManyToMany(mappedBy = "users")
     private Set<Product> products = new LinkedHashSet<>();

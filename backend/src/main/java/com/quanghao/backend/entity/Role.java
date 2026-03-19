@@ -1,5 +1,6 @@
 package com.quanghao.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,8 +24,8 @@ public class Role {
     @NotNull
     @Column(name = "name", nullable = false, length = 20)
     private String name;
-    @ManyToMany
-    @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
     private Set<User> users = new LinkedHashSet<>();
 
 

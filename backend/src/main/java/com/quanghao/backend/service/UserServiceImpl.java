@@ -2,18 +2,37 @@ package com.quanghao.backend.service;
 
 import com.quanghao.backend.dto.ChangePasswordDTO;
 import com.quanghao.backend.dto.UserProfileDTO;
+import com.quanghao.backend.dto.UserResponseDTO;
+import com.quanghao.backend.entity.Role;
 import com.quanghao.backend.entity.User;
+import com.quanghao.backend.repository.RoleRepository;
 import com.quanghao.backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // Gọi vũ khí mã hóa ra để xài
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public Page<UserResponseDTO> getAllUsers(String keyword, Pageable pageable) {
+        Page<User> users = (keyword == null || keyword.isEmpty())
+                ? userRepository.findAll(pageable)
+                : userRepository.findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, pageable);
+
+        return users.map(this::convertToDTO);
+    }
 
     // 1. XEM PROFILE
     @Override
@@ -70,5 +89,34 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return "Đổi mật khẩu thành công!";
+    }
+
+    @Transactional
+    public void updateUserStatus(Long userId, String status) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+        user.setStatus(status); // Truyền vào "ACTIVE" hoặc "INACTIVE"
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateUserRoles(Long userId, List<Long> roleIds) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+
+        List<Role> newRoles = roleRepository.findAllById(roleIds);
+        user.setRoles(new HashSet<>(newRoles));
+        userRepository.save(user);
+    }
+
+    private UserResponseDTO convertToDTO(User user) {
+        return UserResponseDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .phone(user.getPhone())
+                .status(user.getStatus())
+                .roles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()))
+                .build();
     }
 }
