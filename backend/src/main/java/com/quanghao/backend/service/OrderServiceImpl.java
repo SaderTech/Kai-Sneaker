@@ -102,6 +102,33 @@ public class OrderServiceImpl implements OrderService{
                 .toList();
     }
 
+    @Override
+    public OrderDTO cancelOrder(Long orderId, Long userId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại !"));
+        if(!order.getUser().getId().equals(userId)){
+            throw new RuntimeException("Bạn không có quyền hủy đơn hàng này !");
+        }
+
+        if(!order.getOrderStatus().equals("PENDING")){
+            throw new RuntimeException("Không thể hủy đơn hàng vì đơn đã được xử lý : " + order.getOrderStatus());
+
+        }
+
+        for(OrderItem item : order.getOrderItems()){
+            ProductVariant variant = item.getVariant();
+            Inventory inventory = variant.getInventory();
+
+            if(inventory != null){
+                int newQuantity = inventory.getQuantity() + item.getQuantity();
+                inventory.setQuantity(newQuantity);
+                inventoryRepository.save(inventory);
+            }
+        }
+        order.setOrderStatus("CANCELLED");
+        Order savedOrder = orderRepository.save(order);
+        return convertToOrderDTO(savedOrder);
+    }
+
 
     private OrderDTO convertToOrderDTO(Order order){
             List<OrderItemDTO> itemDTOs = order.getOrderItems().stream().map(item -> {

@@ -30,4 +30,10 @@ public class OrderController {
         List<OrderDTO> history = orderService.getOrderHistory(userId);
         return ResponseEntity.ok(history);
     }
+
+    @PutMapping("/{orderId}/cancel/{userId}")
+    public ResponseEntity<OrderDTO> cancelOrder(@PathVariable Long orderId, @PathVariable Long userId){
+        OrderDTO cancelledOrder = orderService.cancelOrder(orderId, userId);
+        return ResponseEntity.ok(cancelledOrder);
+    }
 }
