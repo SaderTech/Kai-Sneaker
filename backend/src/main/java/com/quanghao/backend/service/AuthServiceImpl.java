@@ -1,5 +1,7 @@
 package com.quanghao.backend.service;
 
+import com.quanghao.backend.configuration.JwtUtil;
+import com.quanghao.backend.dto.AuthResponseDTO;
 import com.quanghao.backend.dto.LoginRequestDTO;
 import com.quanghao.backend.dto.RegisterRequestDTO;
 import com.quanghao.backend.entity.User;
@@ -12,12 +14,14 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+
     @Override
-    public String register(RegisterRequestDTO requestDTO){
-        if(userRepository.findByEmail(requestDTO.getEmail()).isPresent()){
+    public String register(RegisterRequestDTO requestDTO) {
+        if (userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email này đã được đăng ký ! Vui lòng dùng email khác.");
         }
 
@@ -36,7 +40,7 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public String login(LoginRequestDTO request) {
+    public AuthResponseDTO login(LoginRequestDTO request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("Email không tồn tại trong hệ thống!"));
 
         boolean isPasswordMatch = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
@@ -45,6 +49,8 @@ public class AuthServiceImpl implements AuthService{
             throw new RuntimeException("Sai mật khẩu! Vui lòng thử lại.");
         }
 
-        return "Đăng nhập thành công! Chào mừng " + user.getFullName();
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        return new AuthResponseDTO(token, "Đăng nhập thành công! Chào mừng " + user.getFullName());
     }
 }

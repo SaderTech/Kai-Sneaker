@@ -1,5 +1,6 @@
 package com.quanghao.backend.controller;
 
+import com.quanghao.backend.dto.AuthResponseDTO;
 import com.quanghao.backend.dto.LoginRequestDTO;
 import com.quanghao.backend.dto.RegisterRequestDTO;
 import com.quanghao.backend.service.AuthService;
@@ -20,7 +21,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login (@Valid @RequestBody LoginRequestDTO requestDTO){
+    public ResponseEntity<AuthResponseDTO> login (@Valid @RequestBody LoginRequestDTO requestDTO){
         return ResponseEntity.ok(authService.login(requestDTO));
     }
 }
