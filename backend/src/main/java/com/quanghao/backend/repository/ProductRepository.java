@@ -67,4 +67,6 @@ List<Product> findRelatedProducts(
         @Param("categoryId") Long categoryId,
         @Param("productId") Long productId,
         Pageable pageable);
+
+    long count();
 }
