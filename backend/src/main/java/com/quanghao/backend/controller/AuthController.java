@@ -2,6 +2,7 @@ package com.quanghao.backend.controller;
 
 import com.quanghao.backend.dto.LoginRequestDTO;
 import com.quanghao.backend.dto.RegisterRequestDTO;
+import com.quanghao.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login (@Valid @RequestBody LoginRequestDTO requestDTO){
-        return ResponseEntity.ok(authService.login(requestDTO);
+        return ResponseEntity.ok(authService.login(requestDTO));
     }
 }

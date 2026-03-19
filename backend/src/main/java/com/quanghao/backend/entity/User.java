@@ -3,8 +3,7 @@ package com.quanghao.backend.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
@@ -15,6 +14,10 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "users")
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,7 +66,6 @@ public class User {
     private String houseNumberStreet;
 
     @ColumnDefault("'ACTIVE'")
-    @Lob
     @Column(name = "status" , length = 20)
     private String status;
 
