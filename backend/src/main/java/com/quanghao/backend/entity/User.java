@@ -85,6 +85,4 @@ public class User {
     private Set<Role> roles = new LinkedHashSet<>();
     @ManyToMany(mappedBy = "users")
     private Set<Product> products = new LinkedHashSet<>();
-
-
 }

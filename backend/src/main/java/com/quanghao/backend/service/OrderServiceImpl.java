@@ -1,18 +1,19 @@
 package com.quanghao.backend.service;
 
-import com.quanghao.backend.dto.CheckoutRequestDTO;
-import com.quanghao.backend.dto.OrderDTO;
-import com.quanghao.backend.dto.OrderItemDTO;
+import com.quanghao.backend.dto.*;
 import com.quanghao.backend.entity.*;
 import com.quanghao.backend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -171,5 +172,61 @@ public class OrderServiceImpl implements OrderService{
                     .totalAmount(order.getTotalAmount())
                     .items(itemDTOs)
                     .build();
+    }
+
+    public Page<OrderResponseDTO> getAllOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable).map(this::convertToDTO);
+    }
+
+    @Transactional
+    public void updateStatus(Long orderId, String newStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng ID: " + orderId));
+
+        String oldStatus = order.getOrderStatus();
+
+        if ("CANCELLED".equalsIgnoreCase(newStatus) && !"CANCELLED".equalsIgnoreCase(oldStatus)) {
+            for (OrderItem item : order.getOrderItems()) {
+                ProductVariant variant = item.getVariant();
+                Inventory inv = variant.getInventory();
+                if (inv != null) {
+                    inv.setQuantity(inv.getQuantity() + item.getQuantity());
+                    inventoryRepository.save(inv);
+                }
+            }
+        }
+
+        if ("DELIVERED".equalsIgnoreCase(newStatus)) {
+            order.setPaymentStatus("PAID");
+        }
+
+        order.setOrderStatus(newStatus.toUpperCase());
+        orderRepository.save(order);
+    }
+
+    private OrderResponseDTO convertToDTO(Order order) {
+        return OrderResponseDTO.builder()
+                .id(order.getId())
+                .fullName(order.getFullName())
+                .phone(order.getPhone())
+                .shippingAddress(order.getShippingAddress())
+                .totalAmount(order.getTotalAmount())
+                .orderStatus(order.getOrderStatus())
+                .paymentStatus(order.getPaymentStatus())
+                .note(order.getNote())
+                .paymentMethodName(order.getPaymentMethod() != null ? order.getPaymentMethod().getName() : "N/A")
+                .createdAt(order.getCreatedAt())
+                .items(order.getOrderItems().stream().map(item -> {
+                    ProductVariant variant = item.getVariant();
+
+                    return OrderItemResponseDTO.builder()
+                            .productName(variant.getProduct().getName())
+                            .size(variant.getSize() != null ? variant.getSize() : "N/A")
+                            .color(variant.getColor() != null ? variant.getColor() : "N/A")
+                            .quantity(item.getQuantity())
+                            .price(item.getUnitPrice())
+                            .build();
+                }).collect(Collectors.toList()))
+                .build();
     }
 }
