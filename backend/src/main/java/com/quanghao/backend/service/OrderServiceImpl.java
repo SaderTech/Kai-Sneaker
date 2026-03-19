@@ -23,14 +23,15 @@ public class OrderServiceImpl implements OrderService{
     private final InventoryRepository inventoryRepository;
     private final PaymentMethodRepository paymentMethodRepository;
     private final CartItemRepository cartItemRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
-    public OrderDTO createOrder(Long userId, CheckoutRequestDTO requestDTO) {
-        System.out.println("ID phương thức thanh toán từ Postman gửi lên là: " + requestDTO.getPaymentMethodId());
-        Cart cart = cartRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Giỏ hàng trống !"));
+    public OrderDTO createOrder(String email, CheckoutRequestDTO requestDTO) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại !"));
+
+        Cart cart = cartRepository.findByUserId(user.getId()).orElseThrow(() -> new RuntimeException("Giỏ hàng trống !"));
         if (cart.getCartItems().isEmpty()) throw new RuntimeException("Không có sản phẩm nào để thanh toán !");
-        User user = cart.getUser();
 
         String finalPhone = (requestDTO.getPhone() != null && !requestDTO.getPhone().isEmpty()) ? requestDTO.getPhone() : user.getPhone();
         PaymentMethod paymentMethod = null;
@@ -91,8 +92,10 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public List<OrderDTO> getOrderHistory(Long userId) {
-        List<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    public List<OrderDTO> getOrderHistory(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại !"));
+
+        List<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
         if(orders.isEmpty()){
             return new ArrayList<>();
         }
@@ -103,9 +106,11 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public OrderDTO cancelOrder(Long orderId, Long userId) {
+    public OrderDTO cancelOrder(Long orderId, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại !"));
+
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại !"));
-        if(!order.getUser().getId().equals(userId)){
+        if(!order.getUser().getId().equals(user.getId())){
             throw new RuntimeException("Bạn không có quyền hủy đơn hàng này !");
         }
 

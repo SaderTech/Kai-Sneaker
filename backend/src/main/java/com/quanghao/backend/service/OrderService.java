@@ -6,7 +6,7 @@ import com.quanghao.backend.dto.OrderDTO;
 import java.util.List;
 
 public interface OrderService {
-    OrderDTO createOrder(Long userId, CheckoutRequestDTO requestDTO);
-    List<OrderDTO> getOrderHistory(Long userId);
-    OrderDTO cancelOrder(Long orderId, Long userId);
+    OrderDTO createOrder(String email, CheckoutRequestDTO requestDTO);
+    List<OrderDTO> getOrderHistory(String email);
+    OrderDTO cancelOrder(Long orderId, String email);
 }

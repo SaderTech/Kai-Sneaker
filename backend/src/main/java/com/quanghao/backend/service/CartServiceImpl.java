@@ -30,11 +30,11 @@ public class CartServiceImpl implements CartService{
 
     @Override
     @Transactional
-    public CartDTO addToCart(Long userId, AddToCartRequestDTO request) {
-        User user = userRepository.findById(userId)
+    public CartDTO addToCart(String email, AddToCartRequestDTO request) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));
 
-        Cart cart = cartRepository.findByUserId(userId).orElseGet(() -> {
+        Cart cart = cartRepository.findByUserId(user.getId()).orElseGet(() -> {
             Cart newCart = new Cart();
             newCart.setUser(user);
             return cartRepository.save(newCart);
@@ -70,12 +70,15 @@ public class CartServiceImpl implements CartService{
             cartItemRepository.save(newItem);
         }
         cartRepository.save(cart);
-        return getUserCart(userId);
+        return getUserCart(email);
     }
 
     @Override
-    public CartDTO getUserCart(Long userId) {
-        Cart cart = cartRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Giỏ hàng trống!"));
+    public CartDTO getUserCart(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại!"));
+
+        Cart cart = cartRepository.findByUserId(user.getId()).orElseThrow(() -> new RuntimeException("Giỏ hàng trống!"));
 
         BigDecimal totalPrice = BigDecimal.ZERO;
         int totalItems = 0;
@@ -115,15 +118,18 @@ public class CartServiceImpl implements CartService{
 
     @Override
     @Transactional
-    public CartDTO updateQuantity(Long userId, Long cartItemId, Integer newQuantity){
+    public CartDTO updateQuantity(String email, Long cartItemId, Integer newQuantity){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại!"));
+
         CartItem item = cartItemRepository.findById(cartItemId).orElseThrow(() -> new RuntimeException("Không tìm thấy món đồ trong giỏ hàng !"));
 
-        if(!item.getCart().getUser().getId().equals(userId)){
+        if(!item.getCart().getUser().getId().equals(user.getId())){
             throw new RuntimeException("Bạn không có quyền chỉnh sửa giỏ hàng này !");
         }
 
         if(newQuantity <= 0){
-            return removeFromCart(userId, cartItemId);
+            return removeFromCart(email, cartItemId);
         }
 
         int stock = item.getVariant().getInventory() != null ? item.getVariant().getInventory().getQuantity() : 0;
@@ -133,20 +139,23 @@ public class CartServiceImpl implements CartService{
 
         item.setQuantity(newQuantity);
         cartItemRepository.save(item);
-        return getUserCart(userId);
+        return getUserCart(email);
     }
 
     @Override
     @Transactional
-    public CartDTO removeFromCart(Long userId, Long cartItemId){
+    public CartDTO removeFromCart(String email, Long cartItemId){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại!"));
+
         CartItem item = cartItemRepository.findById(cartItemId).orElseThrow(() -> new RuntimeException("Món đồ không tồn tại !"));
 
-        if(!item.getCart().getUser().getId().equals(userId)){
+        if(!item.getCart().getUser().getId().equals(user.getId())){
             throw new RuntimeException("Bạn không có quyền xóa món đồ này !");
         }
 
         cartItemRepository.delete(item);
-        return getUserCart(userId);
+        return getUserCart(email);
     }
 
 }

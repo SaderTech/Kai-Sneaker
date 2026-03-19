@@ -6,6 +6,7 @@ import com.quanghao.backend.entity.Cart;
 import com.quanghao.backend.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,23 +16,27 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
     private final CartService cartService;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<CartDTO> getCart(@PathVariable Long userId){
-        return ResponseEntity.ok(cartService.getUserCart(userId));
+    @GetMapping
+    public ResponseEntity<CartDTO> getCart(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(cartService.getUserCart(email));
     }
 
-    @PostMapping("{userId}/add")
-    public ResponseEntity<CartDTO> addToCart(@PathVariable Long userId, @RequestBody AddToCartRequestDTO requestDTO){
-        return ResponseEntity.ok(cartService.addToCart(userId, requestDTO));
+    @PostMapping("/add")
+    public ResponseEntity<CartDTO> addToCart( @RequestBody AddToCartRequestDTO requestDTO){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(cartService.addToCart(email, requestDTO));
     }
 
-    @PutMapping("{userId}/update/{cartItemId}")
-    public ResponseEntity<CartDTO> updateQuantity(@PathVariable Long userId, @PathVariable Long cartItemId, @RequestParam Integer quantity){
-        return ResponseEntity.ok(cartService.updateQuantity(userId,cartItemId,quantity));
+    @PutMapping("/update/{cartItemId}")
+    public ResponseEntity<CartDTO> updateQuantity(@PathVariable Long cartItemId, @RequestParam Integer quantity){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(cartService.updateQuantity(email,cartItemId,quantity));
     }
 
-    @DeleteMapping("{userId}/remove/{cartItemId}")
-    public ResponseEntity<CartDTO> removeItem(@PathVariable Long userId, @PathVariable Long cartItemId){
-        return ResponseEntity.ok(cartService.removeFromCart(userId, cartItemId));
+    @DeleteMapping("/remove/{cartItemId}")
+    public ResponseEntity<CartDTO> removeItem( @PathVariable Long cartItemId){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(cartService.removeFromCart(email, cartItemId));
     }
 }

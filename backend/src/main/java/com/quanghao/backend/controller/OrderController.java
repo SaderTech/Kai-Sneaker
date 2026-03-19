@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,20 +21,21 @@ public class OrderController {
     @Autowired
     private final OrderService orderService;
 
-    @PostMapping("/checkout/{userId}")
-    public ResponseEntity<OrderDTO> checkout(@PathVariable Long userId, @Valid @RequestBody CheckoutRequestDTO requestDTO){
-        return ResponseEntity.ok(orderService.createOrder(userId, requestDTO));
+    @PostMapping("/checkout")
+    public ResponseEntity<OrderDTO> checkout( @Valid @RequestBody CheckoutRequestDTO requestDTO){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(orderService.createOrder(email, requestDTO));
     }
 
-    @GetMapping("/history/{userId}")
-    public ResponseEntity<List<OrderDTO>> getOrderHistory(@PathVariable Long userId){
-        List<OrderDTO> history = orderService.getOrderHistory(userId);
-        return ResponseEntity.ok(history);
+    @GetMapping("/history")
+    public ResponseEntity<List<OrderDTO>> getOrderHistory(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(orderService.getOrderHistory(email));
     }
 
-    @PutMapping("/{orderId}/cancel/{userId}")
-    public ResponseEntity<OrderDTO> cancelOrder(@PathVariable Long orderId, @PathVariable Long userId){
-        OrderDTO cancelledOrder = orderService.cancelOrder(orderId, userId);
-        return ResponseEntity.ok(cancelledOrder);
+    @PutMapping("/{orderId}/cancel")
+    public ResponseEntity<OrderDTO> cancelOrder(@PathVariable Long orderId){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(orderService.cancelOrder(orderId, email));
     }
 }
