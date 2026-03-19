@@ -25,10 +25,10 @@ public class Image {
     @Column(name = "image_url", nullable = false, length = 500)
     private String imageUrl;
     @OneToOne(mappedBy = "image")
+    @JsonIgnore
     private Brand brands;
     @ManyToMany(mappedBy = "images")
     @JsonIgnore
     private Set<Product> products = new LinkedHashSet<>();
-
 
 }

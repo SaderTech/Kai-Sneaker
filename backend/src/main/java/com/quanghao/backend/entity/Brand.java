@@ -29,10 +29,11 @@ public class Brand {
     @Column(name = "description",columnDefinition = "TEXT")
     private String description;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     @JoinColumn(name = "image_id")
     private Image image;
+
     @OneToMany(mappedBy = "brand")
     @JsonIgnore
     private Set<Product> products = new LinkedHashSet<>();
