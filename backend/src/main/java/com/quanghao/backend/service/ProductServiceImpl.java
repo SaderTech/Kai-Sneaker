@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> newArrival = productRepository.findTop8ByIsDeletedFalseOrderByCreatedAtDesc();
         List<Product> featuredProducts = productRepository.findTop8ByIsDeletedFalseOrderByPriceDesc();
         List<HomeBrandSectionDTO> brandSections = brands.stream().map(brand -> {
-            List<Product> productsByBrand = productRepository.findTop4ByBrandIdAndIsDeletedFalseOrderByCreatedAtDesc(brand.getId());
+            List<Product> productsByBrand = productRepository.findTop8ByBrandIdAndIsDeletedFalseOrderByCreatedAtDesc(brand.getId());
             return HomeBrandSectionDTO.builder()
                     .brand(convertToBrandDTO(brand)) // Dùng lại hàm convert Brand
                     .products(productsByBrand.stream().map(this::convertToProductListDTO).collect(Collectors.toList()))
@@ -72,6 +72,7 @@ public class ProductServiceImpl implements ProductService {
         return BrandDTO.builder()
                 .id(brand.getId())
                 .name(brand.getName())
+                .description(brand.getDescription())
                 .imageUrl(brand.getImage() != null ? brand.getImage().getImageUrl() : null)
                 .build();
     }

@@ -28,12 +28,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = null;
         String email = null;
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")){
+        // 👉 THÊM ĐIỀU KIỆN CHẶN CHỮ "null" VÀ "undefined" TỪ LOCAL STORAGE CỦA REACT
+        if(authHeader != null && authHeader.startsWith("Bearer ")
+                && !authHeader.equals("Bearer null") && !authHeader.equals("Bearer undefined")){
+
             token = authHeader.substring(7);
             try{
                 email = jwtUtil.extractEmail(token);
             }catch (Exception e){
-                System.out.println("Lỗi khi giải mã Token");
+                System.out.println("Lỗi khi giải mã Token: Bị sai định dạng hoặc hết hạn!");
             }
         }
 

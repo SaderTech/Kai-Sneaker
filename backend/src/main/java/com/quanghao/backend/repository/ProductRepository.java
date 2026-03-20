@@ -29,7 +29,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     //Lay 8 doi giay noi bat nhat
     List<Product> findTop8ByIsDeletedFalseOrderByPriceDesc();
 
-    List<Product> findTop4ByBrandIdAndIsDeletedFalseOrderByCreatedAtDesc(Long id);
+    List<Product> findTop8ByBrandIdAndIsDeletedFalseOrderByCreatedAtDesc(Long id);
 
     Page<Product> findByNameContainingIgnoreCaseAndIsDeletedFalse(String name, Pageable pageable);
 

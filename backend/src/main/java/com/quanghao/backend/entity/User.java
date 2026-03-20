@@ -74,15 +74,19 @@ public class User {
     private Instant createdAt;
     @OneToOne(mappedBy = "user")
     private Cart cart;
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private Set<Order> orders = new LinkedHashSet<>();
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private Set<Review> reviews = new LinkedHashSet<>();
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private Set<Role> roles = new LinkedHashSet<>();
+    @Builder.Default
     @ManyToMany(mappedBy = "users")
     private Set<Product> products = new LinkedHashSet<>();
 }
