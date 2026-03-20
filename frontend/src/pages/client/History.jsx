@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import OrderItem from '../../components/client/OrderItem';
+import OrderItem from '../../pages/client/OrderItem';
 import api from '../../api/axios';
 import { ShoppingBag, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';

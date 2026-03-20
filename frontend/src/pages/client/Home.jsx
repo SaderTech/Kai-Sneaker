@@ -4,18 +4,62 @@ import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../api/axios';
 
-// --- COMPONENT: PRODUCT SLIDER (CẬP NHẬT ẢNH FIT, TÊN DÀI & GIÁ ĐỎ VNĐ) ---
+// --- COMPONENT: PRODUCT SLIDER (CẬP NHẬT ẢNH FIT, TÊN DÀI, GIÁ ĐỎ VNĐ & FULL NÚT BẤM) ---
 const ProductSlider = ({ products }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  
+  // 1. Dùng một State để quản lý danh sách ID đã thích RIÊNG BIỆT
+  const [likedIds, setLikedIds] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const maxIndex = Math.max(0, (products?.length || 0) - 4);
+
+  // 2. Đồng bộ hóa một lần duy nhất khi products từ Home đổ xuống
+  useEffect(() => {
+    if (products && products.length > 0) {
+      const initialIds = products
+        .filter(p => p.favorite === true) // 👉 Đổi từ isFavorite thành favorite
+        .map(p => p.id);
+      
+      setLikedIds(initialIds);
+    }
+  }, [products]);
+
+  const handleToggleWishlist = async (productId) => {
+    if (isProcessing) return; // Chống click liên tục gây 2 thông báo
+    
+    setIsProcessing(true);
+    try {
+      await api.post(`/kaisneaker/wishlist/${productId}`);
+      
+      // 3. Cập nhật State cục bộ ngay lập tức
+      setLikedIds(prev => {
+        const isCurrentlyLiked = prev.includes(productId);
+        if (isCurrentlyLiked) {
+          toast.success("Đã xóa khỏi yêu thích", { id: 'wishlist-msg' });
+          return prev.filter(id => id !== productId);
+        } else {
+          toast.success("Đã thêm vào yêu thích", { id: 'wishlist-msg' });
+          return [...prev, productId];
+        }
+      });
+    } catch (error) {
+      toast.error("Vui lòng đăng nhập!");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const next = () => setCurrentIndex(prev => prev >= maxIndex ? 0 : prev + 1);
   const prev = () => setCurrentIndex(prev => prev <= 0 ? maxIndex : prev - 1);
 
   if (!products || products.length === 0) return <p className="text-gray-400 text-sm italic py-4">Chưa có sản phẩm.</p>;
 
+  // ĐẢM BẢO CÓ class group/slider ĐỂ NÚT BẤM HIỆN RA KHI HOVER
   return (
     <div className="relative group/slider overflow-hidden px-2 py-4 -mx-2">
+      
+      {/* 👉 ĐÃ KHÔI PHỤC: NÚT BẤM TRÁI / PHẢI */}
       {products.length > 4 && (
         <>
           <button onClick={prev} className="absolute left-2 top-[35%] z-30 p-3 bg-white border border-gray-100 shadow-xl rounded-full opacity-0 group-hover/slider:opacity-100 transition-all hover:bg-black hover:text-white hover:scale-110">
@@ -27,24 +71,40 @@ const ProductSlider = ({ products }) => {
         </>
       )}
 
-      <div 
-        className="flex transition-transform duration-500 ease-out"
-        style={{ transform: `translateX(-${currentIndex * 25}%)` }}
-      >
+      <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${currentIndex * 25}%)` }}>
         {products.map(shoe => (
-          <div key={shoe.id} className="w-1/4 flex-shrink-0 px-4 group cursor-pointer flex flex-col gap-4">
+          // Thêm h-full và flex-col để thẻ cao bằng nhau
+          <div key={shoe.id} className="w-1/4 flex-shrink-0 px-4 group cursor-pointer flex flex-col h-full gap-4">
             
-            {/* THẺ ẢNH: Đã đổi sang hình vuông (aspect-square), p-6 và object-contain để fit ảnh */}
             <div className="aspect-square bg-[#f8f8f8] relative overflow-hidden rounded-2xl border border-transparent group-hover:border-gray-200 transition-all p-6 flex items-center justify-center">
-              <button className="absolute top-4 right-4 z-20 p-2 text-gray-300 opacity-0 group-hover:opacity-100 transition-all hover:text-red-500 hover:scale-110">
-                <Heart className="w-5 h-5" />
+              
+              {/* NÚT TRÁI TIM: Check theo likedIds */}
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleToggleWishlist(shoe.id);
+                }}
+                className="absolute top-4 right-4 z-30 p-2 transition-all hover:scale-125"
+              >
+                <Heart 
+                  className={`w-5 h-5 transition-all duration-300 ${
+                    likedIds.includes(shoe.id) // Kiểm tra xem ID có trong mảng Liked không
+                      ? "fill-red-500 text-red-500 scale-110" 
+                      : "text-gray-300 group-hover:text-gray-400"
+                  }`} 
+                />
               </button>
 
               <img 
-                src={shoe.imageUrls || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600&auto=format&fit=crop"} 
-                className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110" 
-                alt={shoe.name} 
-              />
+  src={
+    shoe.imageUrls 
+      ? (shoe.imageUrls.startsWith('http') ? shoe.imageUrls : `http://localhost:8080${shoe.imageUrls}`) 
+      : "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600"
+  } 
+  className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110" 
+  alt={shoe.name} 
+/>
               
               <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
                 <button className="w-full bg-black/90 backdrop-blur-sm text-white py-3.5 text-xs font-bold tracking-widest hover:bg-black shadow-xl rounded-xl">
@@ -53,25 +113,28 @@ const ProductSlider = ({ products }) => {
               </div>
             </div>
 
-            {/* THÔNG TIN SẢN PHẨM: Xử lý tên dài & Giá VNĐ màu đỏ */}
-            <div className="flex flex-col gap-1 px-1">
+            {/* THÔNG TIN SẢN PHẨM */}
+            <div className="flex flex-col gap-1 px-1 flex-grow">
               <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">{shoe.brandName}</p>
               
-              {/* min-h-[40px] và line-clamp-2 giúp tên dài xuống 2 dòng chuẩn chỉ */}
-              <h4 className="text-[14px] font-bold tracking-tight text-gray-900 leading-snug line-clamp-2 min-h-[40px]" title={shoe.name}>
+              {/* Ép tên thành 2 dòng */}
+              <h4 className="text-[14px] font-bold tracking-tight text-gray-900 leading-snug line-clamp-2" title={shoe.name}>
                 {shoe.name}
               </h4>
               
-              {/* Giá tiền VNĐ và màu đỏ */}
-              <p className="text-[16px] font-extrabold text-red-600 mt-1">
-                {shoe.price?.toLocaleString('vi-VN')} đ
-              </p>
+              {/* mt-auto đẩy giá tiền dính xuống đáy thẻ */}
+              <div className="flex justify-between items-center mt-auto pt-2">
+                <p className="text-[16px] font-extrabold text-red-600">
+                  {shoe.price?.toLocaleString('vi-VN')} đ
+                </p>
+              </div>
             </div>
 
           </div>
         ))}
       </div>
       
+      {/* THANH CUỘN (PROGRESS BAR) Ở DƯỚI */}
       {products.length > 4 && (
         <div className="flex justify-center mt-12">
           <div className="w-48 h-[2px] bg-gray-100 overflow-hidden">
@@ -91,8 +154,10 @@ const ProductSlider = ({ products }) => {
 const Home = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [keyword, setKeyword] = useState('');
 
-const [keyword, setKeyword] = useState('');
+  // 👉 1. THÊM STATE KIỂM TRA ĐĂNG NHẬP
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // 👉 2. THÊM HÀM BẮT SỰ KIỆN ẤN ENTER
   const handleSearch = (e) => {
@@ -112,6 +177,10 @@ const [keyword, setKeyword] = useState('');
   });
 
   useEffect(() => {
+    // 👉 3. KIỂM TRA TOKEN KHI TRANG VỪA LOAD
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token); // Nếu có token thì là true, không có là false
+
     // GỌI API THẬT
     const fetchHomeData = async () => {
       try {
@@ -131,6 +200,7 @@ const [keyword, setKeyword] = useState('');
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    setIsLoggedIn(false); // 👉 Cập nhật lại state sau khi đăng xuất
     toast.success("Đã đăng xuất thành công!");
     navigate('/login');
   };
@@ -162,21 +232,34 @@ const [keyword, setKeyword] = useState('');
             <div className="relative group py-2">
               <User className="w-5 h-5 cursor-pointer hover:text-gray-500 transition-colors" />
               <div className="absolute right-0 top-full w-52 bg-white border border-gray-100 rounded-2xl shadow-xl p-2 z-[60] opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300">
-                <Link to="/profile" className="flex items-center gap-3 p-3 text-sm font-medium rounded-lg hover:bg-gray-50"><User className="w-4 h-4"/>Hồ sơ</Link>
-                <Link to="/orders" className="flex items-center gap-3 p-3 text-sm font-medium rounded-lg hover:bg-gray-50"><ShoppingBag className="w-4 h-4"/>Đơn hàng</Link>
-                <Link to="/history" className="flex items-center gap-3 p-3 text-sm font-medium rounded-lg hover:bg-gray-50"><ListOrdered className="w-4 h-4"/>Lịch sử mua hàng</Link>
-                <button onClick={handleLogout} className="w-full flex items-center gap-3 p-3 text-sm font-bold text-red-500 rounded-lg hover:bg-red-50"><LogOut className="w-4 h-4"/>Đăng xuất</button>
+                
+                {/* 👉 4. LOGIC TÁCH MENU TÙY THEO TRẠNG THÁI ĐĂNG NHẬP */}
+                {isLoggedIn ? (
+                  <>
+                    <Link to="/profile" className="flex items-center gap-3 p-3 text-sm font-medium rounded-lg hover:bg-gray-50"><User className="w-4 h-4"/>Hồ sơ</Link>
+                    <Link to="/orders" className="flex items-center gap-3 p-3 text-sm font-medium rounded-lg hover:bg-gray-50"><ShoppingBag className="w-4 h-4"/>Đơn hàng</Link>
+                    <Link to="/history" className="flex items-center gap-3 p-3 text-sm font-medium rounded-lg hover:bg-gray-50"><ListOrdered className="w-4 h-4"/>Lịch sử mua hàng</Link>
+                    <button onClick={handleLogout} className="w-full flex items-center gap-3 p-3 text-sm font-bold text-red-500 rounded-lg hover:bg-red-50"><LogOut className="w-4 h-4"/>Đăng xuất</button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" className="flex items-center gap-3 p-3 text-sm font-medium rounded-lg hover:bg-gray-50">Đăng nhập</Link>
+                    <Link to="/register" className="flex items-center gap-3 p-3 text-sm font-medium rounded-lg hover:bg-gray-50">Đăng ký</Link>
+                  </>
+                )}
+                {/* KẾT THÚC LOGIC MENU */}
+
               </div>
             </div>
           </div>
         </header>
 
+        {/* CÁC PHẦN DƯỚI CỦA HEADER VÀ MENU DROPDOWN CŨ GIỮ NGUYÊN 100% */}
         <nav className="px-10 py-0 flex justify-center items-center text-[11px] font-bold tracking-[0.2em] uppercase">
           <div className="flex gap-14">
             <Link to="/new-arrivals" className="hover:text-gray-400 py-5">Sản phẩm mới</Link>
             <Link to="/featured" className="hover:text-gray-400 py-5">Nổi bật</Link>
             
-            {/* DROPDOWN BRANDS - ĐỔ DATA THẬT */}
             <div className="relative group">
               <button className="flex items-center gap-2 hover:text-gray-400 uppercase tracking-[0.2em] py-5">
                 Brands <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform" />
@@ -194,7 +277,6 @@ const [keyword, setKeyword] = useState('');
               </div>
             </div>
 
-            {/* DROPDOWN CATEGORIES - ĐỔ DATA THẬT */}
             <div className="relative group">
               <button className="flex items-center gap-2 hover:text-gray-400 uppercase tracking-[0.2em] py-5">
                 Category <ChevronDown className="w-3 h-3 group-hover:rotate-180 transition-transform" />
@@ -215,7 +297,6 @@ const [keyword, setKeyword] = useState('');
         </nav>
       </div>
 
-      {/* HERO BANNER */}
       <header className="relative h-[70vh] flex items-center justify-center overflow-hidden bg-gray-950">
         <img src="https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=2000&auto=format&fit=crop" className="absolute inset-0 w-full h-full object-cover opacity-60" alt="Banner" />
         <div className="relative text-center text-white mt-20">
@@ -232,7 +313,6 @@ const [keyword, setKeyword] = useState('');
         ) : (
           <div className="space-y-32">
             
-            {/* SẢN PHẨM MỚI */}
             {homeData.newArrivals?.length > 0 && (
               <section className="px-10 max-w-[1600px] mx-auto mt-20">
                 <div className="flex justify-between items-end mb-10 border-b border-gray-100 pb-5">
@@ -242,7 +322,6 @@ const [keyword, setKeyword] = useState('');
               </section>
             )}
 
-            {/* SẢN PHẨM NỔI BẬT */}
             {homeData.featuredProducts?.length > 0 && (
               <section className="px-10 max-w-[1600px] mx-auto">
                 <div className="flex justify-between items-end mb-10 border-b border-gray-100 pb-5">
@@ -252,10 +331,8 @@ const [keyword, setKeyword] = useState('');
               </section>
             )}
 
-            {/* TỪNG BRAND LẦN LƯỢT */}
             {homeData.brandSections?.map((section, index) => (
               <section key={index} className="w-full">
-                {/* BÌA BRAND */}
                 <div className="w-full h-[50vh] relative">
                   <img 
                     src={section.brand.imageUrl || "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=2000"} 
@@ -270,7 +347,6 @@ const [keyword, setKeyword] = useState('');
                   </div>
                 </div>
                 
-                {/* MÔ TẢ VÀ SẢN PHẨM CỦA BRAND */}
                 <div className="px-10 max-w-[1600px] mx-auto mt-12">
                   <div className="max-w-3xl mx-auto text-center mb-16">
                     <p className="text-sm font-medium text-gray-500 leading-relaxed">
@@ -289,7 +365,6 @@ const [keyword, setKeyword] = useState('');
               </section>
             ))}
 
-            {/* Thông báo nếu DB trống */}
             {!homeData.newArrivals?.length && !homeData.featuredProducts?.length && !homeData.brandSections?.length && (
                <div className="text-center text-gray-400 py-20 font-medium tracking-wide">
                  Hệ thống đang cập nhật dữ liệu sản phẩm. Vui lòng quay lại sau!
@@ -300,7 +375,6 @@ const [keyword, setKeyword] = useState('');
         )}
       </main>
 
-      {/* FOOTER */}
       <footer className="border-t border-gray-100 px-10 py-12 flex justify-between items-center text-xs font-medium text-gray-400">
         <p>© 2026 KAI SNEAKER. ALL RIGHTS RESERVED.</p>
         <div className="flex gap-6 uppercase tracking-widest">

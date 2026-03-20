@@ -9,6 +9,10 @@ import ForgotPassword from './pages/client/ForgotPassword';
 import Home from './pages/client/Home';
 import Search from './pages/client/Search';
 import Profile from './pages/client/Profile';
+import Orders from './pages/client/Orders'; 
+import History from './pages/client/History';
+import Wishlist from './pages/client/Wishlist';
+import BrandDetail from './pages/client/BrandDetail';
 
 // Các trang tạm thời để test
 const AdminDashboard = () => <div className="p-10 text-2xl font-bold text-red-600">🛡️ Trang Quản trị (Admin)</div>;
@@ -40,6 +44,10 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/search" element={<Search />} />
           <Route path="/profile" element={<Profile/>}/>
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/history" element={<History />} />
+          <Route path="wishlist" element={<Wishlist />}/>
+          <Route path="/brand/:id" element={<BrandDetail />} />
           {/* 3. Route dành cho khách hàng đã đăng nhập */}
           <Route path="/home" element={<Home />} />
 
