@@ -20,4 +20,5 @@ public class ProductListDTO {
     private String brandName;
     private String categoryName;
     private String imageUrls;
+    private boolean isFavorite;
 }

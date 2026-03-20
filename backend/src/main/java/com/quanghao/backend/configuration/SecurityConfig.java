@@ -37,9 +37,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // 2. TRẢ LẠI CHỮ /kaisneaker VÀO ĐÂY!
-                        .requestMatchers("/kaisneaker/auth/**", "/kaisneaker/home/**","/kaisneaker/home","/error").permitAll()
+                        .requestMatchers("/kaisneaker/auth/**", "/kaisneaker/home/**","/kaisneaker/home","/uploads/**","/error").permitAll()
                         .requestMatchers("/kaisneaker/admin/**").hasAuthority("ADMIN")
-
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -1,5 +1,6 @@
 package com.quanghao.backend.service;
 
+import com.quanghao.backend.configuration.SecurityUtils;
 import com.quanghao.backend.dto.*;
 import com.quanghao.backend.entity.*;
 import com.quanghao.backend.repository.*;
@@ -31,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
     private final ImageRepository imageRepository;
     private final ProductVariantRepository productVariantRepository;
     private final InventoryRepository inventoryRepository;
+    private final WishListRepository wishlistRepository;
 
     @Override
     public HomePageDTO getHomePageData() {
@@ -65,6 +67,7 @@ public class ProductServiceImpl implements ProductService {
                 .brandName(product.getBrand() != null ? product.getBrand().getName() : "N/A")
                 .imageUrls(product.getImages() != null && !product.getImages().isEmpty()
                         ? product.getImages().get(0).getImageUrl() : null)
+                .isFavorite(checkIfFavorite(product.getId()))
                 .build();
     }
 
@@ -350,5 +353,16 @@ public class ProductServiceImpl implements ProductService {
                 .color(variant.getColor())
                 .quantity(savedInventory.getQuantity())
                 .build();
+    }
+
+    private boolean checkIfFavorite(Long productId) {
+        try {
+            Long userId = SecurityUtils.getCurrentUserId();
+            if (userId == null) return false;
+            // Giả sử sếp có wishlistRepository
+            return wishlistRepository.existsByUserIdAndProductId(userId, productId);
+        } catch (Exception e) {
+            return false; // Nếu chưa đăng nhập hoặc lỗi thì coi như chưa thích
+        }
     }
 }

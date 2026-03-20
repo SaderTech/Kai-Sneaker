@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
-        dto.setAvatar(user.getAvatarUrl());
+        dto.setAvatarUrl(user.getAvatarUrl());
         dto.setGender(user.getGender());
         dto.setProvinceCity(user.getProvinceCity());
         dto.setDistrict(user.getDistrict());
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setAvatarUrl(request.getAvatar());
+        user.setAvatarUrl(request.getAvatarUrl());
         user.setGender(request.getGender());
         user.setProvinceCity(request.getProvinceCity());
         user.setDistrict(request.getDistrict());

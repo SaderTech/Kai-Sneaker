@@ -28,7 +28,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = null;
         String email = null;
 
-        // 👉 THÊM ĐIỀU KIỆN CHẶN CHỮ "null" VÀ "undefined" TỪ LOCAL STORAGE CỦA REACT
         if(authHeader != null && authHeader.startsWith("Bearer ")
                 && !authHeader.equals("Bearer null") && !authHeader.equals("Bearer undefined")){
 

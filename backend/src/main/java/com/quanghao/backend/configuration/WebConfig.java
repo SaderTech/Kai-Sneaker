@@ -10,10 +10,9 @@ import java.nio.file.Paths;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry){
-        Path uploadDir = Paths.get("uploads");
-        String uploadPath = uploadDir.toFile().getAbsolutePath();
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Cấu hình để link /uploads/** trỏ thẳng vào thư mục uploads/ ở gốc project
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:/" + uploadPath + "/");
+                .addResourceLocations("file:uploads/"); // 👉 Cách viết này tự hiểu đường dẫn tương đối, cực chuẩn!
     }
 }

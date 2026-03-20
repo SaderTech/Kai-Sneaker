@@ -49,20 +49,32 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponseDTO login(LoginRequestDTO request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("Email không tồn tại trong hệ thống!"));
+        // 1. Tìm user theo email
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Email không tồn tại trong hệ thống!"));
 
+        // 2. Kiểm tra mật khẩu
         boolean isPasswordMatch = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
-
         if (!isPasswordMatch) {
             throw new RuntimeException("Sai mật khẩu! Vui lòng thử lại.");
         }
 
-        List<String> roleNames = user.getRoles().stream()
+        // 3. LẤY DANH SÁCH ROLES (Dạng List<String> đúng như JwtUtil yêu cầu)
+        List<String> roles = user.getRoles().stream()
                 .map(Role::getName)
                 .toList();
 
-        String token = jwtUtil.generateToken(user.getEmail(), roleNames);
+        // 4. Sinh token (Ném Email và List Roles vào đây)
+        String token = jwtUtil.generateToken(user.getEmail(), roles);
 
-        return new AuthResponseDTO(token, "Đăng nhập thành công! Chào mừng " + user.getFullName());
+        // 5. Lấy cái Role đầu tiên để trả về cho React lưu LocalStorage (để điều hướng trang)
+        String primaryRole = roles.isEmpty() ? "USER" : roles.get(0);
+
+        // 6. Trả về DTO
+        return AuthResponseDTO.builder()
+                .token(token)
+                .message("Đăng nhập thành công! Chào mừng " + user.getFullName())
+                .role(primaryRole)
+                .build();
     }
 }
