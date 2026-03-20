@@ -56,7 +56,7 @@ function App() {
           <Route path="/category/:id" element={<CategoryDetail />} />
           <Route path="/new-arrivals" element={<NewArrivals />} />
           <Route path="/featured" element={<Featured />} />
-          {/* 3. Route dành cho khách hàng đã đăng nhập */}
+          {/* 3. Route dành cho khách hàng đã đăng nhập */} 
           <Route path="/home" element={<Home />} />
 
           {/* 4. Route dành cho Admin (Tạm thời) */}
