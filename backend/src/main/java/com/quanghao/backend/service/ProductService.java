@@ -26,4 +26,8 @@ public interface ProductService {
     void deleteProduct(Long productId);
     List<VariantDTO> bulkCreateVariants(Long productId, List<VariantRequestDTO> variantRequests);
     VariantDTO updateVariantQuantity(Long variantId, Integer newQuantity);
+
+    CategoryDetailDTO getCategoryFullData(Long id, String priceRange, String size, Pageable pageable);
+
+    Page<ProductListDTO> getFilteredProducts(Long categoryId, Long brandId, String priceRange, String size, Pageable pageable);
 }

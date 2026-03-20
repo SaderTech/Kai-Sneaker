@@ -68,6 +68,34 @@ List<Product> findRelatedProducts(
         @Param("productId") Long productId,
         Pageable pageable);
 
+    Page<Product> findByIsDeletedFalse(Pageable pageable);
+
+    @Query("SELECT DISTINCT p FROM Product p JOIN p.variants v WHERE p.category.id = :categoryId AND p.isDeleted = false " +
+            "AND (:size IS NULL OR v.size = :size) " +
+            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR p.price <= :maxPrice)")
+    Page<Product> findProductsByCategoryAndFilters(
+            @Param("categoryId") Long categoryId,
+            @Param("size") String size,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice,
+            Pageable pageable);
+
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN p.variants v " +
+            "WHERE p.isDeleted = false " +
+            "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
+            "AND (:brandId IS NULL OR p.brand.id = :brandId) " +
+            "AND (:size IS NULL OR v.size = :size) " +
+            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR p.price <= :maxPrice)")
+    Page<Product> findProductsWithFilters(
+            @Param("categoryId") Long categoryId,
+            @Param("brandId") Long brandId,
+            @Param("size") String size,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice,
+            Pageable pageable);
+
     long count();
     boolean existsByCategoryId(Long categoryId);
     boolean existsByBrandId(Long brandId);

@@ -34,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
     private final InventoryRepository inventoryRepository;
     private final WishListRepository wishlistRepository;
 
+
     @Override
     public HomePageDTO getHomePageData() {
         List<Brand> brands = brandRepository.findAll();
@@ -353,6 +354,81 @@ public class ProductServiceImpl implements ProductService {
                 .color(variant.getColor())
                 .quantity(savedInventory.getQuantity())
                 .build();
+    }
+
+    @Override
+    public CategoryDetailDTO getCategoryFullData(Long categoryId, String priceRange, String size, Pageable pageable) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Danh mục!"));
+
+        // 1. Xử lý logic khoảng giá (Giống như bộ lọc Frontend gửi lên)
+        Double minPrice = null;
+        Double maxPrice = null;
+        if (priceRange != null && !priceRange.isEmpty()) {
+            switch (priceRange) {
+                case "Dưới 1 triệu":
+                    maxPrice = 1000000D;
+                    break;
+                case "1 - 3 triệu":
+                    minPrice = 1000000D;
+                    maxPrice = 3000000D;
+                    break;
+                case "Trên 3 triệu":
+                    minPrice = 3000000D;
+                    break;
+            }
+        }
+
+        // 2. Gọi query lấy sản phẩm đã lọc
+        Page<Product> productPage = productRepository.findProductsByCategoryAndFilters(
+                categoryId, size, minPrice, maxPrice, pageable);
+
+        // 3. Khởi tạo sẵn các option cho Frontend vẽ UI
+        // Sếp có thể query động từ DB, hoặc fix cứng như này cũng chạy rất xịn rồi
+        List<String> availableSizes = Arrays.asList("36", "37", "38", "39", "40", "41", "42", "43");
+        List<PriceRangeOption> priceFilters = Arrays.asList(
+                new PriceRangeOption("Dưới 1 triệu", "Dưới 1 triệu"),
+                new PriceRangeOption("1 - 3 triệu", "1 - 3 triệu"),
+                new PriceRangeOption("Trên 3 triệu", "Trên 3 triệu")
+        );
+
+        // 4. Build cục DTO trả về
+        return CategoryDetailDTO.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .products(productPage.map(this::convertToProductListDTO))
+                .availableSizes(availableSizes)
+                .priceFilters(priceFilters)
+                .build();
+    }
+
+    @Override
+    public Page<ProductListDTO> getFilteredProducts(Long categoryId, Long brandId, String priceRange, String size, Pageable pageable) {
+        Double minPrice = null;
+        Double maxPrice = null;
+
+        // Xử lý logic khoảng giá
+        if (priceRange != null && !priceRange.isEmpty()) {
+            switch (priceRange) {
+                case "Dưới 1 triệu":
+                    maxPrice = 1000000D;
+                    break;
+                case "1 - 3 triệu":
+                    minPrice = 1000000D;
+                    maxPrice = 3000000D;
+                    break;
+                case "Trên 3 triệu":
+                    minPrice = 3000000D;
+                    break;
+            }
+        }
+
+        // Gọi DB lấy dữ liệu
+        Page<Product> products = productRepository.findProductsWithFilters(
+                categoryId, brandId, size, minPrice, maxPrice, pageable);
+
+        // Map sang DTO và gắp tim đỏ (isFavorite)
+        return products.map(this::convertToProductListDTO);
     }
 
     private boolean checkIfFavorite(Long productId) {

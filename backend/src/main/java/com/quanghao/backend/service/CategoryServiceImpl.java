@@ -47,4 +47,19 @@ public class CategoryServiceImpl implements CategoryService {
 
         categoryRepository.deleteById(id);
     }
+
+    // Trong CategoryServiceImpl.java
+    @Override
+    public List<CategoryDTO> findAll() {
+        return categoryRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private CategoryDTO convertToDTO(Category category) {
+        CategoryDTO dto = new CategoryDTO();
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        return dto;
+    }
 }

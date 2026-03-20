@@ -13,4 +13,6 @@ public interface BrandService {
     void deleteBrand(Long id);
 
     BrandDTO updateBrand(Long id, BrandRequestDTO request);
+
+    List<BrandDTO> findAll();
 }

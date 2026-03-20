@@ -124,7 +124,7 @@ const res = await api.get(`/kaisneaker/brands/${id}`, { params: cleanFilters });
         {/* BỘ LỌC BÊN TRÁI (SIDEBAR) */}
         <aside className="w-64 flex-shrink-0 space-y-10 hidden lg:block">
           <div>
-            <h3 className="flex items-center gap-2 font-bold text-lg mb-6 uppercase tracking-widest border-b border-black pb-4">
+            <h3 className="flex items-center gap-2 font-bold text-lg mb-6 uppercase tracking-widest border-b border-black pb-[26px]" >
               <Filter className="w-5 h-5" /> Bộ Lọc
             </h3>
 

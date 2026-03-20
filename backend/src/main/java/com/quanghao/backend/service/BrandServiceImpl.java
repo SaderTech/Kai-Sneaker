@@ -109,6 +109,22 @@ public class BrandServiceImpl implements BrandService {
                 .build();
     }
 
+    private BrandDTO convertToDTO(Brand brand) {
+        BrandDTO dto = new BrandDTO();
+        dto.setId(brand.getId());
+        dto.setName(brand.getName());
+        dto.setImageUrl(brand.getImage().getImageUrl());
+        dto.setDescription(brand.getDescription());
+        return dto;
+    }
+
+    @Override
+    public List<BrandDTO> findAll() {
+        return brandRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public void deleteBrand(Long id) {
         if (productRepository.existsByBrandId(id)) {
             throw new RuntimeException("CẢNH BÁO: Không thể xóa! Đang có sản phẩm thuộc hãng này. Vui lòng cập nhật lại sản phẩm trước.");
