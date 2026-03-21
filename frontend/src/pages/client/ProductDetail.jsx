@@ -12,6 +12,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [newRating, setNewRating] = useState(5);
@@ -35,6 +36,35 @@ const ProductDetail = () => {
     fetchProduct();
     window.scrollTo(0, 0);
   }, [id, navigate]);
+
+const handleAddToCart = async () => {
+  if (!localStorage.getItem('token')) {
+    toast.error("Vui lòng đăng nhập!");
+    navigate('/login');
+    return;
+  }
+  if (!selectedSize) {
+    toast.error("Vui lòng chọn size!");
+    return;
+  }
+
+  // ✅ Tìm variant thực tế từ size sếp chọn
+const selectedVariant = product.variants.find(v => v.size === selectedSize);
+  if (!selectedVariant) return;
+
+setIsAdding(true);
+  try {
+    await api.post('/kaisneaker/carts/add', {
+      variantId: selectedVariant.id, 
+      quantity: quantity
+    });
+    toast.success("🛒 Đã ném vào giỏ thành công!");
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Lỗi hệ thống!");
+  } finally {
+    setIsAdding(false);
+  }
+};
 
   const handleSubmitReview = async () => {
     if (!newComment.trim()) return toast.error("Bạn chưa nhập bình luận kìa!");
@@ -125,8 +155,8 @@ const ProductDetail = () => {
                 <span className="w-10 text-center font-bold">{quantity}</span>
                 <button onClick={() => setQuantity(q => q + 1)} className="p-2 hover:text-green-600"><Plus className="w-4 h-4" /></button>
               </div>
-              <button className="flex-1 bg-black text-white py-5 rounded-2xl font-bold tracking-widest flex items-center justify-center gap-3 hover:bg-gray-800 transition-all shadow-xl uppercase">
-                <ShoppingCart className="w-5 h-5" /> THÊM VÀO GIỎ
+              <button onClick={handleAddToCart} disabled={isAdding} className="flex-1 bg-black text-white py-5 rounded-2xl font-bold tracking-widest flex items-center justify-center gap-3 hover:bg-gray-800 transition-all shadow-xl uppercase">
+                {isAdding ? <Loader2 className="animate-spin" /> : <ShoppingCart className="w-5 h-5" />} THÊM VÀO GIỎ
               </button>
             </div>
 

@@ -66,11 +66,10 @@ const Login = () => {
 
       toast.success("Chào mừng đến với Kai Sneaker!");
       
-      // Điều hướng dựa trên role
       if (role === 'ADMIN') {
-        navigate('/admin');
+        window.location.href = '/admin';
       } else {
-        navigate('/home');
+        window.location.href = '/home';
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Sai thông tin đăng nhập. Vui lòng thử lại.");

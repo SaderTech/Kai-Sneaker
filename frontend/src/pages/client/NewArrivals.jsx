@@ -134,7 +134,7 @@ const NewArrivals = () => {
 
         <aside className="w-64 flex-shrink-0 space-y-10 hidden lg:block">
           <div>
-            <h3 class="flex items-center gap-2 font-bold text-lg mb-8 uppercase tracking-widest border-b border-black pb-4">
+            <h3 className="flex items-center gap-2 font-bold text-lg mb-8 uppercase tracking-widest border-b border-black pb-4">
               <Filter className="w-5 h-5" /> Bộ Lọc
             </h3>
             {/* 👉 LỌC THEO HÃNG (BRAND) */}
