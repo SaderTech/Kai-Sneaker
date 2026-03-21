@@ -3,6 +3,7 @@ import { ShoppingBag, Search, User, Heart, LogOut, ChevronDown, ChevronLeft, Che
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../api/axios';
+import ProductCard from '../../components/client/ProductCard';
 
 // --- COMPONENT: PRODUCT SLIDER (CẬP NHẬT ẢNH FIT, TÊN DÀI, GIÁ ĐỎ VNĐ & FULL NÚT BẤM) ---
 const ProductSlider = ({ products }) => {
@@ -78,61 +79,16 @@ const getImageUrl = (imgData) => {
         </>
       )}
 
-      <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${currentIndex * 25}%)` }}>
+      <div className="flex  transition-transform duration-500 ease-out" style={{ transform: `translateX(-${currentIndex * 25}%)` }}>
         {products.map(shoe => (
-          // Thêm h-full và flex-col để thẻ cao bằng nhau
-          <div key={shoe.id} onClick={() => {
-                console.log("Navigating to product ID:", shoe.id);
-                navigate(`/products/${shoe.id}`);
-            }} className="w-1/4 flex-shrink-0 px-4 group cursor-pointer flex flex-col h-full gap-4">
-            
-            <div className="aspect-square bg-[#f8f8f8] relative overflow-hidden rounded-2xl border border-transparent group-hover:border-gray-200 transition-all p-6 flex items-center justify-center">
-              
-              {/* NÚT TRÁI TIM: Check theo likedIds */}
-              <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleToggleWishlist(shoe.id);
-                }}
-                className="absolute top-4 right-4 z-30 p-2 transition-all hover:scale-125"
-              >
-                <Heart 
-                  className={`w-5 h-5 transition-all duration-300 ${
-                    likedIds.includes(shoe.id) // Kiểm tra xem ID có trong mảng Liked không
-                      ? "fill-red-500 text-red-500 scale-110" 
-                      : "text-gray-300 group-hover:text-gray-400"
-                  }`} 
-                />
-              </button>
-
-              <img src={getImageUrl(shoe.imageUrls)} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-all duration-500" alt={shoe.name} />
-              
-              <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
-                <button className="w-full bg-black/90 backdrop-blur-sm text-white py-3.5 text-xs font-bold tracking-widest hover:bg-black shadow-xl rounded-xl">
-                  THÊM VÀO GIỎ
-                </button>
-              </div>
-            </div>
-
-            {/* THÔNG TIN SẢN PHẨM */}
-            <div className="flex flex-col gap-1 px-1 flex-grow">
-              <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">{shoe.brandName}</p>
-              
-              {/* Ép tên thành 2 dòng */}
-              <h4 className="text-[14px] font-bold tracking-tight text-gray-900 leading-snug line-clamp-2" title={shoe.name}>
-                {shoe.name}
-              </h4>
-              
-              {/* mt-auto đẩy giá tiền dính xuống đáy thẻ */}
-              <div className="flex justify-between items-center mt-auto pt-2">
-                <p className="text-[16px] font-extrabold text-red-600">
-                  {shoe.price?.toLocaleString('vi-VN')} đ
-                </p>
-              </div>
-            </div>
-
-          </div>
+          <div key={shoe.id} className="w-1/4 flex-shrink-0 px-4 h-auto">
+         <ProductCard 
+      key={shoe.id} 
+      product={shoe} 
+      isLiked={likedIds.includes(shoe.id)} 
+      onToggleWishlist={handleToggleWishlist} 
+    />
+    </div>
         ))}
       </div>
       

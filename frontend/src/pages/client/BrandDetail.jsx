@@ -4,6 +4,7 @@ import { Heart, ShoppingCart, Loader2, ChevronDown, Filter, ArrowLeft } from 'lu
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
 import Breadcrumb from '../../components/Breadcrumb';
+import ProductCard from '../../components/client/ProductCard';
 
 
 const BrandDetail = () => {
@@ -250,52 +251,17 @@ const res = await api.get(`/kaisneaker/brands/${id}`, { params: cleanFilters });
           {loading ? (
             <div className="flex justify-center py-32"><Loader2 className="w-10 h-10 animate-spin text-black" /></div>
           ) : products.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {products.map((product) => (
-                <div key={product.id} className="group flex flex-col h-full cursor-pointer" onClick={() => navigate(`/products/${product.id}`)}>
-                  
-                  <div className="relative aspect-square bg-[#f9f9f9] rounded-[32px] overflow-hidden mb-5 p-6 border border-transparent group-hover:border-gray-100 transition-all">
-                    <button 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleToggleWishlist(product.id);
-                      }}
-                      className="absolute top-4 right-4 z-30 p-2 transition-all hover:scale-125"
-                    >
-                      <Heart 
-                        className={`w-5 h-5 transition-all duration-300 ${
-                          likedIds.includes(product.id) ? "fill-red-500 text-red-500 scale-110" : "text-gray-300 group-hover:text-gray-400"
-                        }`} 
-                      />
-                    </button>
-
-                    <img 
-                      src={getImageUrl(product)} 
-                      className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700" 
-                      alt={product.name} 
-                    />
-                    
-                    <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
-                      <button className="w-full bg-black/90 backdrop-blur-sm text-white py-3.5 text-xs font-bold tracking-widest hover:bg-black shadow-xl rounded-xl">
-                        THÊM VÀO GIỎ
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="px-2 flex flex-col flex-grow">
-                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mb-1">{product.brandName || brandInfo?.name}</p>
-                    <h3 className="font-bold text-gray-900 text-[14px] leading-snug line-clamp-2 mb-2" title={product.name}>
-                      {product.name}
-                    </h3>
-                    
-                    <div className="flex justify-between items-center mt-auto pt-2">
-                      <span className="text-[16px] font-extrabold text-red-600">{product.price?.toLocaleString('vi-VN')} đ</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 items-stretch">
+  {products.map((product) => (
+    <div key={product.id} className="h-auto w-full"> 
+      <ProductCard 
+        product={product} 
+        isLiked={likedIds.includes(product.id)}
+        onToggleWishlist={handleToggleWishlist}
+      />
+    </div>
+  ))}
+</div>
           ) : (
              <div className="text-center py-32 text-gray-400 font-medium tracking-wide">
                Không tìm thấy sản phẩm nào phù hợp sếp ơi!

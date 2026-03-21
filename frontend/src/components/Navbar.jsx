@@ -10,7 +10,6 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
   const [navData, setNavData] = useState({ brands: [], categories: [] });
 
-  // Tự lấy dữ liệu cho Menu Dropdown
   useEffect(() => {
     const fetchNavData = async () => {
       try {
@@ -24,15 +23,17 @@ const Navbar = () => {
       }
     };
     fetchNavData();
-    // Đồng bộ trạng thái login khi chuyển trang
     setIsLoggedIn(!!localStorage.getItem('token'));
   }, []);
 
-  const handleSearch = (e) => {
-    if (e.key === 'Enter' && keyword.trim() !== '') {
-      navigate(`/search?keyword=${keyword.trim()}`);
-    }
-  };
+const [searchKeyword, setSearchKeyword] = useState(""); 
+
+const handleSearch = (e) => {
+  if (e.key === 'Enter' && searchKeyword.trim() !== '') {
+    navigate(`/search?keyword=${searchKeyword}`);
+    setSearchKeyword("");
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -53,9 +54,10 @@ const Navbar = () => {
             type="text" 
             placeholder="Tìm kiếm sản phẩm... " 
             className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-full text-sm outline-none focus:ring-1 focus:ring-gray-200" 
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onKeyDown={handleSearch}
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)} 
+  
+  onKeyDown={handleSearch}
           />
         </div>
 

@@ -10,7 +10,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
 
-  // 👉 HÀM LẤY DANH SÁCH ĐƠN HÀNG
+  //  HÀM LẤY DANH SÁCH ĐƠN HÀNG
   const fetchOrders = async () => {
     setLoading(true);
     try {
@@ -40,12 +40,10 @@ const Orders = () => {
     }
   };
 
-  // 👉 CHỈNH LẠI: Lọc theo 'orderStatus' để khớp với Entity Backend
   const filteredOrders = filter === 'ALL' 
     ? orders 
     : orders.filter(o => o.orderStatus === filter);
 
-  // Danh sách filter hiển thị tiếng Việt cho "sang"
   const filterOptions = [
     { key: 'ALL', label: 'Tất cả', icon: <PackageCheck className="w-3 h-3" /> },
     { key: 'PENDING', label: 'Chờ xử lý', icon: <Clock className="w-3 h-3" /> },
@@ -57,8 +55,6 @@ const Orders = () => {
   return (
     <div className="min-h-screen bg-[#fafafa] pb-20 font-sans">
       
-      {/* ❌ ĐÃ TRẢM: Navbar thừa ở đây. Navbar chung ở App.jsx sẽ tự hiện */}
-
       <main className="max-w-[1000px] mx-auto pt-12 px-6">
         
         {/* THANH LỌC TRẠNG THÁI (UI MỚI CỰC MƯỢT) */}

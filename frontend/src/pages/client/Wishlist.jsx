@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, ShoppingCart, Loader2, Heart, ArrowLeft, User } from 'lucide-react';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
+import ProductCard from '../../components/client/ProductCard';
 
 const Wishlist = () => {
   const [products, setProducts] = useState([]);
@@ -88,6 +89,21 @@ const Wishlist = () => {
     );
   }
 
+// 👉 HÀM XỬ LÝ KHI ẤN THẢ TIM TRONG TRANG WISHLIST
+  const handleToggleWishlist = async (productId) => {
+    try {
+      // Gọi API bỏ yêu thích
+      await api.post(`/kaisneaker/wishlist/${productId}`);
+      
+      // Đá văng đôi giày đó khỏi giao diện ngay lập tức
+      setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
+      
+      toast.success("Đã xóa khỏi danh sách yêu thích!");
+    } catch (error) {
+      toast.error("Lỗi hệ thống, không thể xóa!");
+    }
+  };
+
   // 👉 4. NẾU ĐÃ ĐĂNG NHẬP: GIỮ NGUYÊN GIAO DIỆN CŨ CỦA SẾP (KHÔNG HỎNG 1 DÒNG CODE)
   return (
     <div className="min-h-screen bg-white">
@@ -103,43 +119,14 @@ const Wishlist = () => {
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-black" /></div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
-            {products.map((product) => (
-              <div key={product.id} onClick={() => navigate(`/products/${product.id}`)} className="group flex flex-col h-full">
-      
-      <div className="relative aspect-[3/4] bg-[#f9f9f9] rounded-[40px] overflow-hidden mb-5 p-8">
-        <img 
-          src={getImageUrl(product)} 
-          className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-700" 
-          alt={product.name} 
-        />
-        <button 
-          onClick={() => handleToggle(product.id)}
-          className="absolute top-6 right-6 p-3 bg-white text-red-500 rounded-2xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all shadow-sm hover:bg-red-500 hover:text-white"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </div>
-      
-      {/* 👉 2. Thêm flex flex-col flex-grow để khối thông tin này chiếm hết khoảng trống còn lại */}
-      <div className="px-2 flex flex-col flex-grow">
-        
-        {/* 👉 3. Thêm line-clamp-2 để tên dài quá tự có dấu ... */}
-        <h3 className="font-bold text-gray-900 text-lg mb-1 line-clamp-2" title={product.name}>
-          {product.name}
-        </h3>
-        
-        <p className="text-sm font-medium text-gray-400 mb-4">{product.categoryName || 'Sneaker'}</p>
-        
-        {/* 👉 4. Thêm mt-auto để ép khối Giá & Giỏ hàng luôn dính xuống đáy */}
-        <div className="flex justify-between items-center mt-auto pb-2">
-          <span className="font-black text-black">{product.price?.toLocaleString('vi-VN')} đ</span>
-          <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-black text-white px-4 py-2.5 rounded-xl hover:bg-gray-800 transition-all">
-            <ShoppingCart className="w-3.5 h-3.5" /> Add
-          </button>
-        </div>
-        
-      </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 items-stretch">
+  {products.map((product) => (
+    <div key={product.id} className="h-auto w-full"> 
+      <ProductCard 
+        product={product} 
+        isLiked={true} // 👉 Đã ở Wishlist thì mặc định tim auto ĐỎ!
+        onToggleWishlist={handleToggleWishlist} // 👉 Gọi hàm xóa của sếp
+      />
     </div>
   ))}
 </div>
