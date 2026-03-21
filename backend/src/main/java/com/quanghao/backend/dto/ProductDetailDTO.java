@@ -22,4 +22,5 @@ public class ProductDetailDTO {
     private Integer totalReviews;
     private List<ReviewDTO> reviews;
     private List<ProductListDTO> relatedProducts;
+    private boolean canReview;
 }
