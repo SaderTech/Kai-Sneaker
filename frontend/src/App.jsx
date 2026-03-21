@@ -18,6 +18,7 @@ import NewArrivals from './pages/client/NewArrivals';
 import Featured from './pages/client/Featured';
 import ProductDetail from './pages/client/ProductDetail';
 import Cart from './pages/client/Cart';
+import Checkout from './pages/client/Checkout';
 
 // Imports Components
 import ScrollToTop from './components/ScrollToTop';
@@ -75,6 +76,7 @@ function AppContent() {
         <Route path="/featured" element={<Featured />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
 
         {/* Routes Admin */}
         <Route path="/admin/*" element={<AdminDashboard />} />

@@ -84,7 +84,8 @@ public class OrderServiceImpl implements OrderService{
             totalAmount = totalAmount.add(orderItem.getUnitPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
         }
 
-        order.setTotalAmount(totalAmount);
+        BigDecimal shippingFee = BigDecimal.valueOf(30000);
+        order.setTotalAmount(totalAmount.add(shippingFee));
         Order savedOrder = orderRepository.saveAndFlush(order);
         cartItemRepository.deleteAll(cart.getCartItems());
         cart.getCartItems().clear();
@@ -156,7 +157,7 @@ public class OrderServiceImpl implements OrderService{
 
             String paymentMethodName = null;
             if (order.getPaymentMethod() != null) {
-                paymentMethodName = order.getPaymentMethod().getName(); // Giả sử Entity của Hào có trường 'name'
+                paymentMethodName = order.getPaymentMethod().getName();
             }
 
             return OrderDTO.builder()

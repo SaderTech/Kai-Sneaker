@@ -224,12 +224,11 @@ const handleRemoveItem = async (cartItemId) => {
               </div>
 
               <button 
-                onClick={() => navigate('/checkout')}
-                className="w-full bg-black text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-gray-800 transition-all shadow-xl flex items-center justify-center gap-2 group"
-              >
-                TIẾN HÀNH THANH TOÁN 
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+      onClick={() => navigate('/checkout')} 
+      className="w-full mt-6 bg-black text-white py-4 rounded-xl font-bold text-sm uppercase tracking-widest hover:bg-gray-800 transition-all shadow-xl flex items-center justify-center gap-2"
+    >
+      TIẾN HÀNH THANH TOÁN
+    </button>
 
               <Link to="/home" className="mt-6 flex items-center justify-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400 hover:text-black transition-all">
                 <ArrowLeft className="w-3 h-3" /> TIẾP TỤC MUA SẮM

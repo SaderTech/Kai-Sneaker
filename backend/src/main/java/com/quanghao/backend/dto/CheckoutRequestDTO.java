@@ -11,7 +11,7 @@ public class CheckoutRequestDTO {
     private String fullName;
 
     @NotBlank(message = "Số điện thoại là bắt buộc!")
-    @Pattern(regexp = "^(0[3|5|7|8|9])+([0-9]{8})$", message = "Số điện thoại không đúng định dạng Việt Nam!")
+    @Pattern(regexp = "^(0[35789])[0-9]{8}$", message = "Số điện thoại không đúng định dạng Việt Nam!")
     private String phone;
 
     @NotBlank(message = "Vui lòng nhập địa chỉ giao hàng!")
