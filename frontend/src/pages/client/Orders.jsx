@@ -3,26 +3,21 @@ import { Link } from 'react-router-dom';
 import { ShoppingBag, Loader2, PackageCheck, Truck, Clock, XCircle, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../api/axios';
-import OrderCard from '../../components/client/OrderCard';
+import OrderCard from '../../components/client/OrderCard'; // 👉 GỌI COMPONENT Ở ĐÂY
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
 
-  // HÀM LẤY DANH SÁCH ĐƠN HÀNG (Đã fix lỗi crash data)
   const fetchOrders = async () => {
     setLoading(true);
     try {
       const res = await api.get('/kaisneaker/orders/history');
-      // Đảm bảo dữ liệu set vào state luôn là một mảng (Array)
       const dataList = Array.isArray(res.data) ? res.data : (res.data?.data || res.data?.content || []);
-      
-      // Sắp xếp đơn hàng mới nhất lên đầu (nếu cần)
       const sortedList = dataList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setOrders(sortedList);
     } catch (error) {
-      console.error(error);
       toast.error("Không thể tải đơn hàng!");
     } finally {
       setLoading(false);
@@ -35,7 +30,7 @@ const Orders = () => {
   }, []);
 
   const handleCancel = async (orderId) => {
-    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
+    if (window.confirm("Sếp có chắc chắn muốn hủy đơn hàng này không?")) {
       try {
         await api.put(`/kaisneaker/orders/${orderId}/cancel`);
         toast.success("Đã hủy đơn hàng thành công!");
@@ -46,12 +41,10 @@ const Orders = () => {
     }
   };
 
-  // Lọc đơn hàng theo trạng thái
   const filteredOrders = filter === 'ALL' 
     ? orders 
     : orders.filter(o => o.orderStatus === filter);
 
-  // Danh sách Trạng thái chuẩn theo Database của sếp
   const filterOptions = [
     { key: 'ALL', label: 'Tất cả', icon: <PackageCheck className="w-4 h-4" /> },
     { key: 'PENDING', label: 'Chờ xử lý', icon: <Clock className="w-4 h-4" /> },
@@ -65,14 +58,13 @@ const Orders = () => {
     <div className="min-h-screen bg-[#fafafa] pb-20 font-sans">
       <main className="max-w-[1000px] mx-auto pt-12 px-6">
         
-        {/* THANH LỌC TRẠNG THÁI */}
         <div className="bg-white p-2 rounded-3xl shadow-sm border border-gray-100 mb-12 flex flex-wrap gap-2 sticky top-28 z-40 backdrop-blur-sm bg-white/80">
           {filterOptions.map(f => (
             <button 
               key={f.key} 
               onClick={() => setFilter(f.key)}
               className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black tracking-widest uppercase transition-all min-w-[120px] ${
-                filter === f.key ? 'bg-black text-white shadow-xl scale-105' : 'text-gray-400 hover:bg-gray-50 hover:text-gray-900'
+                filter === f.key ? 'bg-black text-white shadow-xl scale-105' : 'text-gray-400 hover:bg-gray-50'
               }`}
             >
               {f.icon} {f.label}
@@ -93,6 +85,7 @@ const Orders = () => {
           <div className="flex justify-center py-32"><Loader2 className="w-10 h-10 animate-spin text-black" /></div>
         ) : filteredOrders.length > 0 ? (
           <div className="space-y-6">
+            {/* 👉 TRUYỀN DATA VÀO ORDER CARD Ở ĐÂY */}
             {filteredOrders.map(order => (
               <OrderCard key={order.id} order={order} onCancel={handleCancel} />
             ))}
