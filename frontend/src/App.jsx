@@ -19,21 +19,12 @@ import Featured from './pages/client/Featured';
 import ProductDetail from './pages/client/ProductDetail';
 import Cart from './pages/client/Cart';
 import Checkout from './pages/client/Checkout';
-
+import Dashboard from './pages/admin/Dashboard';
 // Imports Components
 import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-
-// Trang tạm cho Admin
-const AdminDashboard = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-    <div className="text-center p-20 border-2 border-red-500 rounded-3xl">
-      <h1 className="text-6xl font-black mb-4">🛡️ ADMIN PANEL</h1>
-      <p className="text-gray-400 uppercase tracking-widest">Trang Quản trị Kai-Sneaker</p>
-    </div>
-  </div>
-);
+import AdminProducts from './pages/admin/AdminProducts'
 
 // 👉 COMPONENT CHỨA LOGIC HIỂN THỊ
 function AppContent() {
@@ -79,7 +70,8 @@ function AppContent() {
         <Route path="/checkout" element={<Checkout />} />
 
         {/* Routes Admin */}
-        <Route path="/admin/*" element={<AdminDashboard />} />
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/products" element={<AdminProducts />} />
 
         {/* Mặc định nếu lạc đường thì về Login */}
         <Route path="*" element={<Navigate to="/login" />} />

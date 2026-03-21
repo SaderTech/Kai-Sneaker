@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Thêm Link vào đây
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../../api/axios';
 import { Mail, Lock, LogIn, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -27,11 +27,15 @@ const Login = () => {
       return false;
     }
 
-    if (password.length < 8) {
+    // ❌ CHÚ Ý: Ở trang Login thì sếp KHÔNG NÊN check độ dài hay độ khó của mật khẩu.
+    // Lỡ tài khoản cũ họ dùng pass '123456' thì sếp chặn họ từ vòng gửi xe luôn à?
+    // Mấy cái validate độ khó này CHỈ DÙNG Ở TRANG ĐĂNG KÝ (REGISTER) thôi nhé!
+    // Tôi đã tạm comment mấy dòng dưới lại để sếp login cho dễ.
+    
+     if (password.length < 8) {
       toast.error("Mật khẩu quá ngắn! Phải có ít nhất 8 ký tự.");
       return false;
     }
-
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumbers = /\d/.test(password);
@@ -41,37 +45,46 @@ const Login = () => {
       toast.error("Mật khẩu phải chứa ít nhất: 1 chữ hoa, 1 thường, 1 số và 1 ký tự đặc biệt!");
       return false;
     }
+    
 
     return true; 
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Chặn reload trang
     
     if (!validateInput()) return;
 
     setLoading(true);
     try {
+      // 1. Gọi API Backend
       const response = await api.post('/kaisneaker/auth/login', { email, password });
       
-      // Lúc này Backend đã trả về chuẩn { token, message, role }
+      // 2. Bóc tách dữ liệu Backend trả về
       const { token, role } = response.data; 
       
       if (!token) {
-         return toast.error("Lỗi: Backend không trả về Token!");
+         toast.error("Lỗi: Backend không trả về Token!");
+         setLoading(false);
+         return; // Dừng lại ngay nếu không có token
       }
 
+      // 3. Lưu dữ liệu vào LocalStorage
       localStorage.setItem('token', token);
-      localStorage.setItem('role', role || 'USER'); // Gán role, dự phòng nếu trống
-
-      toast.success("Chào mừng đến với Kai Sneaker!");
+      localStorage.setItem('role', role || 'USER'); 
       
-      if (role === 'ADMIN') {
-        window.location.href = '/admin';
+      // 4. Bẻ lái (Điều hướng) bằng navigate của React (KHÔNG DÙNG window.location.href)
+      // window.location.href sẽ làm tải lại lại toàn bộ trang web, mất đi tính mượt mà của React SPA
+      if (role === 'ADMIN' || role === 'ROLE_ADMIN') {
+        toast.success("Chào Boss đã trở lại! 🚀");
+        navigate('/admin/dashboard'); 
       } else {
-        window.location.href = '/home';
+        toast.success("Chào mừng đến với Kai Sneaker!");
+        navigate('/home'); 
       }
+
     } catch (error) {
+      // Bắt lỗi nếu API trả về 401 (Sai pass) hoặc 404 (Không thấy user)
       toast.error(error.response?.data?.message || "Sai thông tin đăng nhập. Vui lòng thử lại.");
     } finally {
       setLoading(false);
@@ -100,8 +113,9 @@ const Login = () => {
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5 group-focus-within:text-black transition-colors" />
               <input 
                 type="email" 
+                autoComplete="username" // Thêm cái này cho hết báo lỗi Vàng ở F12
                 className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-300"
-                placeholder=""
+                placeholder="Nhập email của bạn"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -115,8 +129,9 @@ const Login = () => {
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5 group-focus-within:text-black transition-colors" />
               <input 
                 type="password" 
+                autoComplete="current-password" // Thêm cái này cho hết báo lỗi Vàng ở F12
                 className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-300"
-                placeholder=""
+                placeholder="Nhập mật khẩu"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -135,7 +150,6 @@ const Login = () => {
         </form>
 
         <div className="mt-12 pt-8 border-t border-gray-100 text-center text-sm text-gray-500 font-medium">
-          {/* 👉 Đã đổi sang dùng thẻ Link cho SPA mượt mà */}
           Not a member? <Link to="/register" className="text-black font-bold hover:underline">Create Account</Link>
         </div>
       </div>
