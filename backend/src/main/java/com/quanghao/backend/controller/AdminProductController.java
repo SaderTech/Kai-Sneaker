@@ -22,6 +22,12 @@ public class AdminProductController {
 
     private final ProductService productService;
 
+    @GetMapping
+    public ResponseEntity<List<ProductDetailDTO>> getAllProducts() {
+        List<ProductDetailDTO> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
+    }
+
     @PostMapping
     public ResponseEntity<ProductDetailDTO> createProduct(@ModelAttribute ProductRequestDTO requestDTO){
         Product savedProduct = productService.createProduct(requestDTO);
@@ -74,5 +80,11 @@ public class AdminProductController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi cập nhật kho: " + e.getMessage());
         }
+    }
+
+    @PatchMapping("/{id}/restore")
+    public ResponseEntity<String> restoreProduct(@PathVariable Long id) {
+        productService.restoreProduct(id); // Hàm này mình vừa bàn ở trên
+        return ResponseEntity.ok("Siêu phẩm đã quay trở lại kệ hàng!");
     }
 }

@@ -99,4 +99,6 @@ List<Product> findRelatedProducts(
     long count();
     boolean existsByCategoryId(Long categoryId);
     boolean existsByBrandId(Long brandId);
+
+    List<Product> findAllByIsDeletedFalse();
 }

@@ -431,6 +431,53 @@ public class ProductServiceImpl implements ProductService {
         return products.map(this::convertToProductListDTO);
     }
 
+    @Override
+    public List<ProductDetailDTO> getAllProducts() {
+        // 1. Lấy TẤT CẢ (findAll của JpaRepository lấy cả hàng isDeleted=true/false)
+        List<Product> products = productRepository.findAll();
+
+        return products.stream()
+                .map(product -> {
+                    return ProductDetailDTO.builder()
+                            .id(product.getId())
+                            .name(product.getName())
+                            .price(product.getPrice())
+                            .description(product.getDescription())
+                            .isDeleted(product.getIsDeleted())
+                            .brandName(product.getBrand() != null ? product.getBrand().getName() : "N/A")
+                            .brandId(product.getBrand() != null ? product.getBrand().getId() : null)
+                            .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
+                            .categoryName(product.getCategory() != null ? product.getCategory().getName() : "N/A")
+                            .imageUrls(product.getImages().stream().map(Image::getImageUrl).collect(Collectors.toList()))
+                            .variants(product.getVariants().stream()
+                                    .map(v -> VariantDTO.builder()
+                                            .id(v.getId())
+                                            .size(v.getSize())
+                                            .color(v.getColor())
+                                            .quantity(v.getInventory() != null ? v.getInventory().getQuantity() : 0)
+                                            .build())
+                                    .collect(Collectors.toList()))
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    private ProductDetailDTO convertToAdminDTO(Product product) {
+        return ProductDetailDTO.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .brandName(product.getBrand() != null ? product.getBrand().getName() : "N/A")
+                .categoryName(product.getCategory() != null ? product.getCategory().getName() : "N/A")
+                .imageUrls(product.getImages().stream().map(Image::getImageUrl).collect(Collectors.toList()))
+                // Mấy cái này ở bảng danh sách Admin chưa cần soi kỹ nên để mặc định hoặc rỗng
+                .variants(new ArrayList<>())
+                .averageRating(0.0)
+                .totalReviews(0)
+                .build();
+    }
+
     private boolean checkIfFavorite(Long productId) {
         try {
             Long userId = SecurityUtils.getCurrentUserId();
@@ -440,5 +487,15 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             return false; // Nếu chưa đăng nhập hoặc lỗi thì coi như chưa thích
         }
+    }
+
+    @Transactional
+    @Override
+    public void restoreProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm!"));
+
+        product.setIsDeleted(false); // Đưa trạng thái về chưa xóa
+        productRepository.save(product);
     }
 }

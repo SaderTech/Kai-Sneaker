@@ -30,4 +30,9 @@ public interface ProductService {
     CategoryDetailDTO getCategoryFullData(Long id, String priceRange, String size, Pageable pageable);
 
     Page<ProductListDTO> getFilteredProducts(Long categoryId, Long brandId, String priceRange, String size, Pageable pageable);
+
+    List<ProductDetailDTO> getAllProducts();
+
+    @Transactional
+    void restoreProduct(Long productId);
 }
