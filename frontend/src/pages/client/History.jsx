@@ -1,47 +1,82 @@
 import React, { useState, useEffect } from 'react';
-import OrderItem from '../../pages/client/OrderItem';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingBag, Loader2, Package, ChevronRight, Clock } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../../api/axios';
-import { ShoppingBag, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import OrderItem from './OrderItem'; // Đảm bảo đường dẫn này đúng với file card của bạn
+import Breadcrumb from '../../components/Breadcrumb';
 
 const Orders = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setLoading(true);
       try {
-        const res = await api.get('/kaisneaker/user/orders/history');
+        // Gọi API lấy lịch sử đơn hàng
+        const res = await api.get('/kaisneaker/orders/history');
         setOrders(res.data);
       } catch (error) {
-        console.error("Lỗi lấy đơn hàng:", error);
+        console.error("Lỗi fetch orders:", error);
+        toast.error("Không thể tải lịch sử đơn hàng!");
+        if (error.response?.status === 401) navigate('/login');
       } finally {
         setLoading(false);
       }
     };
     fetchOrders();
-  }, []);
+    window.scrollTo(0, 0);
+  }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Header tối giản tương tự Profile */}
-      <header className="px-10 py-6 bg-white border-b border-gray-100 flex justify-between items-center sticky top-0 z-50 shadow-sm">
-        <Link to="/home" className="text-2xl font-[900] tracking-tighter hover:text-gray-600 transition-colors">KAI SNEAKER</Link>
-        <div className="text-sm font-bold uppercase tracking-widest text-gray-500">LỊCH SỬ ĐƠN HÀNG</div>
-        <Link to="/home" className="text-sm font-bold uppercase tracking-widest hover:text-black">TRANG CHỦ</Link>
-      </header>
+    <div className="min-h-screen bg-[#fafafa] pb-20 font-sans">
 
-      <main className="max-w-[800px] mx-auto mt-12 px-6">
+      <main className="max-w-[1000px] mx-auto pt-12 px-6">
+        
+        {/* BREADCRUMB CHO TRANG ĐƠN HÀNG */}
+        <Breadcrumb items={[{ label: 'Tài khoản', link: '/profile' }, { label: 'Đơn hàng của tôi' }]} />
+
+        <div className="flex justify-between items-end mb-10 mt-6">
+          <div>
+            <h2 className="text-4xl font-[900] tracking-tighter uppercase italic text-gray-900">
+              LỊCH SỬ ĐƠN HÀNG
+            </h2>
+            <p className="text-gray-400 text-[10px] font-bold mt-2 uppercase tracking-[0.2em]">
+              Bạn đang có <span className="text-black">{orders.length}</span> đơn hàng đã thực hiện
+            </p>
+          </div>
+        </div>
+
         {loading ? (
-          <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" /></div>
+          <div className="flex justify-center py-32">
+            <Loader2 className="w-10 h-10 animate-spin text-black" />
+          </div>
         ) : orders.length > 0 ? (
-          orders.map(order => <OrderItem key={order.id} order={order} />)
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {orders.map(order => (
+              <OrderItem key={order.id} order={order} />
+            ))}
+          </div>
         ) : (
-          <div className="text-center py-20 bg-white rounded-3xl border border-gray-100">
-            <ShoppingBag className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-2">Chưa có đơn hàng nào!</h2>
-            <p className="text-gray-400 mb-8">Hãy chọn cho mình những đôi giày ưng ý nhất nhé.</p>
-            <Link to="/home" className="px-8 py-3 bg-black text-white text-xs font-bold rounded-xl">MUA SẮM NGAY</Link>
+          /* TRẠNG THÁI TRỐNG */
+          <div className="text-center py-32 bg-white rounded-[40px] border border-gray-100 shadow-sm">
+            <div className="bg-gray-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+              <ShoppingBag className="w-10 h-10 text-gray-200" />
+            </div>
+            <h3 className="font-black text-gray-900 uppercase text-lg tracking-tight mb-2">
+              Giỏ hàng đang đợi bạn!
+            </h3>
+            <p className="text-gray-400 text-sm font-medium mb-8 max-w-xs mx-auto">
+              Bạn chưa có đơn hàng nào. Những đôi Sneaker cực phẩm đang chờ bạn rước về đấy!
+            </p>
+            <Link 
+              to="/home" 
+              className="inline-flex items-center gap-2 bg-black text-white px-10 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-gray-800 transition-all shadow-xl shadow-gray-200"
+            >
+              MUA SẮM NGAY <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
         )}
       </main>

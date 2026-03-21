@@ -29,7 +29,7 @@ const Orders = () => {
   }, []);
 
   const handleCancel = async (orderId) => {
-    if (window.confirm("Sếp có chắc chắn muốn hủy đơn hàng này không?")) {
+    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
       try {
         await api.put(`/kaisneaker/orders/${orderId}/cancel`);
         toast.success("Đã hủy đơn hàng thành công!");
@@ -79,7 +79,7 @@ const Orders = () => {
         <div className="flex justify-between items-end mb-10">
             <div>
                 <h2 className="text-4xl font-[900] tracking-tighter uppercase italic">Đơn hàng của tôi</h2>
-                <p className="text-gray-400 text-xs font-bold mt-1 uppercase tracking-widest">Sếp đang có {filteredOrders.length} đơn hàng {filter !== 'ALL' && `trạng thái ${filter}`}</p>
+                <p className="text-gray-400 text-xs font-bold mt-1 uppercase tracking-widest">Bạn đang có {filteredOrders.length} đơn hàng {filter !== 'ALL' && `trạng thái ${filter}`}</p>
             </div>
         </div>
 
@@ -97,7 +97,7 @@ const Orders = () => {
                 <ShoppingBag className="w-10 h-10 text-gray-200" />
             </div>
             <h3 className="font-black text-gray-900 uppercase text-lg tracking-tight mb-2">Chưa có đơn hàng nào</h3>
-            <p className="text-gray-400 text-sm font-medium mb-8">Có vẻ như sếp chưa chốt đơn nào ở mục này rồi.</p>
+            <p className="text-gray-400 text-sm font-medium mb-8">Có vẻ như bạn chưa chốt đơn nào ở mục này rồi.</p>
             <Link to="/home" className="bg-black text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-gray-800 transition-all shadow-xl">Tiếp tục mua sắm</Link>
           </div>
         )}
