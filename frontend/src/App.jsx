@@ -16,7 +16,10 @@ import BrandDetail from './pages/client/BrandDetail';
 import CategoryDetail from './pages/client/CategoryDetail';
 import NewArrivals from './pages/client/NewArrivals';
 import Featured from './pages/client/Featured';
+import ProductDetail from './pages/client/ProductDetail';
 import ScrollToTop from './components/ScrollToTop';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 // Các trang tạm thời để test
 const AdminDashboard = () => <div className="p-10 text-2xl font-bold text-red-600">🛡️ Trang Quản trị (Admin)</div>;
@@ -39,6 +42,7 @@ function App() {
       
       <Router>
         <ScrollToTop />
+        <Navbar />
         <Routes>
           {/* 1. Mặc định vào web sẽ chuyển thẳng sang trang Login */}
           <Route path="/" element={<Navigate to="/login" />} />
@@ -56,6 +60,7 @@ function App() {
           <Route path="/category/:id" element={<CategoryDetail />} />
           <Route path="/new-arrivals" element={<NewArrivals />} />
           <Route path="/featured" element={<Featured />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
           {/* 3. Route dành cho khách hàng đã đăng nhập */} 
           <Route path="/home" element={<Home />} />
 
@@ -65,6 +70,7 @@ function App() {
           {/* 5. Nếu gõ sai đường dẫn thì về Login */}
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
+        <Footer/>
       </Router>
     </>
   );

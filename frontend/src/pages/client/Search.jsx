@@ -99,25 +99,6 @@ const Search = () => {
   return (
     <div className="min-h-screen bg-white text-black font-sans">
       
-      {/* Header nhỏ gọn gọn */}
-      <header className="px-10 py-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur-md z-50">
-        <Link to="/home" className="text-2xl font-[900] tracking-tighter hover:text-gray-600 transition-colors">
-          KAI SNEAKER
-        </Link>
-        <div className="relative w-[400px]">
-          <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input 
-            type="text" 
-            defaultValue={keyword}
-            onKeyDown={handleNewSearch}
-            placeholder="Bạn muốn tìm giày gì? (Ấn Enter)" 
-            className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-full text-sm outline-none focus:ring-1 focus:ring-black" 
-          />
-        </div>
-        <Link to="/home" className="text-sm font-bold uppercase tracking-widest hover:text-gray-500">
-          QUAY LẠI TRANG CHỦ
-        </Link>
-      </header>
 
       <main className="px-10 py-16 max-w-[1600px] mx-auto">
         <div className="mb-12 border-b-2 border-gray-100 pb-6 flex justify-between items-end">

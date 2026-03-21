@@ -105,7 +105,7 @@ const Wishlist = () => {
         ) : products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
             {products.map((product) => (
-              <div key={product.id} className="group flex flex-col h-full">
+              <div key={product.id} onClick={() => navigate(`/products/${product.id}`)} className="group flex flex-col h-full">
       
       <div className="relative aspect-[3/4] bg-[#f9f9f9] rounded-[40px] overflow-hidden mb-5 p-8">
         <img 

@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, Loader2, ArrowLeft, Filter} from 'lucide-react';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
+import Breadcrumb from '../../components/Breadcrumb';
+
 
 const NewArrivals = () => {
   const navigate = useNavigate();
@@ -224,6 +226,11 @@ const NewArrivals = () => {
           </div>
         </aside>
         <div className="flex-1">
+            <Breadcrumb 
+  items={[
+    { label: 'Sản phẩm mới' }
+  ]} 
+/>
           <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
             <p className="text-sm font-medium text-gray-400">
               Khám phá những mẫu giày vừa cập bến.
@@ -236,7 +243,7 @@ const NewArrivals = () => {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {products.map((product) => (
-                <div key={product.id} className="group flex flex-col h-full cursor-pointer" onClick={() => navigate(`/product/${product.id}`)}>
+                <div key={product.id} className="group flex flex-col h-full cursor-pointer" onClick={() => navigate(`/products/${product.id}`)}>
                   <div className="relative aspect-square bg-[#f9f9f9] rounded-[32px] overflow-hidden mb-5 p-6 border border-transparent group-hover:border-gray-100 transition-all">
                     <button 
                       onClick={(e) => {

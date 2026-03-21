@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Loader2, ArrowLeft, Filter } from 'lucide-react';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
+import Breadcrumb from '../../components/Breadcrumb';
+
 
 const Featured = () => {
   const navigate = useNavigate();
@@ -120,7 +122,7 @@ const Featured = () => {
             <h3 className="flex items-center gap-2 font-bold text-lg mb-8 uppercase tracking-widest border-b border-black pb-4">
               <Filter className="w-5 h-5" /> Bộ Lọc
             </h3>
-            
+
              {/* 👉 LỌC THEO HÃNG (BRAND) */}
           <div className="mb-8">
             <h4 className="font-bold mb-4 uppercase tracking-widest text-black">Thương Hiệu</h4>
@@ -191,6 +193,11 @@ const Featured = () => {
 
         {/* NỘI DUNG SẢN PHẨM BÊN PHẢI */}
         <div className="flex-1">
+            <Breadcrumb 
+  items={[
+    { label: 'Sản phẩm nổi bật' }
+  ]} 
+/>
           <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
             <p className="text-sm font-medium text-gray-400">Khám phá những mẫu giày nổi bật nhất hiện nay.</p>
           </div>
@@ -201,7 +208,7 @@ const Featured = () => {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {products.map((product) => (
-                  <div key={product.id} className="group flex flex-col h-full cursor-pointer" onClick={() => navigate(`/product/${product.id}`)}>
+                  <div key={product.id} className="group flex flex-col h-full cursor-pointer" onClick={() => navigate(`/products/${product.id}`)}>
                     <div className="relative aspect-square bg-[#f9f9f9] rounded-[32px] overflow-hidden mb-5 p-6 border border-transparent group-hover:border-gray-100 transition-all">
                       <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleToggleWishlist(product.id); }} className="absolute top-4 right-4 z-30 p-2">
                         <Heart className={`w-5 h-5 ${likedIds.includes(product.id) ? "fill-red-500 text-red-500" : "text-gray-300"}`} />
