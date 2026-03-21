@@ -78,11 +78,22 @@ public class CartServiceImpl implements CartService{
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại!"));
 
-        Cart cart = cartRepository.findByUserId(user.getId()).orElseThrow(() -> new RuntimeException("Giỏ hàng trống!"));
+        // 👉 TÌM GIỎ HÀNG, KHÔNG THẤY THÌ TRẢ VỀ RỖNG, KHÔNG ĐƯỢC NÉM LỖI
+        Optional<Cart> cartOpt = cartRepository.findByUserId(user.getId());
+        if (cartOpt.isEmpty()) {
+            return CartDTO.builder()
+                    .items(new ArrayList<>()) // Trả về mảng rỗng
+                    .totalItems(0)
+                    .totalPrice(BigDecimal.ZERO)
+                    .build();
+        }
+
+        Cart cart = cartOpt.get();
 
         BigDecimal totalPrice = BigDecimal.ZERO;
         int totalItems = 0;
         List<CartItemDTO> itemDTOs = new ArrayList<>();
+
         for (CartItem item : cart.getCartItems()){
             ProductVariant variant = item.getVariant();
             if (variant == null || variant.getProduct() == null) {
@@ -95,16 +106,16 @@ public class CartServiceImpl implements CartService{
             totalItems += item.getQuantity();
 
             itemDTOs.add(CartItemDTO.builder()
-                            .cartItemId(item.getId())
-                            .variantId(variant.getId())
-                            .productName(variant.getProduct().getName())
-                            .size(variant.getSize())
-                            .color(variant.getColor())
-                            .price(price)
-                            .quantity(item.getQuantity())
-                            .subTotal(subTotal)
-                            .imageUrl(variant.getProduct().getImages().isEmpty() ? null : variant.getProduct().getImages().iterator().next().getImageUrl())
-                            .stockQuantity(variant.getInventory() != null ? variant.getInventory().getQuantity() : 0)
+                    .cartItemId(item.getId())
+                    .variantId(variant.getId())
+                    .productName(variant.getProduct().getName())
+                    .size(variant.getSize())
+                    .color(variant.getColor())
+                    .price(price)
+                    .quantity(item.getQuantity())
+                    .subTotal(subTotal)
+                    .imageUrl(variant.getProduct().getImages().isEmpty() ? null : variant.getProduct().getImages().iterator().next().getImageUrl())
+                    .stockQuantity(variant.getInventory() != null ? variant.getInventory().getQuantity() : 0)
                     .build());
         }
 
