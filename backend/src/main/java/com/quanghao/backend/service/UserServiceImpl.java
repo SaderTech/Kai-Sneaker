@@ -114,8 +114,15 @@ public class UserServiceImpl implements UserService {
                 .id(user.getId())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .gender(user.getGender())
                 .phone(user.getPhone())
+                .avatarUrl(user.getAvatarUrl())
+                .province_city(user.getProvinceCity())
+                .district(user.getDistrict())
+                .ward(user.getWard())
+                .houseNumberStreet(user.getHouseNumberStreet())
                 .status(user.getStatus())
+                .createAt(user.getCreatedAt())
                 .roles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()))
                 .build();
     }
