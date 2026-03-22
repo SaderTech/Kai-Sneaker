@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Plus, Pencil, Trash2, Search, Loader2, ArrowLeft, 
-  Image as ImageIcon, X, UploadCloud, Briefcase 
+  Plus, Pencil, Trash2, Search, Loader2, ArrowLeft, Award,
+  Image as  X, UploadCloud 
 } from 'lucide-react';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
@@ -138,7 +138,7 @@ const getImageUrl = (url) => {
       <div className="flex justify-between items-center mb-8 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
         <div>
           <h2 className="text-2xl font-black text-gray-900 flex items-center gap-3 uppercase italic tracking-tighter">
-            <ImageIcon className="w-6 h-6 text-blue-600" /> THƯƠNG HIỆU (BRANDS)
+            <Award className="w-6 h-6 text-rose-600" /> THƯƠNG HIỆU (BRANDS)
           </h2>
           <p className="text-[10px] text-gray-400 font-bold mt-1 uppercase tracking-[0.2em]">Quản lý danh mục hãng giày hệ thống</p>
         </div>
