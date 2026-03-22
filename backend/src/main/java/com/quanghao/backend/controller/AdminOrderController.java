@@ -19,8 +19,8 @@ public class AdminOrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ResponseEntity<Page<OrderResponseDTO>> getOrders(@PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.ok(orderService.getAllOrders(pageable));
+    public ResponseEntity<Page<OrderResponseDTO>> getOrders(@RequestParam(required = false) Long orderId,@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(orderService.getAllOrders(pageable, orderId));
     }
 
     @PutMapping("/{id}/status")
@@ -30,5 +30,14 @@ public class AdminOrderController {
         String status = request.get("status");
         orderService.updateStatus(id, status);
         return ResponseEntity.ok("Đã cập nhật đơn hàng thành: " + status);
+    }
+
+    @PutMapping("/{id}/payment-status")
+    public ResponseEntity<String> updatePaymentStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> request) {
+        String status = request.get("status");
+        orderService.updatePaymentStatus(id, status); // Mình sẽ viết hàm này ở dưới
+        return ResponseEntity.ok("Đã cập nhật trạng thái thanh toán: " + status);
     }
 }

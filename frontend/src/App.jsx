@@ -20,11 +20,15 @@ import ProductDetail from './pages/client/ProductDetail';
 import Cart from './pages/client/Cart';
 import Checkout from './pages/client/Checkout';
 import Dashboard from './pages/admin/Dashboard';
+
 // Imports Components
 import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AdminProducts from './pages/admin/AdminProducts'
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminBrands from './pages/admin/AdminBrands';
+import AdminCategories from './pages/admin/AdminCategories';
 
 // 👉 COMPONENT CHỨA LOGIC HIỂN THỊ
 function AppContent() {
@@ -72,7 +76,10 @@ function AppContent() {
         {/* Routes Admin */}
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/products" element={<AdminProducts />} />
-
+        <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/brands" element={<AdminBrands />} />
+        <Route path="/admin/categories" element={<AdminCategories/>} />
+        
         {/* Mặc định nếu lạc đường thì về Login */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>

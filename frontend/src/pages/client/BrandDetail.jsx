@@ -31,12 +31,15 @@ const BrandDetail = () => {
   const isLoggedIn = !!localStorage.getItem('token');
 
   // 👉 HÀM XỬ LÝ ẢNH BẤT TỬ SẾP ĐÃ QUEN THUỘC
-  const getImageUrl = (product) => {
-    const imgPath = product.imageUrls || product.imageUrl || product.image;
-    if (!imgPath) return "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400";
-    if (imgPath.startsWith('http')) return imgPath;
-    return `http://localhost:8080${imgPath}`; 
-  };
+  // 👉 Sửa lại hàm này để dùng được cho mọi loại ảnh
+const getImageUrl = (url) => {
+  if (!url) return "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400";
+  if (url.startsWith('http')) return url;
+  
+  // Ép về cổng 8080 của Backend
+  const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+  return `http://localhost:8080${cleanUrl}`; 
+};
 
   // 👉 GỌI API THEO BỘ LỌC
   useEffect(() => {
@@ -104,10 +107,10 @@ const res = await api.get(`/kaisneaker/brands/${id}`, { params: cleanFilters });
       {/* HEADER CỦA BRAND */}
       <header className="relative h-[40vh] bg-gray-950 flex items-center justify-center overflow-hidden">
         <img 
-          src={brandInfo?.imageUrl || "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=2000"} 
-          alt="Brand Cover" 
-          className="absolute inset-0 w-full h-full object-cover opacity-40" 
-        />
+  src={getImageUrl(brandInfo?.imageUrl)} 
+  alt="Brand Cover" 
+  className="absolute inset-0 w-full h-full object-cover opacity-40" 
+/>
         <div className="absolute top-8 left-10 z-10">
           <Link to="/home" className="flex items-center gap-2 text-white text-[10px] font-bold tracking-[0.2em] uppercase hover:text-gray-300 transition-all">
             <ArrowLeft className="w-4 h-4" /> Back to Shop

@@ -6,12 +6,14 @@ import com.quanghao.backend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -175,7 +177,20 @@ public class OrderServiceImpl implements OrderService{
                     .build();
     }
 
-    public Page<OrderResponseDTO> getAllOrders(Pageable pageable) {
+    public Page<OrderResponseDTO> getAllOrders(Pageable pageable, Long orderId) {
+        if (orderId != null) {
+            return orderRepository.findById(orderId)
+                    .map(order -> {
+                        OrderResponseDTO dto = convertToDTO(order);
+                        return (Page<OrderResponseDTO>) new PageImpl<>(
+                                List.of(dto),
+                                pageable,
+                                1
+                        );
+                    })
+                    .orElseGet(() -> new PageImpl<>(Collections.emptyList(), pageable, 0));
+        }
+
         return orderRepository.findAll(pageable).map(this::convertToDTO);
     }
 
@@ -202,6 +217,15 @@ public class OrderServiceImpl implements OrderService{
         }
 
         order.setOrderStatus(newStatus.toUpperCase());
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    public void updatePaymentStatus(Long orderId, String newStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng!"));
+
+        order.setPaymentStatus(newStatus.toUpperCase());
         orderRepository.save(order);
     }
 

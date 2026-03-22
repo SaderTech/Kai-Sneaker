@@ -13,8 +13,9 @@ public interface OrderService {
     List<OrderDTO> getOrderHistory(String email);
     OrderDTO cancelOrder(Long orderId, String email);
 
-    Page<OrderResponseDTO> getAllOrders(Pageable pageable);
+    Page<OrderResponseDTO> getAllOrders(Pageable pageable,Long orderId);
 
     void updateStatus(Long id, String status);
 
+    void updatePaymentStatus(Long id, String status);
 }

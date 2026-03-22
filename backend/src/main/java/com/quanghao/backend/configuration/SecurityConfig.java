@@ -38,7 +38,7 @@ public class SecurityConfig {
 
                         // 2. TRẢ LẠI CHỮ /kaisneaker VÀO ĐÂY!
                         .requestMatchers("/kaisneaker/auth/**", "/kaisneaker/home/**","/kaisneaker/categories/**","/kaisneaker/products/**","/kaisneaker/brands/**","/kaisneaker/home","/uploads/**","/error").permitAll()
-                        .requestMatchers("/kaisneaker/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/kaisneaker/admin/**", "/kaisneaker/admin/orders/**", "/kaisneaker/admin/brands/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
