@@ -12,7 +12,6 @@ const Checkout = () => {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState([]);
 
-  // Form thông tin giao hàng
   const [shippingInfo, setShippingInfo] = useState({
     fullName: '',
     phone: '',
@@ -23,7 +22,6 @@ const Checkout = () => {
 
   const isLoggedIn = !!localStorage.getItem('token');
 
-  // Lấy URL ảnh chuẩn
   const getImageUrl = (imgData) => {
     const data = imgData?.imageUrls || imgData?.images || imgData?.imageUrl || imgData?.image || imgData;
     if (!data || (Array.isArray(data) && data.length === 0)) {
@@ -45,7 +43,6 @@ const Checkout = () => {
     window.scrollTo(0, 0);
   }, [isLoggedIn, navigate]);
 
-  // Lấy dữ liệu
   const fetchCheckoutData = async () => {
     setLoading(true);
     try {
@@ -55,7 +52,6 @@ const Checkout = () => {
         api.get('/kaisneaker/users/profile').catch(() => ({ data: {} })) 
       ]);
 
-      // 1. Set Giỏ hàng
       const items = cartRes.data.items || cartRes.data.cartItems || [];
       if (items.length === 0) {
         toast.error("Giỏ hàng trống! Hãy mua sắm thêm nhé.");
@@ -64,7 +60,6 @@ const Checkout = () => {
       }
       setCartItems([...items].sort((a, b) => a.cartItemId - b.cartItemId));
 
-      // 2. Set Phương thức thanh toán
       if (pmRes.data.length > 0) {
         setPaymentMethods(pmRes.data);
       } else {
@@ -74,7 +69,6 @@ const Checkout = () => {
         ]);
       }
 
-      // 3. AUTO-FILL THÔNG TIN USER
       const user = userRes.data;
       const fullAddress = [
         user.houseNumberStreet, 
@@ -104,13 +98,11 @@ const Checkout = () => {
     setShippingInfo(prev => ({ ...prev, [name]: value }));
   };
 
-  // 👉 HÀM XÓA TỪNG TRƯỜNG CỤ THỂ
   const handleClearField = (fieldName) => {
     setShippingInfo(prev => ({ ...prev, [fieldName]: '' }));
   };
 
   const validateForm = () => {
-    // 1. Validate Họ và tên (Không được để trống)
     if (!shippingInfo.fullName.trim()) {
       toast.error("Sếp ơi, chưa nhập họ tên kìa!");
       return false;
@@ -180,10 +172,8 @@ const Checkout = () => {
 
         <div className="flex flex-col lg:flex-row gap-10 items-start">
           
-          {/* CỘT TRÁI */}
           <div className="w-full lg:w-2/3 space-y-8">
             
-            {/* Form Địa chỉ */}
             <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm relative">
               
               <h3 className="text-lg font-[900] uppercase tracking-tight mb-6 flex items-center gap-2">
@@ -192,7 +182,6 @@ const Checkout = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
-                {/* Họ và tên */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Họ và tên</label>
                   <div className="relative">
@@ -213,7 +202,6 @@ const Checkout = () => {
                   </div>
                 </div>
 
-                {/* Số điện thoại */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Số điện thoại</label>
                   <div className="relative">
@@ -234,7 +222,6 @@ const Checkout = () => {
                   </div>
                 </div>
 
-                {/* Địa chỉ giao hàng */}
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Địa chỉ giao hàng</label>
                   <div className="relative">
@@ -255,7 +242,6 @@ const Checkout = () => {
                   </div>
                 </div>
 
-                {/* Ghi chú */}
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Ghi chú (Tùy chọn)</label>
                   <div className="relative">
@@ -278,7 +264,6 @@ const Checkout = () => {
               </div>
             </div>
 
-            {/* Phương thức thanh toán */}
             <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
               <h3 className="text-lg font-[900] uppercase tracking-tight mb-6 flex items-center gap-2">
                 <CreditCard className="w-5 h-5" /> Phương thức thanh toán
@@ -305,7 +290,6 @@ const Checkout = () => {
 
           </div>
 
-          {/* CỘT PHẢI */}
           <div className="w-full lg:w-1/3 space-y-8 sticky top-32">
             <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
               <h3 className="text-lg font-[900] uppercase tracking-tight mb-6 border-b border-gray-100 pb-4">Đơn hàng của sếp</h3>

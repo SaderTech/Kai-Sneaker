@@ -16,7 +16,6 @@ const Featured = () => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // 1. Thêm State Filters
   const [filters, setFilters] = useState({
     categoryId: '',
     brandId: '',
@@ -28,7 +27,6 @@ const Featured = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const isLoggedIn = !!localStorage.getItem('token');
 
-  // Hàm cập nhật filter
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
     setPage(0); 
@@ -80,7 +78,7 @@ const Featured = () => {
       }
     };
     fetchFeatured();
-  }, [page, filters]); // Chạy lại khi chuyển trang hoặc đổi lọc
+  }, [page, filters]); 
 
   const handleToggleWishlist = async (productId) => {
     if (!isLoggedIn) {
@@ -114,17 +112,14 @@ const Featured = () => {
         </div>
       </header>
 
-      {/* THÊM FLEX GAP-12 ĐỂ CHỨA SIDEBAR */}
       <main className="max-w-[1600px] mx-auto px-10 py-16 flex gap-12">
         
-        {/* SIDEBAR BÊN TRÁI */}
         <aside className="w-64 flex-shrink-0 space-y-10 hidden lg:block">
           <div>
             <h3 className="flex items-center gap-2 font-bold text-lg mb-8 uppercase tracking-widest border-b border-black pb-4">
               <Filter className="w-5 h-5" /> Bộ Lọc
             </h3>
 
-             {/* 👉 LỌC THEO HÃNG (BRAND) */}
           <div className="mb-8">
             <h4 className="font-bold mb-4 uppercase tracking-widest text-black">Thương Hiệu</h4>
             <div className="space-y-3 text-gray-500 font-medium max-h-48 overflow-y-auto pr-2 custom-scrollbar">
@@ -141,7 +136,6 @@ const Featured = () => {
             </div>
           </div>
 
-          {/* 👉 LỌC THEO DANH MỤC (CATEGORY) */}
           <div className="mb-8">
             <h4 className="font-bold mb-4 uppercase tracking-widest text-black">Loại Giày</h4>
             <div className="space-y-3 text-gray-500 font-medium">
@@ -158,7 +152,6 @@ const Featured = () => {
             </div>
           </div>
 
-            {/* Lọc Giá */}
             <div className="mb-8">
               <h4 className="font-bold mb-4 text-sm uppercase tracking-widest">Mức Giá</h4>
               <div className="space-y-3 text-sm text-gray-500 font-medium">
@@ -175,7 +168,6 @@ const Featured = () => {
               </div>
             </div>
 
-            {/* Lọc Size */}
             <div className="mb-8">
               <h4 className="font-bold mb-4 text-sm uppercase tracking-widest">Size</h4>
               <div className="flex flex-wrap gap-2">
@@ -192,7 +184,6 @@ const Featured = () => {
           </div>
         </aside>
 
-        {/* NỘI DUNG SẢN PHẨM BÊN PHẢI */}
         <div className="flex-1">
             <Breadcrumb 
   items={[
@@ -219,7 +210,6 @@ const Featured = () => {
   ))}
 </div>
 
-              {/* Phân trang */}
               {totalPages > 1 && (
                 <div className="flex justify-center mt-16 gap-2">
                   <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="px-6 py-3 border border-gray-200 rounded-xl text-xs font-bold uppercase hover:bg-black hover:text-white transition-all">Trang trước</button>

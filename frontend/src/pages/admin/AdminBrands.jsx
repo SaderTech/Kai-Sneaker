@@ -13,7 +13,6 @@ const AdminBrands = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // State cho Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -25,7 +24,6 @@ const AdminBrands = () => {
     image: null
   });
 
-  // 1. LẤY DANH SÁCH HÃNG
   const fetchBrands = async () => {
     setLoading(true);
     try {
@@ -40,7 +38,6 @@ const AdminBrands = () => {
 
   useEffect(() => { fetchBrands(); }, []);
 
-  // 2. MỞ MODAL THÊM/SỬA
   const handleOpenModal = (brand = null) => {
     if (brand) {
       setIsEditing(true);
@@ -48,7 +45,7 @@ const AdminBrands = () => {
       setFormData({
         name: brand.name,
         description: brand.description || '',
-        image: null // Khi sửa, nếu không chọn ảnh mới thì giữ nguyên ảnh cũ ở backend
+        image: null 
       });
     } else {
       setIsEditing(false);
@@ -58,7 +55,6 @@ const AdminBrands = () => {
     setIsModalOpen(true);
   };
 
-  // 3. XỬ LÝ SUBMIT (Dùng FormData vì có File ảnh)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -91,7 +87,6 @@ const AdminBrands = () => {
     }
   };
 
-  // 4. XÓA THƯƠNG HIỆU
   const handleDelete = async (id, name) => {
     if (window.confirm(`Xóa hãng "${name}" hả sếp? Lưu ý: Hãng phải không có sản phẩm nào mới xóa được.`)) {
       try {
@@ -99,7 +94,6 @@ const AdminBrands = () => {
         toast.success("Đã xóa thương hiệu!");
         fetchBrands();
       } catch (error) {
-        // Backend của sếp trả về lỗi nếu đang có sản phẩm, mình hiện nó lên luôn
         toast.error(error.response?.data || "Không thể xóa hãng này!");
       }
     }
@@ -108,15 +102,12 @@ const AdminBrands = () => {
 const getImageUrl = (url) => {
   if (!url) return "https://via.placeholder.com/150?text=No+Logo";
 
-  // 1. Nếu là link có sẵn http (hàng cũ) -> return luôn
   if (url.startsWith('http')) return url;
 
-  // 2. Nếu là hàng mới (/uploads/...) -> Nối cổng 8080 và PHẢI RETURN
   const cleanUrl = url.startsWith('/') ? url : `/${url}`;
   const finalUrl = `http://localhost:8080${cleanUrl}`;
   
-  // console.log("Check link ảnh nà sếp:", finalUrl); // Dòng này để check thôi
-  return finalUrl; // 👉 QUAN TRỌNG NHẤT: Phải có dòng này thì thẻ img mới có cái mà hiện!
+  return finalUrl; 
 };
 
   const filteredBrands = brands.filter(b => b.name?.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -124,7 +115,6 @@ const getImageUrl = (url) => {
   return (
     <div className="p-8 max-w-[1200px] mx-auto font-sans bg-[#f8f9fa] min-h-screen">
       
-      {/* NÚT BACK */}
       <div className="mb-6">
         <button onClick={() => navigate('/admin/dashboard')} className="group flex items-center gap-2 text-gray-400 hover:text-black transition-all">
           <div className="p-2 bg-white rounded-xl shadow-sm border border-gray-100 group-hover:bg-black group-hover:text-white transition-all">
@@ -134,7 +124,6 @@ const getImageUrl = (url) => {
         </button>
       </div>
 
-      {/* HEADER */}
       <div className="flex justify-between items-center mb-8 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
         <div>
           <h2 className="text-2xl font-black text-gray-900 flex items-center gap-3 uppercase italic tracking-tighter">
@@ -147,7 +136,6 @@ const getImageUrl = (url) => {
         </button>
       </div>
 
-      {/* SEARCH BAR */}
       <div className="mb-6 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm flex items-center">
         <Search className="w-5 h-5 text-gray-400 ml-4" />
         <input 
@@ -159,7 +147,6 @@ const getImageUrl = (url) => {
         />
       </div>
 
-      {/* BẢNG THƯƠNG HIỆU */}
       <div className="bg-white rounded-[32px] border border-gray-100 shadow-xl overflow-hidden">
         {loading ? (
           <div className="py-20 flex justify-center"><Loader2 className="animate-spin text-blue-600 w-10 h-10" /></div>
@@ -207,7 +194,6 @@ const getImageUrl = (url) => {
         )}
       </div>
 
-      {/* MODAL THÊM/SỬA HÃNG */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-[40px] shadow-2xl overflow-hidden flex flex-col">

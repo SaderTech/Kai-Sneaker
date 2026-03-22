@@ -2,7 +2,6 @@ import React from 'react';
 import { Package, Truck, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 const OrderItem = ({ order }) => {
-  // Hàm hiển thị Badge trạng thái
   const getStatusBadge = (status) => {
     const styles = {
       'PENDING': { color: 'text-amber-600 bg-amber-50', icon: <Clock className="w-3 h-3" />, text: 'Chờ xác nhận' },

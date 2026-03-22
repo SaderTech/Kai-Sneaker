@@ -9,7 +9,6 @@ import {
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
 
-// Cấu hình Role ID theo Database của sếp
 const ROLE_LIST = [
   { id: 1, name: 'ADMIN', label: 'Quản trị viên hệ thống', color: 'text-red-600', bg: 'bg-red-50' },
   { id: 2, name: 'USER', label: 'Khách hàng thành viên', color: 'text-blue-600', bg: 'bg-blue-50' }
@@ -23,14 +22,12 @@ const AdminUsers = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   
-  // States quản lý Modal
   const [selectedUser, setSelectedUser] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(null);
   const [tempRoleIds, setTempRoleIds] = useState([]);
 
-  // 👉 HÀM XỬ LÝ ẢNH CỔNG 8080 (BẮT BUỘC PHẢI CÓ RETURN)
   const getImageUrl = (url) => {
     if (!url) return null;
     if (url.startsWith('http')) return url;
@@ -38,7 +35,6 @@ const AdminUsers = () => {
     return `http://localhost:8080${cleanUrl}`;
   };
 
-  // 1. LẤY DANH SÁCH USER TỪ BACKEND
   const fetchUsers = async (page = 0, keyword = searchTerm) => {
     setLoading(true);
     try {
@@ -57,7 +53,6 @@ const AdminUsers = () => {
 
   useEffect(() => { fetchUsers(0); }, []);
 
-  // 2. KHÓA / MỞ KHÓA TÀI KHOẢN
   const handleToggleStatus = async (user) => {
     const newStatus = user.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
     setIsProcessing(user.id);
@@ -71,7 +66,6 @@ const AdminUsers = () => {
     } finally { setIsProcessing(null); }
   };
 
-  // 3. MỞ MODAL PHÂN QUYỀN
   const openRoleModal = (user) => {
     setSelectedUser(user);
     const currentRoleIds = ROLE_LIST.filter(r => user.roles?.includes(r.name)).map(r => r.id);
@@ -79,7 +73,6 @@ const AdminUsers = () => {
     setIsRoleModalOpen(true);
   };
 
-  // 4. LƯU QUYỀN MỚI
   const handleSaveRoles = async () => {
     if (tempRoleIds.length === 0) return toast.error("Phải chọn ít nhất một quyền!");
     setIsProcessing(selectedUser.id);
@@ -96,7 +89,6 @@ const AdminUsers = () => {
   return (
     <div className="p-8 max-w-[1400px] mx-auto font-sans bg-[#f8f9fa] min-h-screen text-gray-900">
       
-      {/* NÚT BACK DASHBOARD */}
       <div className="mb-8">
         <button onClick={() => navigate('/admin/dashboard')} className="group flex items-center gap-3 text-gray-400 hover:text-black transition-all">
           <div className="p-2.5 bg-white rounded-2xl shadow-sm border border-gray-100 group-hover:bg-black group-hover:text-white transition-all shadow-indigo-100">
@@ -109,7 +101,6 @@ const AdminUsers = () => {
         </button>
       </div>
 
-      {/* HEADER TRANG */}
       <div className="flex justify-between items-center mb-10 bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 relative overflow-hidden">
         <div className="relative z-10">
           <h2 className="text-3xl font-black text-gray-900 flex items-center gap-4 uppercase italic tracking-tighter">
@@ -123,7 +114,6 @@ const AdminUsers = () => {
         <Users className="absolute right-[-20px] top-[-20px] w-64 h-64 text-gray-50 opacity-50 rotate-12" />
       </div>
 
-      {/* THANH TÌM KIẾM CHI TIẾT */}
       <div className="mb-8 flex gap-4">
         <div className="flex-1 bg-white p-2 rounded-[24px] border border-gray-100 shadow-sm flex items-center gap-3">
           <div className="flex-1 flex items-center bg-gray-50 rounded-2xl px-5 py-2">
@@ -146,7 +136,6 @@ const AdminUsers = () => {
         </div>
       </div>
 
-      {/* BẢNG DỮ LIỆU CHÍNH */}
       <div className="bg-white rounded-[40px] border border-gray-100 shadow-xl overflow-hidden mb-10">
         {loading ? (
           <div className="py-32 flex flex-col items-center gap-6">
@@ -230,7 +219,6 @@ const AdminUsers = () => {
           </div>
         )}
 
-        {/* PHÂN TRANG LUXURY */}
         {!loading && totalPages > 1 && (
           <div className="p-8 border-t border-gray-50 flex justify-between items-center bg-gray-50/30">
             <div className="flex items-center gap-2">
@@ -258,7 +246,6 @@ const AdminUsers = () => {
         )}
       </div>
 
-      {/* MODAL PHÂN QUYỀN (Roles) */}
       {isRoleModalOpen && selectedUser && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-sm rounded-[48px] shadow-2xl overflow-hidden p-12 border border-gray-100 relative">
@@ -278,7 +265,6 @@ const AdminUsers = () => {
     <label 
       key={role.id} 
       className={`flex items-center gap-5 p-5 rounded-[24px] border-2 cursor-pointer transition-all ${
-        // Kiểm tra xem ID này có phải là ID duy nhất đang được chọn không
         tempRoleIds.includes(role.id) 
           ? 'border-indigo-600 bg-indigo-50 shadow-md' 
           : 'border-gray-50 bg-gray-50 hover:border-gray-200'
@@ -286,15 +272,13 @@ const AdminUsers = () => {
     >
       <div className="relative flex items-center">
         <input 
-          type="radio" // 1. Đổi từ checkbox sang radio
-          name="admin-role-selection" // 2. Đặt cùng name để chúng nó biết là "đối thủ" của nhau
+          type="radio" 
+          name="admin-role-selection"
           className="peer h-6 w-6 opacity-0 absolute cursor-pointer"
           checked={tempRoleIds.includes(role.id)}
-          // 3. Khi chọn, ta thay thế hoàn toàn mảng cũ bằng mảng mới chỉ có 1 ID
           onChange={() => setTempRoleIds([role.id])} 
         />
         
-        {/* Vòng tròn UI custom cho Radio */}
         <div className="h-6 w-6 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:bg-indigo-600 peer-checked:border-indigo-600 transition-all">
           <div className="w-2 h-2 bg-white rounded-full"></div>
         </div>
@@ -321,12 +305,10 @@ const AdminUsers = () => {
         </div>
       )}
 
-      {/* MODAL CHI TIẾT HỒ SƠ - BẢN ĐẦY ĐỦ NHẤT */}
       {isDetailModalOpen && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-3xl rounded-[50px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border-4 border-white">
             
-            {/* Modal Header */}
             <div className="px-12 py-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
               <div className="flex items-center gap-4 text-indigo-600">
                 <Fingerprint className="w-8 h-8" />
@@ -337,7 +319,6 @@ const AdminUsers = () => {
 
             <div className="p-12 overflow-y-auto space-y-12 custom-scrollbar">
               
-              {/* Profile Card */}
               <div className="flex flex-col md:flex-row items-center gap-10 pb-10 border-b border-dashed border-gray-200">
                 <div className="w-32 h-32 rounded-[40px] bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center text-white text-5xl font-black shadow-2xl overflow-hidden border-4 border-white">
                   {selectedUser.avatarUrl ? (
@@ -360,7 +341,6 @@ const AdminUsers = () => {
                 </div>
               </div>
 
-              {/* Thông tin mở rộng */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-6">
                   <h5 className="text-[11px] font-black text-indigo-600 uppercase tracking-[0.3em] flex items-center gap-2"><Info className="w-4 h-4"/> Định danh & Lịch sử</h5>
@@ -411,7 +391,6 @@ const AdminUsers = () => {
                 </div>
               </div>
 
-              {/* Bảo mật note */}
               <div className="bg-indigo-900 text-white p-10 rounded-[40px] flex gap-6 items-center shadow-2xl shadow-indigo-200">
                 <ShieldAlert className="w-12 h-12 text-indigo-300 flex-shrink-0" />
                 <div>

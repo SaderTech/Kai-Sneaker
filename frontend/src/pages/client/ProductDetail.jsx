@@ -19,7 +19,6 @@ const ProductDetail = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
 
-  // Đóng Modal khi bấm ESC
   useEffect(() => {
     const handleEsc = (event) => {
        if (event.keyCode === 27) setShowSizeGuide(false);
@@ -28,7 +27,6 @@ const ProductDetail = () => {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
-  // Lấy dữ liệu sản phẩm
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
@@ -48,7 +46,6 @@ const ProductDetail = () => {
     window.scrollTo(0, 0);
   }, [id, navigate]);
 
-  // Thêm vào giỏ hàng
   const handleAddToCart = async () => {
     if (!localStorage.getItem('token')) {
       toast.error("Vui lòng đăng nhập!");
@@ -74,7 +71,6 @@ const ProductDetail = () => {
     }
   };
 
-  // Gửi bình luận
   const handleSubmitReview = async () => {
     if (!newComment.trim()) return toast.error("Bạn chưa nhập bình luận kìa!");
     setSubmitting(true);
@@ -115,7 +111,6 @@ const ProductDetail = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mt-8">
           
-          {/* CỘT TRÁI: GALLERY ẢNH */}
           <div className="lg:col-span-7 space-y-6">
             <div className="aspect-square bg-[#f8f8f8] rounded-[40px] overflow-hidden p-12 group flex items-center justify-center border border-gray-100">
               <img src={getImageUrl(product.imageUrls[activeImage])} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-700" alt={product.name} />
@@ -129,10 +124,8 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* CỘT PHẢI: MUA HÀNG & THÔNG TIN (ĐÃ CHỈNH LẠI KHOẢNG CÁCH) */}
           <div className="lg:col-span-5 flex flex-col gap-10">
             
-            {/* 1. Header Sản Phẩm */}
             <div className="space-y-4">
               <p className="text-gray-400 font-bold tracking-[0.2em] text-[10px] uppercase">{product.brandName}</p>
               <h1 className="text-4xl font-[900] tracking-tight text-gray-900 leading-tight uppercase">{product.name}</h1>
@@ -145,7 +138,6 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* 2. Chọn Size & Bảng Size */}
             <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100">
               <div className="flex items-center justify-between mb-5">
                 <h4 className="font-bold uppercase tracking-widest text-xs text-gray-900">Chọn Kích Cỡ</h4>
@@ -170,7 +162,6 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* 3. Nút Thêm Vào Giỏ */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex items-center justify-between border-2 border-gray-100 rounded-2xl px-2 py-1 bg-white sm:w-32">
                 <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-3 text-gray-400 hover:text-black transition-colors"><Minus className="w-4 h-4" /></button>
@@ -186,7 +177,6 @@ const ProductDetail = () => {
               </button>
             </div>
 
-            {/* 4. Thông Số & Mô Tả */}
             <div className="pt-8 border-t border-gray-100 space-y-8">
                <div>
                   <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
@@ -223,7 +213,6 @@ const ProductDetail = () => {
           </div>
         </div>
 
-        {/* PHẦN ĐÁNH GIÁ (REVIEWS) - Chỉnh lại margin mt-24 cho đỡ bị xa quá */}
         <section className="mt-24 border-t border-gray-100 pt-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
             <div>
@@ -242,7 +231,6 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* FORM GỬI ĐÁNH GIÁ */}
           {product.canReview ? (
             <div className="bg-white rounded-[32px] p-8 mb-12 border border-gray-100 shadow-xl shadow-gray-100/50">
               <h4 className="font-bold uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
@@ -287,7 +275,6 @@ const ProductDetail = () => {
             </div>
           )}
 
-          {/* DANH SÁCH REVIEWS */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {product.reviews?.length > 0 ? product.reviews.map((rev) => (
               <div key={rev.id} className="bg-gray-50 p-8 rounded-[32px] border border-transparent hover:border-gray-200 hover:bg-white transition-all shadow-sm">
@@ -310,7 +297,6 @@ const ProductDetail = () => {
           </div>
         </section>
 
-        {/* SẢN PHẨM LIÊN QUAN */}
         <section className="mt-24 border-t border-gray-100 pt-16">
           <h3 className="text-2xl font-black uppercase italic tracking-tighter mb-10 border-l-4 border-black pl-4">CÓ THỂ BẠN CŨNG THÍCH</h3>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
@@ -328,7 +314,6 @@ const ProductDetail = () => {
 
       </main>
 
-      {/* MODAL BẢNG SIZE */}
       {showSizeGuide && (
         <div
           className="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-300"
@@ -347,7 +332,7 @@ const ProductDetail = () => {
             <div className="p-4 flex flex-col items-center">
               <div className="text-center mb-8 mt-6">
                 <h4 className="text-xl font-black text-gray-900 uppercase tracking-tighter italic">BẢNG QUY ĐỔI KÍCH CỠ</h4>
-                <p className="text-gray-500 text-sm mt-1">Đo chiều dài chân để chọn size chuẩn nhất nhé sếp!</p>
+                <p className="text-gray-500 text-sm mt-1">Đo chiều dài chân để chọn size chuẩn nhất nhé bạn!</p>
               </div>
               <img
                 src="https://sneakerdaily.vn/wp-content/uploads/2024/01/bang-size-giay-va-cach-quy-doi.jpg"

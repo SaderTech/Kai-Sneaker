@@ -5,42 +5,32 @@ import toast from 'react-hot-toast';
 import api from '../../api/axios';
 import ProductCard from '../../components/client/ProductCard';
 
-// --- COMPONENT: PRODUCT SLIDER (CẬP NHẬT ẢNH FIT, TÊN DÀI, GIÁ ĐỎ VNĐ & FULL NÚT BẤM) ---
 const ProductSlider = ({ products }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
-  // 1. Dùng một State để quản lý danh sách ID đã thích RIÊNG BIỆT
   const [likedIds, setLikedIds] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const maxIndex = Math.max(0, (products?.length || 0) - 4);
 
-  // 2. Đồng bộ hóa một lần duy nhất khi products từ Home đổ xuống
   useEffect(() => {
     if (products && products.length > 0) {
       const initialIds = products
-        .filter(p => p.favorite === true) // 👉 Đổi từ isFavorite thành favorite
+        .filter(p => p.favorite === true) 
         .map(p => p.id);
       
       setLikedIds(initialIds);
     }
   }, [products]);
 
-const getImageUrl = (imgData) => {
-    const path = Array.isArray(imgData) ? imgData[0] : imgData; // Lấy cái đầu tiên nếu là mảng
-    if (!path) return "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600";
-    if (path.startsWith('http')) return path;
-    return `http://localhost:8080${path}`;
-  };
 
   const handleToggleWishlist = async (productId) => {
-    if (isProcessing) return; // Chống click liên tục gây 2 thông báo
+    if (isProcessing) return; 
     
     setIsProcessing(true);
     try {
       await api.post(`/kaisneaker/wishlist/${productId}`);
       
-      // 3. Cập nhật State cục bộ ngay lập tức
       setLikedIds(prev => {
         const isCurrentlyLiked = prev.includes(productId);
         if (isCurrentlyLiked) {
@@ -58,16 +48,15 @@ const getImageUrl = (imgData) => {
     }
   };
 
+
   const next = () => setCurrentIndex(prev => prev >= maxIndex ? 0 : prev + 1);
   const prev = () => setCurrentIndex(prev => prev <= 0 ? maxIndex : prev - 1);
 
   if (!products || products.length === 0) return <p className="text-gray-400 text-sm italic py-4">Chưa có sản phẩm.</p>;
 
-  // ĐẢM BẢO CÓ class group/slider ĐỂ NÚT BẤM HIỆN RA KHI HOVER
   return (
     <div className="relative group/slider overflow-hidden px-2 py-4 -mx-2">
       
-      {/* 👉 ĐÃ KHÔI PHỤC: NÚT BẤM TRÁI / PHẢI */}
       {products.length > 4 && (
         <>
           <button onClick={prev} className="absolute left-2 top-[35%] z-30 p-3 bg-white border border-gray-100 shadow-xl rounded-full opacity-0 group-hover/slider:opacity-100 transition-all hover:bg-black hover:text-white hover:scale-110">
@@ -92,7 +81,6 @@ const getImageUrl = (imgData) => {
         ))}
       </div>
       
-      {/* THANH CUỘN (PROGRESS BAR) Ở DƯỚI */}
       {products.length > 4 && (
         <div className="flex justify-center mt-12">
           <div className="w-48 h-[2px] bg-gray-100 overflow-hidden">
@@ -107,15 +95,20 @@ const getImageUrl = (imgData) => {
   );
 };
 
+  const getImageUrl = (url) => {
+  if (!url) return "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=2000";
+  if (url.startsWith('http')) return url;
+  
+  const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+  return `http://localhost:8080${cleanUrl}`;
+};
 
-// --- TRANG CHỦ CHÍNH ---
 const Home = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   
 
 
-  // Khởi tạo state rỗng, khớp cấu trúc với HomePageDTO của Backend
   const [homeData, setHomeData] = useState({
     navbarBrands: [],
     navbarCategories: [],
@@ -126,7 +119,6 @@ const Home = () => {
 
   useEffect(() => {
 
-    // GỌI API THẬT
     const fetchHomeData = async () => {
       try {
         const response = await api.get('/kaisneaker/home'); 
@@ -185,10 +177,10 @@ const Home = () => {
               <section key={index} className="w-full">
                 <div className="w-full h-[50vh] relative">
                   <img 
-                    src={section.brand.imageUrl || "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=2000"} 
-                    className="w-full h-full object-cover" 
-                    alt={`${section.brand.name} Cover`} 
-                  />
+  src={getImageUrl(section.brand.imageUrl)} 
+  className="w-full h-full object-cover" 
+  alt={`${section.brand.name} Cover`} 
+/>
                   <div className="absolute inset-0 bg-black/30"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <h2 className="text-white text-7xl font-[900] tracking-tighter drop-shadow-xl uppercase">

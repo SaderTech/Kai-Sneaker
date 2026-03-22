@@ -10,11 +10,11 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false); // Chống click đúp
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const isLoggedIn = !!localStorage.getItem('token');
 
-  // 👉 HÀM LẤY ẢNH CHUẨN
+
   const getImageUrl = (imgData) => {
     const data = imgData?.imageUrls || imgData?.images || imgData?.imageUrl || imgData?.image || imgData;
     if (!data || (Array.isArray(data) && data.length === 0)) {
@@ -28,18 +28,17 @@ const Cart = () => {
     return `http://localhost:8080${path}`;
   };
 
-  // 👉 1. HÀM XỬ LÝ DỮ LIỆU & SẮP XẾP (Fix lỗi nhảy vị trí)
+
   const handleSetCartData = (data) => {
-    // Backend trả về CartDTO có list "items"
+
     const rawItems = data.items || data.cartItems || [];
     
-    // ✅ Sắp xếp theo cartItemId tăng dần để đôi giày luôn đứng im một chỗ
+
     const sorted = [...rawItems].sort((a, b) => a.cartItemId - b.cartItemId);
     
     setCartItems(sorted);
   };
 
-  // 👉 2. FETCH DỮ LIỆU (Fix lỗi xoay chong chóng)
   const fetchCart = async () => {
     if (!isLoggedIn) {
         setLoading(false);
@@ -47,7 +46,7 @@ const Cart = () => {
     }
     setLoading(true);
     try {
-      // Dùng đường dẫn tuyệt đối để tránh lỗi 404 mất chữ /kaisneaker
+
       const res = await api.get('/kaisneaker/carts'); 
       handleSetCartData(res.data);
     } catch (error) {
@@ -55,7 +54,7 @@ const Cart = () => {
       toast.error("Không thể tải giỏ hàng!");
       setCartItems([]);
     } finally {
-      setLoading(false); // Bắt buộc dừng xoay
+      setLoading(false);
     }
   };
 
@@ -64,13 +63,13 @@ const Cart = () => {
     window.scrollTo(0, 0);
   }, [isLoggedIn]);
 
-  // 👉 3. CẬP NHẬT SỐ LƯỢNG
+
   const updateQuantity = async (cartItemId, newQuantity) => {
     if (newQuantity < 1 || isProcessing) return;
     setUpdatingId(cartItemId);
     try {
       const res = await api.put(`/kaisneaker/carts/update/${cartItemId}?quantity=${newQuantity}`);
-      handleSetCartData(res.data); // Cập nhật và sắp xếp lại ngay
+      handleSetCartData(res.data);
     } catch (error) {
       toast.error(error.response?.data?.message || "Lỗi cập nhật!");
     } finally {
@@ -79,28 +78,22 @@ const Cart = () => {
   };
 
 const handleRemoveItem = async (cartItemId) => {
-    if (isProcessing) return; // Chặn click đúp
+    if (isProcessing) return;
     
     setIsProcessing(true);
     const toastId = toast.loading("Đang xóa sản phẩm...");
 
-    // 1. MUA BẢO HIỂM: Lưu lại toàn bộ giỏ hàng hiện tại trước khi xóa
     const previousCart = [...cartItems];
 
-    // 2. XÓA TẠM THỜI: Lọc bỏ item đó ra khỏi UI ngay lập tức cho mượt
+
     setCartItems(prev => prev.filter(item => item.cartItemId !== cartItemId));
 
     try {
-      // 3. BÁO BACKEND: Gửi lệnh xóa thật
       await api.delete(`/kaisneaker/carts/remove/${cartItemId}`);
-      
-      // ✅ Thành công: Không cần làm gì thêm vì UI đã xóa mượt rồi
       toast.success("Đã xóa khỏi giỏ hàng!", { id: toastId });
     } catch (error) {
-      // 🚨 THẤT BẠI: BACKEND CÓ BIẾN!
       console.error("Xóa thất bại:", error);
       
-      // 👉 ROLLBACK: Bê cái giỏ hàng cũ (có chứa đôi giày bị lỗi) đập lại vào UI
       setCartItems(previousCart); 
       
       toast.error("Lỗi hệ thống, không thể xóa! Đã khôi phục lại giỏ hàng.", { id: toastId });
@@ -109,19 +102,17 @@ const handleRemoveItem = async (cartItemId) => {
     }
   };
 
-  // TÍNH TOÁN TỔNG TIỀN
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shippingFee = subtotal > 0 ? 30000 : 0;
   const total = subtotal + shippingFee;
 
-  // GIAO DIỆN CHƯA ĐĂNG NHẬP
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
         <div className="text-center bg-white p-16 rounded-[40px] shadow-sm border border-gray-100">
           <ShoppingBag className="w-20 h-20 text-gray-100 mx-auto mb-6" />
-          <h2 className="text-2xl font-black uppercase mb-4">Sếp chưa đăng nhập</h2>
-          <p className="text-gray-400 mb-8">Vui lòng đăng nhập để xem giỏ hàng của sếp nhé!</p>
+          <h2 className="text-2xl font-black uppercase mb-4">Bạn chưa đăng nhập</h2>
+          <p className="text-gray-400 mb-8">Vui lòng đăng nhập để xem giỏ hàng của bạn nhé!</p>
           <Link to="/login" className="bg-black text-white px-10 py-4 rounded-2xl font-bold uppercase tracking-widest">Đăng nhập ngay</Link>
         </div>
       </div>
@@ -135,7 +126,7 @@ const handleRemoveItem = async (cartItemId) => {
 
         <div className="mb-10 mt-6 flex justify-between items-end">
           <div>
-            <h1 className="text-4xl font-[900] tracking-tighter uppercase italic text-gray-900">GIỎ HÀNG CỦA SẾP</h1>
+            <h1 className="text-4xl font-[900] tracking-tighter uppercase italic text-gray-900">GIỎ HÀNG CỦA TÔI</h1>
             <p className="text-gray-400 text-[10px] font-bold mt-2 uppercase tracking-[0.2em]">
                 Đang có <span className="text-black">{cartItems.length}</span> sản phẩm
             </p>
@@ -147,10 +138,10 @@ const handleRemoveItem = async (cartItemId) => {
         ) : cartItems.length > 0 ? (
           <div className="flex flex-col lg:flex-row gap-10 items-start">
             
-            {/* CỘT TRÁI: DANH SÁCH */}
+
             <div className="w-full lg:w-2/3 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm space-y-8">
               {cartItems.map((item) => (
-                // ✅ DÙNG cartItemId LÀM KEY ĐỂ REACT KHÔNG BỊ NHẦM
+
                 <div key={item.cartItemId} className="flex gap-6 pb-8 border-b border-gray-50 last:border-0 last:pb-0">
                   
                   <Link to={`/products/${item.productId}`} className="w-32 h-32 bg-[#f8f8f8] rounded-2xl p-2 flex-shrink-0">
@@ -162,7 +153,7 @@ const handleRemoveItem = async (cartItemId) => {
                       <div className="flex justify-between items-start">
                         <h3 className="text-base font-bold text-gray-900 line-clamp-2">{item.productName}</h3>
                         
-                        {/* NÚT XÓA CHUẨN ID */}
+
                         <button 
                           onClick={() => handleRemoveItem(item.cartItemId)}
                           disabled={isProcessing}
@@ -175,7 +166,7 @@ const handleRemoveItem = async (cartItemId) => {
                     </div>
 
                     <div className="flex justify-between items-end mt-4">
-                      {/* CỘT TĂNG GIẢM */}
+
                       <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-1 border border-gray-100">
                         <button 
                           onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
@@ -204,7 +195,7 @@ const handleRemoveItem = async (cartItemId) => {
               ))}
             </div>
 
-            {/* CỘT PHẢI: TỔNG TIỀN */}
+            
             <div className="w-full lg:w-1/3 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm sticky top-32">
               <h3 className="text-lg font-[900] uppercase tracking-tight mb-6 border-b border-gray-100 pb-4">Tóm tắt đơn hàng</h3>
               
@@ -237,13 +228,13 @@ const handleRemoveItem = async (cartItemId) => {
 
           </div>
         ) : (
-          /* TRẠNG THÁI TRỐNG */
+          
           <div className="text-center py-32 bg-white rounded-[40px] border border-gray-100 shadow-sm">
             <div className="bg-gray-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
               <ShoppingBag className="w-10 h-10 text-gray-200" />
             </div>
             <h3 className="font-black text-gray-900 uppercase text-lg tracking-tight mb-2">Giỏ hàng trống</h3>
-            <p className="text-gray-400 text-sm font-medium mb-8">Sếp chưa chọn đôi giày nào vào giỏ cả.</p>
+            <p className="text-gray-400 text-sm font-medium mb-8">Bạn chưa chọn đôi giày nào vào giỏ cả.</p>
             <Link to="/home" className="inline-block bg-black text-white px-10 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-gray-800 transition-all shadow-xl">ĐI MUA SẮM NGAY</Link>
           </div>
         )}

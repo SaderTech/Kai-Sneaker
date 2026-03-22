@@ -13,7 +13,6 @@ const AdminCategories = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // State cho Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -21,7 +20,6 @@ const AdminCategories = () => {
 
   const [formData, setFormData] = useState({ name: '' });
 
-  // 1. LẤY DANH SÁCH DANH MỤC
   const fetchCategories = async () => {
     setLoading(true);
     try {
@@ -36,7 +34,6 @@ const AdminCategories = () => {
 
   useEffect(() => { fetchCategories(); }, []);
 
-  // 2. MỞ MODAL THÊM/SỬA
   const handleOpenModal = (category = null) => {
     if (category) {
       setIsEditing(true);
@@ -50,7 +47,6 @@ const AdminCategories = () => {
     setIsModalOpen(true);
   };
 
-  // 3. XỬ LÝ SUBMIT (JSON thẳng tiến)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -72,7 +68,6 @@ const AdminCategories = () => {
     }
   };
 
-  // 4. XÓA DANH MỤC (Dò mìn từ Backend)
   const handleDelete = async (id, name) => {
     if (window.confirm(`Xóa danh mục "${name}" hả sếp?`)) {
       try {
@@ -80,7 +75,6 @@ const AdminCategories = () => {
         toast.success("Đã xóa danh mục!");
         fetchCategories();
       } catch (error) {
-        // Hiện lỗi "Cảnh báo: Đang có sản phẩm..." từ backend của sếp
         toast.error(error.response?.data || "Không thể xóa danh mục này!");
       }
     }
@@ -93,7 +87,6 @@ const AdminCategories = () => {
   return (
     <div className="p-8 max-w-[1000px] mx-auto font-sans bg-[#f8f9fa] min-h-screen">
       
-      {/* NÚT BACK */}
       <div className="mb-6">
         <button onClick={() => navigate('/admin/dashboard')} className="group flex items-center gap-2 text-gray-400 hover:text-black transition-all">
           <div className="p-2 bg-white rounded-xl shadow-sm border border-gray-100 group-hover:bg-black group-hover:text-white transition-all">
@@ -103,7 +96,6 @@ const AdminCategories = () => {
         </button>
       </div>
 
-      {/* HEADER */}
       <div className="flex justify-between items-center mb-8 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
         <div>
           <h2 className="text-2xl font-black text-gray-900 flex items-center gap-3 uppercase italic tracking-tighter">
@@ -116,7 +108,6 @@ const AdminCategories = () => {
         </button>
       </div>
 
-      {/* SEARCH BAR */}
       <div className="mb-6 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm flex items-center">
         <Search className="w-5 h-5 text-gray-400 ml-4" />
         <input 
@@ -128,7 +119,6 @@ const AdminCategories = () => {
         />
       </div>
 
-      {/* BẢNG DANH MỤC */}
       <div className="bg-white rounded-[32px] border border-gray-100 shadow-xl overflow-hidden">
         {loading ? (
           <div className="py-20 flex justify-center"><Loader2 className="animate-spin text-purple-600 w-10 h-10" /></div>
@@ -177,7 +167,6 @@ const AdminCategories = () => {
         )}
       </div>
 
-      {/* MODAL THÊM/SỬA DANH MỤC */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white w-full max-w-sm rounded-[40px] shadow-2xl overflow-hidden animate-in zoom-in duration-200">

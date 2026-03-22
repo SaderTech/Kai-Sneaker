@@ -15,15 +15,12 @@ const AdminOrders = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   
-  // State cho Tìm kiếm và Sắp xếp
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ field: 'id', direction: 'desc' });
 
-  // 1. FETCH DỮ LIỆU TỪ BACKEND (Hỗ trợ Search + Sort + Pagination)
   const fetchOrders = async (page = 0, idSearch = searchTerm, sField = sortConfig.field, sDir = sortConfig.direction) => {
     setLoading(true);
     try {
-      // Spring Boot nhận sort theo định dạng: field,direction
       let url = `/kaisneaker/admin/orders?page=${page}&size=10&sort=${sField},${sDir}`;
       
       if (idSearch) {
@@ -45,7 +42,6 @@ const AdminOrders = () => {
     fetchOrders(0);
   }, []);
 
-  // 2. LOGIC SẮP XẾP (SORT)
   const handleSort = (field) => {
     let direction = 'asc';
     if (sortConfig.field === field && sortConfig.direction === 'asc') {
@@ -56,7 +52,6 @@ const AdminOrders = () => {
     fetchOrders(0, searchTerm, field, direction);
   };
 
-  // 3. CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
       await api.put(`/kaisneaker/admin/orders/${orderId}/status`, { status: newStatus });
@@ -67,7 +62,6 @@ const AdminOrders = () => {
     }
   };
 
-  // 4. CẬP NHẬT TRẠNG THÁI THANH TOÁN
   const handleUpdatePaymentStatus = async (orderId, newStatus) => {
     try {
       await api.put(`/kaisneaker/admin/orders/${orderId}/payment-status`, { status: newStatus });
@@ -89,7 +83,6 @@ const AdminOrders = () => {
     }
   };
 
-  // Render icon mũi tên cho phần sắp xếp
   const renderSortIcon = (field) => {
     if (sortConfig.field !== field) return <ArrowUpDown className="w-3 h-3 ml-1 opacity-30" />;
     return sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1 text-black" /> : <ArrowDown className="w-3 h-3 ml-1 text-black" />;
@@ -98,7 +91,6 @@ const AdminOrders = () => {
   return (
     <div className="p-8 max-w-[1400px] mx-auto font-sans bg-[#f8f9fa] min-h-screen">
       
-      {/* NÚT QUAY LẠI DASHBOARD */}
       <div className="mb-6">
         <button 
           onClick={() => navigate('/admin/dashboard')} 
@@ -111,7 +103,6 @@ const AdminOrders = () => {
         </button>
       </div>
 
-      {/* HEADER */}
       <div className="flex justify-between items-center mb-8 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100">
         <div>
           <h2 className="text-2xl font-black text-gray-900 flex items-center gap-3 uppercase italic tracking-tighter">
@@ -121,7 +112,6 @@ const AdminOrders = () => {
         </div>
       </div>
 
-      {/* SEARCH BAR */}
       <div className="mb-6 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3">
         <div className="flex-1 flex items-center bg-gray-50 rounded-xl px-4 py-1">
           <Search className="w-4 h-4 text-gray-400" />
@@ -145,7 +135,6 @@ const AdminOrders = () => {
         )}
       </div>
 
-      {/* BẢNG ĐƠN HÀNG */}
       <div className="bg-white rounded-[32px] border border-gray-100 shadow-xl overflow-hidden">
         {loading ? (
           <div className="py-32 flex flex-col items-center gap-4 text-gray-300">
@@ -244,7 +233,6 @@ const AdminOrders = () => {
           </div>
         )}
 
-        {/* PHÂN TRANG (Ẩn khi đang Search) */}
         {!loading && totalPages > 1 && !searchTerm && (
           <div className="p-6 border-t border-gray-50 flex justify-between items-center bg-gray-50/30">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">

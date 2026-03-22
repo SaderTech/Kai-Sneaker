@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Loader2, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../api/axios';
-import OrderCard from '../../components/client/OrderCard'; // 👉 GỌI COMPONENT Ở ĐÂY
+import OrderCard from '../../components/client/OrderCard';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const History = () => {
@@ -18,7 +18,6 @@ const History = () => {
         const res = await api.get('/kaisneaker/orders/history');
         const dataList = Array.isArray(res.data) ? res.data : (res.data?.data || res.data?.content || []);
         
-        // 👉 CHỈ LẤY ĐƠN ĐÃ GIAO THÀNH CÔNG
         const completedOrders = dataList.filter(o => {
           const status = o.orderStatus || o.status || '';
           return status === 'DELIVERED' || status === 'COMPLETED';
@@ -59,7 +58,6 @@ const History = () => {
           <div className="flex justify-center py-32"><Loader2 className="w-10 h-10 animate-spin text-black" /></div>
         ) : historyOrders.length > 0 ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* 👉 TRUYỀN DATA VÀO ORDER CARD (Không truyền onCancel vì mua xong rồi thì không được hủy nữa) */}
             {historyOrders.map(order => (
               <OrderCard key={order.id} order={order} />
             ))}

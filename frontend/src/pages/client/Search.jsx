@@ -6,13 +6,12 @@ import api from '../../api/axios';
 import ProductCard from '../../components/client/ProductCard';
 
 
-// --- COMPONENT CHÍNH: SEARCH ---
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const keyword = searchParams.get('keyword') || '';
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [likedIds, setLikedIds] = useState([]); // Quản lý danh sách ID đã thích
+  const [likedIds, setLikedIds] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [page, setPage] = useState(0);
@@ -31,7 +30,6 @@ const Search = () => {
         setTotalPages(response.data.totalPages);
         setTotalElements(response.data.totalElements);
 
-        // Cập nhật likedIds từ dữ liệu trả về
         const initialLiked = response.data.content
           .filter(p => p.favorite === true)
           .map(p => p.id);
@@ -46,7 +44,6 @@ const Search = () => {
     fetchSearchResults();
   }, [keyword, page]);
 
-  // LOGIC THẢ TIM (Dùng chung với trang Home)
   const handleToggleWishlist = async (productId) => {
     if (isProcessing) return;
     setIsProcessing(true);

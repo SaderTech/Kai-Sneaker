@@ -20,22 +20,18 @@ const NewArrivals = () => {
     size: ''
   });
 
-  // 2. Thêm hàm xử lý khi click vào bộ lọc
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
-    setPage(0); // Reset về trang 1 khi đổi bộ lọc
+    setPage(0); 
   };
   
-  // State phân trang
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // State Wishlist
   const [likedIds, setLikedIds] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const isLoggedIn = !!localStorage.getItem('token');
 
-  // Hàm xử lý ảnh bất tử
   const getImageUrl = (product) => {
     const imgPath = product.imageUrls || product.imageUrl || product.image;
     if (!imgPath) return "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400";
@@ -115,7 +111,6 @@ const NewArrivals = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* HEADER BÌA CHUẨN KAI-SNEAKER */}
       <header className="relative h-[40vh] bg-gray-950 flex items-center justify-center overflow-hidden">
         <div className="absolute top-8 left-10 z-10">
           <Link to="/home" className="flex items-center gap-2 text-white text-[10px] font-bold tracking-[0.2em] uppercase hover:text-gray-300 transition-all">
@@ -137,7 +132,6 @@ const NewArrivals = () => {
             <h3 className="flex items-center gap-2 font-bold text-lg mb-8 uppercase tracking-widest border-b border-black pb-4">
               <Filter className="w-5 h-5" /> Bộ Lọc
             </h3>
-            {/* 👉 LỌC THEO HÃNG (BRAND) */}
           <div className="mb-8">
             <h4 className="font-bold mb-4 uppercase tracking-widest text-black">Thương Hiệu</h4>
             <div className="space-y-3 text-gray-500 font-medium max-h-48 overflow-y-auto pr-2 custom-scrollbar">
@@ -154,7 +148,6 @@ const NewArrivals = () => {
             </div>
           </div>
 
-          {/* 👉 LỌC THEO DANH MỤC (CATEGORY) */}
           <div className="mb-8">
             <h4 className="font-bold mb-4 uppercase tracking-widest text-black">Loại Giày</h4>
             <div className="space-y-3 text-gray-500 font-medium">
@@ -170,11 +163,9 @@ const NewArrivals = () => {
               ))}
             </div>
           </div>
-            {/* Lọc Giá cứng (Vì trang này không gọi API Brand/Category DTO để lấy list filter động) */}
             <div className="mb-8">
               <h4 className="font-bold mb-4 text-sm uppercase tracking-widest">Mức Giá</h4>
               <div className="space-y-3 text-sm text-gray-500 font-medium">
-  {/* 1. Nút Tất cả (Nằm NGOÀI map nên KHÔNG được dùng biến range) */}
   <label className="flex items-center gap-3 cursor-pointer group">
     <input 
       type="radio" name="priceRange" 
@@ -187,7 +178,6 @@ const NewArrivals = () => {
     </span>
   </label>
 
-  {/* 2. Các mức giá cụ thể (Nằm TRONG map nên mới dùng được biến range) */}
   {['Dưới 1 triệu', '1 - 3 triệu', 'Trên 3 triệu'].map((range, idx) => (
     <label key={idx} className="flex items-center gap-3 cursor-pointer group">
       <input 
@@ -204,8 +194,6 @@ const NewArrivals = () => {
 </div>
             </div>
 
-            {/* Sếp có thể copy thêm cục Lọc Size cứng vào đây */}
-            {/* Lọc Size cứng cho trang New Arrivals */}
             <div className="mb-8">
               <h4 className="font-bold mb-4 text-sm uppercase tracking-widest">Size</h4>
               <div className="flex flex-wrap gap-2">
@@ -254,7 +242,7 @@ const NewArrivals = () => {
   ))}
 </div>
 
-            {/* Điều hướng Phân trang */}
+           
             {totalPages > 1 && (
               <div className="flex justify-center mt-16 gap-2">
                 <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="px-6 py-3 border border-gray-200 rounded-xl text-xs font-bold uppercase disabled:opacity-50 hover:bg-black hover:text-white transition-all">Trang trước</button>

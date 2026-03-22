@@ -5,7 +5,6 @@ import { User, Mail, Lock, Phone, UserPlus, Loader2, ArrowLeft } from 'lucide-re
 import toast from 'react-hot-toast';
 
 const Register = () => {
-  // 1. Sửa lại State cho khớp với RegisterRequestDTO ở Backend
   const [formData, setFormData] = useState({ 
     fullName: '', 
     email: '', 
@@ -17,7 +16,6 @@ const Register = () => {
   const navigate = useNavigate();
 
   const validateInput = () => {
-    // 1. Validate Họ Tên (Đúng Regex tiếng Việt, độ dài 2-50)
     const name = formData.fullName.trim();
     if (!name) { 
       toast.error("Họ tên không được để trống!"); 
@@ -33,7 +31,6 @@ const Register = () => {
       return false; 
     }
 
-    // 2. Validate Email
     const email = formData.email.trim();
     if (!email) { 
       toast.error("Email không được để trống!"); 
@@ -45,7 +42,6 @@ const Register = () => {
       return false; 
     }
 
-    // 3. Validate Số điện thoại (Chuẩn mạng Viễn thông Việt Nam)
     const phone = formData.phone.trim();
     if (!phone) { 
       toast.error("Số điện thoại không được để trống!"); 
@@ -57,7 +53,6 @@ const Register = () => {
       return false; 
     }
 
-    // 4. Validate Mật khẩu (Khớp 100% Regex của sếp)
     const password = formData.password;
     if (!password) { 
       toast.error("Mật khẩu không được để trống!"); 
@@ -69,13 +64,12 @@ const Register = () => {
       return false; 
     }
 
-    // 5. Xác nhận mật khẩu (Riêng cái này Frontend tự lo)
     if (password !== formData.confirmPassword) { 
       toast.error("Mật khẩu xác nhận không khớp!"); 
       return false; 
     }
 
-    return true; // Hoàn hảo 100% mới cho đi gọi API
+    return true; 
   };
 
   const handleRegister = async (e) => {
@@ -84,7 +78,6 @@ const Register = () => {
 
     setLoading(true);
     try {
-      // 2. Map đúng tên biến mà Java đang chờ đợi
       const payload = {
         fullName: formData.fullName,
         email: formData.email,
@@ -92,13 +85,11 @@ const Register = () => {
         password: formData.password
       };
 
-      // Gọi API đăng ký
       await api.post('/auth/register', payload);
       
       toast.success("Đăng ký thành công! Chào mừng đến với Kai Sneaker.");
       navigate('/login');
     } catch (error) {
-      // Bắt lỗi RuntimeException từ Backend trả về
       const errorMsg = error.response?.data?.message || error.response?.data || "Email đã tồn tại hoặc có lỗi xảy ra!";
       toast.error(typeof errorMsg === 'string' ? errorMsg : "Lỗi hệ thống!");
     } finally {

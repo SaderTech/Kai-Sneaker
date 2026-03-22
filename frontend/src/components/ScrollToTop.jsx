@@ -4,7 +4,6 @@ import { ChevronUp } from 'lucide-react';
 const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Kiểm tra độ cuộn của trang để ẩn/hiện nút
   useEffect(() => {
     const toggleVisibility = () => {
       if (window.pageYOffset > 300) {
@@ -18,7 +17,6 @@ const ScrollToTop = () => {
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
-  // Hàm kéo lên đầu trang mượt mà
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,

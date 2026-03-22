@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingBag, Loader2, PackageCheck, Truck, Clock, XCircle, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../api/axios';
-import OrderCard from '../../components/client/OrderCard'; // 👉 GỌI COMPONENT Ở ĐÂY
+import OrderCard from '../../components/client/OrderCard';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -85,7 +85,6 @@ const Orders = () => {
           <div className="flex justify-center py-32"><Loader2 className="w-10 h-10 animate-spin text-black" /></div>
         ) : filteredOrders.length > 0 ? (
           <div className="space-y-6">
-            {/* 👉 TRUYỀN DATA VÀO ORDER CARD Ở ĐÂY */}
             {filteredOrders.map(order => (
               <OrderCard key={order.id} order={order} onCancel={handleCancel} />
             ))}

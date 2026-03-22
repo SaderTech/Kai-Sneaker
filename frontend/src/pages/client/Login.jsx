@@ -27,10 +27,6 @@ const Login = () => {
       return false;
     }
 
-    // ❌ CHÚ Ý: Ở trang Login thì sếp KHÔNG NÊN check độ dài hay độ khó của mật khẩu.
-    // Lỡ tài khoản cũ họ dùng pass '123456' thì sếp chặn họ từ vòng gửi xe luôn à?
-    // Mấy cái validate độ khó này CHỈ DÙNG Ở TRANG ĐĂNG KÝ (REGISTER) thôi nhé!
-    // Tôi đã tạm comment mấy dòng dưới lại để sếp login cho dễ.
     
      if (password.length < 8) {
       toast.error("Mật khẩu quá ngắn! Phải có ít nhất 8 ký tự.");
@@ -51,30 +47,26 @@ const Login = () => {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Chặn reload trang
+    e.preventDefault(); 
     
     if (!validateInput()) return;
 
     setLoading(true);
     try {
-      // 1. Gọi API Backend
       const response = await api.post('/kaisneaker/auth/login', { email, password });
       
-      // 2. Bóc tách dữ liệu Backend trả về
       const { token, role } = response.data; 
       
       if (!token) {
          toast.error("Lỗi: Backend không trả về Token!");
          setLoading(false);
-         return; // Dừng lại ngay nếu không có token
+         return; 
       }
 
-      // 3. Lưu dữ liệu vào LocalStorage
       localStorage.setItem('token', token);
       localStorage.setItem('role', role || 'USER'); 
       
-      // 4. Bẻ lái (Điều hướng) bằng navigate của React (KHÔNG DÙNG window.location.href)
-      // window.location.href sẽ làm tải lại lại toàn bộ trang web, mất đi tính mượt mà của React SPA
+
       if (role === 'ADMIN' || role === 'ROLE_ADMIN') {
         toast.success("Chào Boss đã trở lại! 🚀");
         navigate('/admin/dashboard'); 
@@ -84,7 +76,6 @@ const Login = () => {
       }
 
     } catch (error) {
-      // Bắt lỗi nếu API trả về 401 (Sai pass) hoặc 404 (Không thấy user)
       toast.error(error.response?.data?.message || "Sai thông tin đăng nhập. Vui lòng thử lại.");
     } finally {
       setLoading(false);
@@ -113,7 +104,7 @@ const Login = () => {
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5 group-focus-within:text-black transition-colors" />
               <input 
                 type="email" 
-                autoComplete="username" // Thêm cái này cho hết báo lỗi Vàng ở F12
+                autoComplete="username" 
                 className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-300"
                 placeholder="Nhập email của bạn"
                 value={email}
@@ -129,7 +120,7 @@ const Login = () => {
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5 group-focus-within:text-black transition-colors" />
               <input 
                 type="password" 
-                autoComplete="current-password" // Thêm cái này cho hết báo lỗi Vàng ở F12
+                autoComplete="current-password" 
                 className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-300"
                 placeholder="Nhập mật khẩu"
                 value={password}

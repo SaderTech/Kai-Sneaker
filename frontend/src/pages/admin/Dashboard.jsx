@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-// 👉 Import thêm icon Award (Thương hiệu) và Layers (Danh mục)
-import { Users, Package, ShoppingBag, DollarSign, Loader2, TrendingUp, Activity, PackagePlus, ClipboardList, ArrowRight, Award, Layers } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import api from '../../api/axios'; 
+import { Users, Package, ShoppingBag, DollarSign, Loader2, TrendingUp, Activity, PackagePlus, ClipboardList, ArrowRight, Award, Layers, Home } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../../api/axios';
 import toast from 'react-hot-toast';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalProducts: 0,
@@ -72,7 +72,6 @@ const Dashboard = () => {
     }
   ];
 
-  // 👉 BỘ 5 CÔNG CỤ QUẢN TRỊ QUYỀN LỰC NHẤT CỦA SẾP
   const quickActions = [
     { title: 'Quản lý Đơn hàng', desc: 'Duyệt, giao và hủy đơn', icon: ClipboardList, link: '/admin/orders', color: 'text-blue-600', bg: 'bg-blue-50' },
     { title: 'Quản lý Sản phẩm', desc: 'Thêm, sửa, xóa giày', icon: PackagePlus, link: '/admin/products', color: 'text-purple-600', bg: 'bg-purple-50' },
@@ -92,8 +91,23 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-[#f8f9fa] p-6 lg:p-10 font-sans w-full">
       <div className="max-w-[1400px] mx-auto">
-        
-        {/* HEADER */}
+
+        <button
+          onClick={() => navigate('/home')}
+          className="group flex items-center gap-3 px-6 py-3.5 bg-white border-2 border-gray-100 rounded-[22px] shadow-sm hover:border-black hover:bg-black hover:text-white transition-all duration-300 active:scale-95 mb-8"
+        >
+          <Home className="w-5 h-5 text-indigo-600 group-hover:text-white group-hover:rotate-12 transition-all duration-300" />
+
+          <div className="flex flex-col items-start">
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-50 group-hover:opacity-100 transition-opacity duration-300">
+              Rời Quản Trị
+            </span>
+            <span className="text-[11px] font-black uppercase tracking-widest">
+              Về Trang Chủ
+            </span>
+          </div>
+        </button>
+
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4 bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm">
           <div>
             <h1 className="text-3xl lg:text-4xl font-[900] tracking-tighter uppercase italic text-gray-900 flex items-center gap-4">
@@ -108,13 +122,12 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* 4 THẺ THỐNG KÊ */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8 mb-12">
           {statCards.map((card, index) => {
             const Icon = card.icon;
             return (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
               >
                 <div className="flex justify-between items-start mb-8">
@@ -139,18 +152,16 @@ const Dashboard = () => {
           })}
         </div>
 
-        {/* BỘ 5 TÍNH NĂNG QUẢN TRỊ */}
         <div>
           <h3 className="text-lg font-black uppercase tracking-tight text-gray-900 mb-6 flex items-center gap-2">
             Điều hành hệ thống
           </h3>
-          {/* 👉 Chia 5 cột trên màn hình siêu lớn (xl), chia 3 cột màn vừa (lg) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {quickActions.map((action, index) => {
               const ActionIcon = action.icon;
               return (
-                <Link 
-                  key={index} 
+                <Link
+                  key={index}
                   to={action.link}
                   className="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm hover:border-black hover:shadow-md transition-all group flex flex-col justify-between min-h-[160px]"
                 >
@@ -169,7 +180,6 @@ const Dashboard = () => {
             })}
           </div>
         </div>
-
       </div>
     </div>
   );

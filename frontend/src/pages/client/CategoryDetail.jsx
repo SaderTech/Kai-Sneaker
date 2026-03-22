@@ -8,15 +8,13 @@ import ProductCard from '../../components/client/ProductCard';
 
 
 const CategoryDetail = () => {
-  const { id } = useParams(); // Lấy ID brand từ URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   
-  // Dữ liệu từ Backend trả về (CategoryDetail)
   const [categoryInfo, setCategoryInfo] = useState(null);
   const [products, setProducts] = useState([]);
   
-  // State quản lý bộ lọc để gửi lên Backend
   const [filters, setFilters] = useState({
     categoryId: '',
     priceRange: '',
@@ -26,12 +24,10 @@ const CategoryDetail = () => {
     sizePage: 12
   });
 
-  // State quản lý Wishlist cục bộ (Giống trang Home)
   const [likedIds, setLikedIds] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const isLoggedIn = !!localStorage.getItem('token');
 
-  // 👉 HÀM XỬ LÝ ẢNH BẤT TỬ SẾP ĐÃ QUEN THUỘC
   const getImageUrl = (product) => {
     const imgPath = product.imageUrls || product.imageUrl || product.image;
     if (!imgPath) return "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400";
@@ -39,7 +35,6 @@ const CategoryDetail = () => {
     return `http://localhost:8080${imgPath}`; 
   };
 
-  // 👉 GỌI API THEO BỘ LỌC
   useEffect(() => {
     const fetchCategoryDetail = async () => {
       setLoading(true);
@@ -47,14 +42,11 @@ const CategoryDetail = () => {
         const cleanFilters = Object.fromEntries(
           Object.entries(filters).filter(([key, value]) => value !== '')
         );
-        // Gọi đúng API sếp vừa viết, truyền kèm filters
 const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters });        
-        // Sếp log ra để check cấu trúc thật của CategoryDetailDTO nhé!
         setCategoryInfo(res.data.brand || res.data); 
         const productList = res.data.products?.content || res.data.products || [];
         setProducts(productList);
 
-        // Đồng bộ Wishlist
         setLikedIds(productList.filter(p => p.favorite === true).map(p => p.id));
       } catch (error) {
         console.error("Lỗi tải trang Brand:", error);
@@ -65,9 +57,8 @@ const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters
     };
 
     fetchCategoryDetail();
-  }, [id, filters]); // Gọi lại mỗi khi ID hoặc Filters thay đổi
+  }, [id, filters]);
 
-  // 👉 HÀM TIM ĐỎ
   const handleToggleWishlist = async (productId) => {
     if (!isLoggedIn) {
       toast.error("Sếp vui lòng đăng nhập để thả tim nhé!");
@@ -94,14 +85,12 @@ const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters
     }
   };
 
-  // Hàm cập nhật filter
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value, page: 0 })); // Reset về trang 1 khi đổi bộ lọc
+    setFilters(prev => ({ ...prev, [key]: value, page: 0 })); 
   };
 
   return (
     <div className="min-h-screen bg-white">
-      {/* HEADER CỦA BRAND */}
       <header className="relative h-[40vh] bg-gray-950 flex items-center justify-center overflow-hidden">
         <img 
           src={categoryInfo?.imageUrl || "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=2000"} 
@@ -122,20 +111,17 @@ const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters
       </header>
 
       <main className="max-w-[1600px] mx-auto px-10 py-16 flex gap-12">
-        {/* BỘ LỌC BÊN TRÁI (SIDEBAR) */}
-        {/* BỘ LỌC BÊN TRÁI (SIDEBAR) */}
+
         <aside className="w-64 flex-shrink-0 space-y-10 hidden lg:block">
           <div>
             <h3 class="flex items-center gap-2 font-bold text-lg mb-6 uppercase tracking-widest border-b border-black pb-[26px]">
               <Filter className="w-5 h-5" /> Bộ Lọc
             </h3>
 
-            {/* LỌC THEO DANH MỤC (Lấy từ availableCategories) */}
             {categoryInfo?.availableCategories?.length > 0 && (
               <div className="mb-8">
                 <h4 className="font-bold mb-4 text-sm uppercase tracking-widest">Danh Mục</h4>
                 <div className="space-y-3 text-sm text-gray-500 font-medium">
-                  {/* Thêm nút "Tất cả" */}
                   <label className="flex items-center gap-3 cursor-pointer group">
                     <input 
                       type="radio" name="categoryId"
@@ -163,7 +149,6 @@ const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters
               </div>
             )}
 
-            {/* LỌC THEO MỨC GIÁ (Lấy từ priceFilters) */}
             {categoryInfo?.priceFilters?.length > 0 && (
               <div className="mb-8">
                 <h4 className="font-bold mb-4 text-sm uppercase tracking-widest">Mức Giá</h4>
@@ -182,13 +167,12 @@ const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters
                     <label key={idx} className="flex items-center gap-3 cursor-pointer group">
                       <input 
                         type="radio" name="priceRange"
-                        // Nếu priceFilters là Object thì lấy price.value, nếu là chuỗi thì lấy thẳng price
                         checked={filters.priceRange === (price.value || price)}
                         onChange={() => handleFilterChange('priceRange', (price.value || price))} 
                         className="accent-black w-4 h-4"
                       />
                       <span className={filters.priceRange === (price.value || price) ? 'text-black font-bold' : 'group-hover:text-black transition-colors'}>
-                        {price.label || price} {/* Tùy cấu trúc PriceRangeOption của sếp */}
+                        {price.label || price} 
                       </span>
                     </label>
                   ))}
@@ -196,7 +180,6 @@ const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters
               </div>
             )}
             
-            {/* LỌC THEO SIZE (Lấy từ availableSizes) */}
             {categoryInfo?.availableSizes?.length > 0 && (
               <div className="mb-8">
                 <h4 className="font-bold mb-4 text-sm uppercase tracking-widest">Size</h4>
@@ -221,14 +204,12 @@ const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters
           </div>
         </aside>
 
-        {/* DANH SÁCH SẢN PHẨM BÊN PHẢI */}
         <div className="flex-1">
             <Breadcrumb 
       items={[
         { label: categoryInfo?.name || 'Loading...' }
       ]} 
     />
-          {/* Thanh công cụ Sorting */}
           <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
             <p className="text-sm font-medium text-gray-400">
               Hiển thị <span className="text-black font-bold">{products.length}</span> sản phẩm
@@ -247,7 +228,6 @@ const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters
             </div>
           </div>
 
-          {/* Lưới sản phẩm */}
           {loading ? (
             <div className="flex justify-center py-32"><Loader2 className="w-10 h-10 animate-spin text-black" /></div>
           ) : products.length > 0 ? (
@@ -268,7 +248,6 @@ const res = await api.get(`/kaisneaker/categories/${id}`, { params: cleanFilters
              </div>
           )}
 
-          {/* Phân trang (Sếp nối API vào đây nếu Backend trả về totalPages nhé) */}
           <div className="flex justify-center mt-16 gap-2">
              <button 
                 disabled={filters.page === 0}

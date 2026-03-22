@@ -11,20 +11,15 @@ const Wishlist = () => {
   const navigate = useNavigate();
 
   const getImageUrl = (product) => {
-    // Tự động tìm xem Backend trả về biến tên gì
     const imgPath = product.imageUrls || product.imageUrl || product.image;
     
-    // Nếu không có ảnh, trả về ảnh mặc định
     if (!imgPath) return "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=400";
     
-    // Nếu ảnh là link mạng (http) thì dùng luôn
     if (imgPath.startsWith('http')) return imgPath;
     
-    // Nếu là ảnh từ Backend (bắt đầu bằng /uploads), nối thẳng với localhost:8080
     return `http://localhost:8080${imgPath}`; 
   };
 
-  // 👉 1. KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP TỪ LOCAL STORAGE
   const isLoggedIn = !!localStorage.getItem('token');
 
   const fetchWishlist = async () => {
@@ -40,7 +35,6 @@ const Wishlist = () => {
   };
 
   useEffect(() => { 
-    // 👉 2. NẾU CHƯA ĐĂNG NHẬP THÌ KHÔNG GỌI API NỮA, TẮT LOADING LUÔN
     if (!isLoggedIn) {
       setLoading(false);
       return;
@@ -58,7 +52,6 @@ const Wishlist = () => {
     }
   };
 
-  // 👉 3. NẾU CHƯA ĐĂNG NHẬP: HIỆN GIAO DIỆN BÁO LỖI SIÊU ĐẸP
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-white">
@@ -89,13 +82,10 @@ const Wishlist = () => {
     );
   }
 
-// 👉 HÀM XỬ LÝ KHI ẤN THẢ TIM TRONG TRANG WISHLIST
   const handleToggleWishlist = async (productId) => {
     try {
-      // Gọi API bỏ yêu thích
       await api.post(`/kaisneaker/wishlist/${productId}`);
       
-      // Đá văng đôi giày đó khỏi giao diện ngay lập tức
       setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
       
       toast.success("Đã xóa khỏi danh sách yêu thích!");
@@ -104,7 +94,6 @@ const Wishlist = () => {
     }
   };
 
-  // 👉 4. NẾU ĐÃ ĐĂNG NHẬP: GIỮ NGUYÊN GIAO DIỆN CŨ CỦA SẾP (KHÔNG HỎNG 1 DÒNG CODE)
   return (
     <div className="min-h-screen bg-white">
       <header className="px-10 py-8 flex justify-between items-center border-b border-gray-50 sticky top-0 bg-white/90 backdrop-blur-md z-50">
@@ -124,8 +113,8 @@ const Wishlist = () => {
     <div key={product.id} className="h-auto w-full"> 
       <ProductCard 
         product={product} 
-        isLiked={true} // 👉 Đã ở Wishlist thì mặc định tim auto ĐỎ!
-        onToggleWishlist={handleToggleWishlist} // 👉 Gọi hàm xóa của sếp
+        isLiked={true} 
+        onToggleWishlist={handleToggleWishlist}
       />
     </div>
   ))}
@@ -134,7 +123,7 @@ const Wishlist = () => {
           <div className="text-center py-32 bg-gray-50 rounded-[60px] border border-dashed border-gray-200">
             <Heart className="w-16 h-16 text-gray-200 mx-auto mb-6" />
             <h2 className="text-xl font-bold text-gray-900 mb-2">Trống trơn sếp ơi!</h2>
-            <p className="text-gray-400 mb-10 text-sm">Có vẻ sếp chưa "chấm" được đôi giày nào rồi.</p>
+            <p className="text-gray-400 mb-10 text-sm">Có vẻ bạn chưa "chấm" được đôi giày nào rồi.</p>
             <Link to="/home" className="px-10 py-4 bg-black text-white text-[10px] font-bold tracking-[0.2em] rounded-2xl hover:bg-gray-800 transition-all">
               GO SHOPPING
             </Link>

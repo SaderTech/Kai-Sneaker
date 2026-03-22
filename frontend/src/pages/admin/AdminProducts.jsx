@@ -9,17 +9,14 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // State cho Modal Sản phẩm
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate()
-  // State cho Hãng và Danh mục (Để đổ vào Dropdown)
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  // State cho Modal Biến thể (Size & Kho)
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
   const [variants, setVariants] = useState([]); 
@@ -30,7 +27,6 @@ const AdminProducts = () => {
     name: '', price: '', description: '', brandId: '', categoryId: '', images: null
   });
 
-  // 1. LẤY DỮ LIỆU TỪ BACKEND
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -67,7 +63,6 @@ const AdminProducts = () => {
     fetchBrandsAndCategories();
   }, []);
 
-  // 2. LOGIC BIẾN THỂ (SIZE & KHO)
   const handleOpenVariantModal = (product) => {
     setCurrentProduct(product);
     setVariants(product.variants || []); 
@@ -117,7 +112,6 @@ const AdminProducts = () => {
     }
   };
 
-  // 3. LOGIC SẢN PHẨM (CRUD)
   const handleOpenModal = (product = null) => {
     if (product) {
       setIsEditing(true);
@@ -201,7 +195,7 @@ const AdminProducts = () => {
     <div className="p-8 max-w-[1400px] mx-auto font-sans bg-[#f8f9fa] min-h-screen">
       <div className="mb-6">
   <button 
-    onClick={() => navigate('/admin/dashboard')} // Sếp check lại route Dashboard của sếp nhé
+    onClick={() => navigate('/admin/dashboard')} 
     className="group flex items-center gap-2 text-gray-400 hover:text-black transition-all"
   >
     <div className="p-2 bg-white rounded-xl shadow-sm border border-gray-100 group-hover:bg-black group-hover:text-white transition-all">
@@ -288,7 +282,6 @@ const AdminProducts = () => {
         )}
       </div>
 
-      {/* MODAL THÊM/SỬA SẢN PHẨM */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -358,7 +351,6 @@ const AdminProducts = () => {
         </div>
       )}
 
-      {/* MODAL BIẾN THỂ (SIZE & KHO) */}
       {isVariantModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
           <div className="bg-white w-full max-w-3xl rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">

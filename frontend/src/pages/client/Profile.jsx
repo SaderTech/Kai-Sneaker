@@ -20,7 +20,6 @@ const Profile = () => {
     oldPassword: '', newPassword: '', confirmPassword: ''
   });
 
-  // 👉 HÀM XỬ LÝ ẢNH AVATAR BẤT TỬ
   const getImageUrl = (url) => {
     if (!url) return null;
     return url.startsWith('http') ? url : `http://localhost:8080${url}`;
@@ -93,11 +92,8 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-black font-sans pb-20">
       
-      {/* ❌ ĐÃ TRẢM: Không còn <header> ở đây nữa vì Navbar ở App.jsx đã lo */}
-
       <main className="max-w-[1200px] mx-auto pt-12 px-10 flex gap-10">
         
-        {/* THANH SIDEBAR BÊN TRÁI */}
         <aside className="w-[280px] flex-shrink-0">
           <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm sticky top-32">
             <div className="flex items-center gap-4 mb-10 pb-8 border-b border-gray-100">
