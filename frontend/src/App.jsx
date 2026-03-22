@@ -29,6 +29,7 @@ import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminBrands from './pages/admin/AdminBrands';
 import AdminCategories from './pages/admin/AdminCategories';
+import AdminUser from './pages/admin/AdminUser';
 
 // 👉 COMPONENT CHỨA LOGIC HIỂN THỊ
 function AppContent() {
@@ -79,7 +80,8 @@ function AppContent() {
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/admin/brands" element={<AdminBrands />} />
         <Route path="/admin/categories" element={<AdminCategories/>} />
-        
+        <Route path="/admin/users" element={<AdminUser/>} />
+
         {/* Mặc định nếu lạc đường thì về Login */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
