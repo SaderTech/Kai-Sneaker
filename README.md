@@ -14,6 +14,6 @@ Hệ thống quản lý bán giày trực tuyến
 - /frontend: Mã nguồn phía người dùng (ReactJS).
 
 ### 🚀 Hướng dẫn chạy nhanh
-1. Clone dự án: git clone [link-repo]
+1. Clone dự án: git clone https://github.com/SaderTech/Kai-Sneaker.git
 2. Chạy Backend: cd backend && ./mvnw spring-boot:run
 3. Chạy Frontend: cd frontend && npm install && npm run dev
