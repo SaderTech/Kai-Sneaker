@@ -33,10 +33,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Cho phép mọi request OPTIONS đi qua
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // 2. TRẢ LẠI CHỮ /kaisneaker VÀO ĐÂY!
                         .requestMatchers("/kaisneaker/auth/**", "/kaisneaker/home/**","/kaisneaker/categories/**","/kaisneaker/products/**","/kaisneaker/brands/**","/kaisneaker/home","/uploads/**","/error").permitAll()
                         .requestMatchers("/kaisneaker/admin/**", "/kaisneaker/admin/orders/**", "/kaisneaker/admin/brands/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
@@ -50,12 +48,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH","OPTIONS"));
-
-        // 👉 2. Đổi thành dấu "*" để cho phép mọi Header (tránh bị trình duyệt làm khó)
         configuration.setAllowedHeaders(List.of("*"));
-
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface OrderService {
     OrderDTO createOrder(String email, CheckoutRequestDTO requestDTO);
-    List<OrderDTO> getOrderHistory(String email);
+    List<OrderResponseDTO> getOrderHistory(String email);
     OrderDTO cancelOrder(Long orderId, String email);
 
     Page<OrderResponseDTO> getAllOrders(Pageable pageable,Long orderId);

@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public List<OrderDTO> getOrderHistory(String email) {
+    public List<OrderResponseDTO> getOrderHistory(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại !"));
 
         List<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
@@ -105,8 +105,8 @@ public class OrderServiceImpl implements OrderService{
         }
 
         return orders.stream()
-                .map(this::convertToOrderDTO)
-                .toList();
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -247,6 +247,7 @@ public class OrderServiceImpl implements OrderService{
                             ? variant.getProduct().getImages().iterator().next().getImageUrl()
                             : null;
                     return OrderItemResponseDTO.builder()
+                            .productId(variant.getProduct().getId())
                             .productName(variant.getProduct().getName())
                             .size(variant.getSize() != null ? variant.getSize() : "N/A")
                             .color(variant.getColor() != null ? variant.getColor() : "N/A")

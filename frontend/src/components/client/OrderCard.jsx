@@ -1,5 +1,6 @@
 import React from 'react';
-import { Package, Truck, CheckCircle, Clock, XCircle, CreditCard, ShoppingBag } from 'lucide-react';
+import { Package, Truck, CheckCircle, Clock, XCircle, CreditCard, ShoppingBag, MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const OrderCard = ({ order, onCancel }) => {
   if (!order) return null;
@@ -10,11 +11,11 @@ const OrderCard = ({ order, onCancel }) => {
 const subtotal = orderItems.reduce((sum, item) => sum + ((item.unitPrice || item.price || 0) * (item.quantity || 1)), 0);
   const shippingFee = totalAmount - subtotal;
   const getImageUrl = (item) => {
-    const data = item?.imageUrl || item?.image || item?.productImage || item;
-    if (!data || typeof data !== 'string') return "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600";
-    if (data.startsWith('http')) return data;
-    return `http://localhost:8080${data}`;
-  };
+    const data = item?.thumbnail || item?.imageUrl || item?.image; 
+  if (!data || typeof data !== 'string') return "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600";
+  if (data.startsWith('http')) return data;
+  return `http://localhost:8080${data}`;
+};
 
   const getStatusConfig = (sts) => {
     switch (sts) {
@@ -69,6 +70,14 @@ const subtotal = orderItems.reduce((sum, item) => sum + ((item.unitPrice || item
               <p className="text-sm font-black text-red-600">
                 {(item.unitPrice || item.price || 0).toLocaleString('vi-VN')} đ
               </p>
+              {(status === 'DELIVERED' || status === 'COMPLETED') && (
+                <Link 
+                  to={`/products/${item.productId}#reviews`} 
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-black text-white text-[9px] font-black uppercase tracking-tighter rounded-lg hover:bg-gray-800 transition-all shadow-md shadow-gray-200"
+                >
+                  <MessageSquare className="w-3 h-3" /> REVIEW
+                </Link>
+              )}
             </div>
           </div>
         ))}

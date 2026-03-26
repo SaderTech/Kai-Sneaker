@@ -21,11 +21,22 @@ const ProductDetail = () => {
 
   useEffect(() => {
     const handleEsc = (event) => {
-       if (event.keyCode === 27) setShowSizeGuide(false);
+      if (event.keyCode === 27) setShowSizeGuide(false);
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
+
+  useEffect(() => {
+    if (window.location.hash === '#reviews') {
+      setTimeout(() => {
+        const element = document.getElementById('reviews');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 500);
+    }
+  }, [product]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -60,10 +71,10 @@ const ProductDetail = () => {
     setIsAdding(true);
     try {
       await api.post('/kaisneaker/carts/add', {
-        variantId: selectedVariant.id, 
+        variantId: selectedVariant.id,
         quantity: quantity
       });
-      toast.success("🛒 Đã ném vào giỏ thành công!");
+      toast.success(" Đã thêm vào giỏ thành công!");
     } catch (error) {
       toast.error(error.response?.data?.message || "Lỗi hệ thống!");
     } finally {
@@ -84,7 +95,8 @@ const ProductDetail = () => {
       setNewComment("");
       setNewRating(5);
     } catch (error) {
-      toast.error("Vui lòng đăng nhập để bình luận bạn ơi!");
+      const msg = error.response?.data?.message || error.response?.data || "Lỗi rồi sếp!";
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -110,7 +122,7 @@ const ProductDetail = () => {
         <Breadcrumb items={[{ label: product.name }]} />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mt-8">
-          
+
           <div className="lg:col-span-7 space-y-6">
             <div className="aspect-square bg-[#f8f8f8] rounded-[40px] overflow-hidden p-12 group flex items-center justify-center border border-gray-100">
               <img src={getImageUrl(product.imageUrls[activeImage])} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-700" alt={product.name} />
@@ -125,14 +137,14 @@ const ProductDetail = () => {
           </div>
 
           <div className="lg:col-span-5 flex flex-col gap-10">
-            
+
             <div className="space-y-4">
               <p className="text-gray-400 font-bold tracking-[0.2em] text-[10px] uppercase">{product.brandName}</p>
               <h1 className="text-4xl font-[900] tracking-tight text-gray-900 leading-tight uppercase">{product.name}</h1>
               <div className="flex items-center gap-6 pt-2">
                 <span className="text-3xl font-black text-red-600">{product.price?.toLocaleString('vi-VN')} đ</span>
                 <div className="flex items-center gap-1.5 bg-gray-50 px-4 py-1.5 rounded-full text-sm font-bold border border-gray-100">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" /> 
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   <span>{product.averageRating} <span className="text-gray-400 font-medium text-xs ml-1">({product.reviews?.length || 0})</span></span>
                 </div>
               </div>
@@ -142,7 +154,7 @@ const ProductDetail = () => {
               <div className="flex items-center justify-between mb-5">
                 <h4 className="font-bold uppercase tracking-widest text-xs text-gray-900">Chọn Kích Cỡ</h4>
                 <button
-                  onClick={() => setShowSizeGuide(true)} 
+                  onClick={() => setShowSizeGuide(true)}
                   className="group flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-black transition-all"
                 >
                   <Ruler className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
@@ -168,9 +180,9 @@ const ProductDetail = () => {
                 <span className="w-8 text-center font-black text-lg">{quantity}</span>
                 <button onClick={() => setQuantity(q => q + 1)} className="p-3 text-gray-400 hover:text-black transition-colors"><Plus className="w-4 h-4" /></button>
               </div>
-              <button 
-                onClick={handleAddToCart} 
-                disabled={isAdding} 
+              <button
+                onClick={handleAddToCart}
+                disabled={isAdding}
                 className="flex-1 bg-black text-white py-5 rounded-2xl font-bold tracking-widest flex items-center justify-center gap-3 hover:bg-gray-800 transition-all shadow-xl shadow-gray-200 uppercase disabled:opacity-70"
               >
                 {isAdding ? <Loader2 className="animate-spin" /> : <ShoppingCart className="w-5 h-5" />} THÊM VÀO GIỎ
@@ -178,42 +190,42 @@ const ProductDetail = () => {
             </div>
 
             <div className="pt-8 border-t border-gray-100 space-y-8">
-               <div>
-                  <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
-                    <Info className="w-4 h-4 text-gray-400" /> Thông số sản phẩm
-                  </h4>
-                  <div className="bg-white rounded-2xl p-6 space-y-4 border border-gray-100 shadow-sm">
-                     <div className="flex justify-between border-b border-gray-50 pb-3">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Thương hiệu</span>
-                        <span className="text-black text-[10px] font-black uppercase tracking-widest">{product.brandName}</span>
-                     </div>
-                     <div className="flex justify-between border-b border-gray-50 pb-3">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Dòng (Category)</span>
-                        <span className="text-black text-[10px] font-black uppercase tracking-widest">{product.categoryName}</span>
-                     </div>
-                     <div className="flex justify-between">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Màu sắc</span>
-                        <span className="text-black text-[10px] font-black uppercase tracking-widest">{getUniqueColors()}</span>
-                     </div>
+              <div>
+                <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
+                  <Info className="w-4 h-4 text-gray-400" /> Thông số sản phẩm
+                </h4>
+                <div className="bg-white rounded-2xl p-6 space-y-4 border border-gray-100 shadow-sm">
+                  <div className="flex justify-between border-b border-gray-50 pb-3">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Thương hiệu</span>
+                    <span className="text-black text-[10px] font-black uppercase tracking-widest">{product.brandName}</span>
                   </div>
-               </div>
+                  <div className="flex justify-between border-b border-gray-50 pb-3">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Dòng (Category)</span>
+                    <span className="text-black text-[10px] font-black uppercase tracking-widest">{product.categoryName}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Màu sắc</span>
+                    <span className="text-black text-[10px] font-black uppercase tracking-widest">{getUniqueColors()}</span>
+                  </div>
+                </div>
+              </div>
 
-               <div>
-                  <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-gray-400" /> Mô tả chi tiết
-                  </h4>
-                  <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
-                    <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line font-medium">
-                      {product.description || "Đôi giày tuyệt vời dành cho bạn. Nhanh tay chốt đơn ngay hôm nay!"}
-                    </p>
-                  </div>
-               </div>
+              <div>
+                <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-gray-400" /> Mô tả chi tiết
+                </h4>
+                <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
+                  <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line font-medium">
+                    {product.description || "Đôi giày tuyệt vời dành cho bạn. Nhanh tay chốt đơn ngay hôm nay!"}
+                  </p>
+                </div>
+              </div>
             </div>
 
           </div>
         </div>
 
-        <section className="mt-24 border-t border-gray-100 pt-16">
+        <section id="reviews" className="mt-24 border-t border-gray-100 pt-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
             <div>
               <h3 className="text-3xl font-black uppercase tracking-tighter mb-2 flex items-center gap-3">
@@ -245,14 +257,14 @@ const ProductDetail = () => {
                   ))}
                   <span className="ml-3 mt-1 text-sm font-bold text-gray-400">{newRating}/5 sao</span>
                 </div>
-                <textarea 
+                <textarea
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Chia sẻ cảm nhận thực tế của bạn về chất liệu, độ êm, form dáng..."
                   className="w-full h-32 p-6 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:ring-1 focus:ring-black transition-all text-sm font-medium resize-none custom-scrollbar"
                 />
-                <button 
-                  onClick={handleSubmitReview} 
+                <button
+                  onClick={handleSubmitReview}
                   disabled={submitting}
                   className="bg-black text-white px-8 py-4 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-gray-800 transition-all shadow-lg disabled:opacity-50"
                 >
@@ -302,11 +314,11 @@ const ProductDetail = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {product.relatedProducts?.map((item) => (
               <div key={item.id} onClick={() => navigate(`/products/${item.id}`)} className="group cursor-pointer">
-                 <div className="aspect-square bg-[#f8f8f8] rounded-[32px] p-6 lg:p-8 mb-4 overflow-hidden border border-transparent group-hover:border-gray-200 group-hover:bg-white transition-all shadow-sm">
-                    <img src={getImageUrl(item.imageUrls)} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-all duration-500" alt={item.name} />
-                 </div>
-                 <h4 className="font-bold text-xs lg:text-sm line-clamp-1 uppercase tracking-tight text-gray-900">{item.name}</h4>
-                 <p className="text-red-600 font-black mt-1.5 text-sm">{item.price?.toLocaleString('vi-VN')} đ</p>
+                <div className="aspect-square bg-[#f8f8f8] rounded-[32px] p-6 lg:p-8 mb-4 overflow-hidden border border-transparent group-hover:border-gray-200 group-hover:bg-white transition-all shadow-sm">
+                  <img src={getImageUrl(item.imageUrls)} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-all duration-500" alt={item.name} />
+                </div>
+                <h4 className="font-bold text-xs lg:text-sm line-clamp-1 uppercase tracking-tight text-gray-900">{item.name}</h4>
+                <p className="text-red-600 font-black mt-1.5 text-sm">{item.price?.toLocaleString('vi-VN')} đ</p>
               </div>
             ))}
           </div>
@@ -317,11 +329,11 @@ const ProductDetail = () => {
       {showSizeGuide && (
         <div
           className="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-300"
-          onClick={() => setShowSizeGuide(false)} 
+          onClick={() => setShowSizeGuide(false)}
         >
           <div
             className="relative bg-white p-2 rounded-3xl max-w-4xl w-full max-h-[90vh] shadow-2xl animate-in zoom-in-95 duration-300 overflow-auto custom-scrollbar"
-            onClick={(e) => e.stopPropagation()} 
+            onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setShowSizeGuide(false)}

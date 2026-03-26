@@ -4,6 +4,7 @@ import com.quanghao.backend.configuration.JwtUtil;
 import com.quanghao.backend.dto.AuthResponseDTO;
 import com.quanghao.backend.dto.LoginRequestDTO;
 import com.quanghao.backend.dto.RegisterRequestDTO;
+import com.quanghao.backend.dto.ResetPasswordRequestDTO;
 import com.quanghao.backend.entity.Role;
 import com.quanghao.backend.entity.User;
 import com.quanghao.backend.repository.RoleRepository;
@@ -92,6 +93,24 @@ public class AuthServiceImpl implements AuthService {
         message.setSubject("Mã OTP Quên mật khẩu - KAI SNEAKER");
         message.setText("Mã OTP của bạn là: " + otp + ". Hiệu lực trong 5 phút.");
         mailSender.send(message);
+    }
+
+    @Override
+    @Transactional
+    public String resetPasswordByOtp(String email, ResetPasswordRequestDTO request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Email không tồn tại!"));
+        if (user.getOtp() == null || !user.getOtp().equals(request.getOtp())) {
+            throw new RuntimeException("Mã OTP không chính xác sếp ơi!");
+        }
+        if (user.getOtpExpiry().isBefore(Instant.now())) {
+            throw new RuntimeException("Mã OTP này 'hết đát' rồi, sếp lấy mã mới đi!");
+        }
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        user.setOtp(null);
+        user.setOtpExpiry(null);
+        userRepository.save(user);
+        return "Mật khẩu mới của sếp đã được kích hoạt! Chúc mừng sếp! 🚀";
     }
 
     @Transactional

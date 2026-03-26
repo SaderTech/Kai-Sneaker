@@ -33,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductVariantRepository productVariantRepository;
     private final InventoryRepository inventoryRepository;
     private final WishListRepository wishlistRepository;
+    private final OrderRepository orderRepository;
 
 
     @Override
@@ -200,6 +201,17 @@ public class ProductServiceImpl implements ProductService {
                     .collect(Collectors.toList());
         }
 
+        boolean canReview = false;
+        try {
+            Long userId = SecurityUtils.getCurrentUserId();
+            if (userId != null) {
+                // Gọi câu Query anh em mình vừa viết ở trên
+                canReview = orderRepository.existsCompletedOrder(userId, productId);
+            }
+        } catch (Exception e) {
+            canReview = false;
+        }
+
         return ProductDetailDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -213,6 +225,7 @@ public class ProductServiceImpl implements ProductService {
                 .totalReviews(totalRev)
                 .reviews(reviewDTOs)
                 .relatedProducts(relatedDTOs)
+                .canReview(canReview)
                 .build();
     }
 
@@ -305,21 +318,18 @@ public class ProductServiceImpl implements ProductService {
         List<VariantDTO> resultList = new ArrayList<>();
 
         for (VariantRequestDTO dto : variantRequests) {
-            // 1. Tạo và lưu Variant TRƯỚC để nó có ID trong Database
             ProductVariant variant = new ProductVariant();
             variant.setProduct(product);
             variant.setSize(dto.getSize());
             variant.setColor(dto.getColor());
             ProductVariant savedVariant = productVariantRepository.save(variant);
 
-            // 2. Tạo và lưu Inventory SAU (Lúc này savedVariant đã là hàng "Auth" có ID)
             Inventory inventory = new Inventory();
             inventory.setVariant(savedVariant);
             inventory.setQuantity(dto.getQuantity() != null ? dto.getQuantity() : 0);
             inventory.setUpdatedAt(Instant.now());
             Inventory savedInventory = inventoryRepository.save(inventory);
 
-            // 3. Đóng gói vào DTO trả về cho ReactJS
             resultList.add(VariantDTO.builder()
                     .id(savedVariant.getId())
                     .size(savedVariant.getSize())
@@ -361,7 +371,6 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Danh mục!"));
 
-        // 1. Xử lý logic khoảng giá (Giống như bộ lọc Frontend gửi lên)
         Double minPrice = null;
         Double maxPrice = null;
         if (priceRange != null && !priceRange.isEmpty()) {
@@ -379,20 +388,16 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        // 2. Gọi query lấy sản phẩm đã lọc
         Page<Product> productPage = productRepository.findProductsByCategoryAndFilters(
                 categoryId, size, minPrice, maxPrice, pageable);
 
-        // 3. Khởi tạo sẵn các option cho Frontend vẽ UI
-        // Sếp có thể query động từ DB, hoặc fix cứng như này cũng chạy rất xịn rồi
-        List<String> availableSizes = Arrays.asList("36", "37", "38", "39", "40", "41", "42", "43");
+        List<String> availableSizes = Arrays.asList("36", "37", "38", "39", "40", "41", "42", "43", "44", "45");
         List<PriceRangeOption> priceFilters = Arrays.asList(
                 new PriceRangeOption("Dưới 1 triệu", "Dưới 1 triệu"),
                 new PriceRangeOption("1 - 3 triệu", "1 - 3 triệu"),
                 new PriceRangeOption("Trên 3 triệu", "Trên 3 triệu")
         );
 
-        // 4. Build cục DTO trả về
         return CategoryDetailDTO.builder()
                 .id(category.getId())
                 .name(category.getName())
@@ -407,7 +412,6 @@ public class ProductServiceImpl implements ProductService {
         Double minPrice = null;
         Double maxPrice = null;
 
-        // Xử lý logic khoảng giá
         if (priceRange != null && !priceRange.isEmpty()) {
             switch (priceRange) {
                 case "Dưới 1 triệu":
@@ -433,7 +437,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDetailDTO> getAllProducts() {
-        // 1. Lấy TẤT CẢ (findAll của JpaRepository lấy cả hàng isDeleted=true/false)
         List<Product> products = productRepository.findAll();
 
         return products.stream()
@@ -471,7 +474,6 @@ public class ProductServiceImpl implements ProductService {
                 .brandName(product.getBrand() != null ? product.getBrand().getName() : "N/A")
                 .categoryName(product.getCategory() != null ? product.getCategory().getName() : "N/A")
                 .imageUrls(product.getImages().stream().map(Image::getImageUrl).collect(Collectors.toList()))
-                // Mấy cái này ở bảng danh sách Admin chưa cần soi kỹ nên để mặc định hoặc rỗng
                 .variants(new ArrayList<>())
                 .averageRating(0.0)
                 .totalReviews(0)
@@ -482,10 +484,9 @@ public class ProductServiceImpl implements ProductService {
         try {
             Long userId = SecurityUtils.getCurrentUserId();
             if (userId == null) return false;
-            // Giả sử sếp có wishlistRepository
             return wishlistRepository.existsByUserIdAndProductId(userId, productId);
         } catch (Exception e) {
-            return false; // Nếu chưa đăng nhập hoặc lỗi thì coi như chưa thích
+            return false;
         }
     }
 
@@ -495,7 +496,17 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm!"));
 
-        product.setIsDeleted(false); // Đưa trạng thái về chưa xóa
+        product.setIsDeleted(false);
         productRepository.save(product);
+    }
+
+    private boolean checkIfUserCanReview(Long productId) {
+        try {
+            Long userId = SecurityUtils.getCurrentUserId();
+            if (userId == null) return false;
+            return orderRepository.existsCompletedOrder(userId, productId);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

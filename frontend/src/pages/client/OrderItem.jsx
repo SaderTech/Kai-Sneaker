@@ -37,14 +37,6 @@ const OrderItem = ({ order }) => {
               <h5 className="font-bold text-sm mb-1">{item.productName}</h5>
               <p className="text-xs text-gray-400">Size: {item.size} | SL: {item.quantity}</p>
               <p className="text-sm font-bold mt-2 text-red-600">{item.price?.toLocaleString('vi-VN')} đ</p>
-              {(order.status === 'COMPLETED' || order.status === 'DELIVERED') && (
-                <Link
-                  to={`/products/${item.productId}`} // Nhớ đảm bảo trong item có productId nhé sếp
-                  className="text-[10px] font-black bg-white border border-black px-3 py-1.5 rounded-lg hover:bg-black hover:text-white transition-all uppercase tracking-widest"
-                >
-                  Viết đánh giá
-                </Link>
-              )}
             </div>
           </div>
         ))}
