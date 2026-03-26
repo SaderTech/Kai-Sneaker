@@ -13,4 +13,5 @@ public class OrderItemResponseDTO {
     private String color;
     private Integer quantity;
     private BigDecimal price;
+    private String thumbnail;
 }

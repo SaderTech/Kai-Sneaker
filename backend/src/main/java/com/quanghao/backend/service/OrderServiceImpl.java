@@ -243,14 +243,18 @@ public class OrderServiceImpl implements OrderService{
                 .createdAt(order.getCreatedAt())
                 .items(order.getOrderItems().stream().map(item -> {
                     ProductVariant variant = item.getVariant();
-
+                    String firstImage = (variant.getProduct().getImages() != null && !variant.getProduct().getImages().isEmpty())
+                            ? variant.getProduct().getImages().iterator().next().getImageUrl()
+                            : null;
                     return OrderItemResponseDTO.builder()
                             .productName(variant.getProduct().getName())
                             .size(variant.getSize() != null ? variant.getSize() : "N/A")
                             .color(variant.getColor() != null ? variant.getColor() : "N/A")
                             .quantity(item.getQuantity())
                             .price(item.getUnitPrice())
+                            .thumbnail(firstImage)
                             .build();
+
                 }).collect(Collectors.toList()))
                 .build();
     }
