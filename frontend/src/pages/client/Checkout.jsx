@@ -104,7 +104,7 @@ const Checkout = () => {
 
   const validateForm = () => {
     if (!shippingInfo.fullName.trim()) {
-      toast.error("Sếp ơi, chưa nhập họ tên kìa!");
+      toast.error("Bạn ơi, chưa nhập họ tên kìa!");
       return false;
     }
 
@@ -145,7 +145,7 @@ const Checkout = () => {
       });
 
       toast.success(" Đặt hàng thành công!", { id: toastId });
-      navigate('/history');
+      navigate('/orders');
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || "Lỗi đặt hàng! Vui lòng thử lại.", { id: toastId });

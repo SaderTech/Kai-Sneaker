@@ -85,7 +85,7 @@ const Register = () => {
         password: formData.password
       };
 
-      await api.post('/auth/register', payload);
+      await api.post('kaisneaker/auth/register', payload);
       
       toast.success("Đăng ký thành công! Chào mừng đến với Kai Sneaker.");
       navigate('/login');
@@ -125,7 +125,6 @@ const Register = () => {
               value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
           </div>
 
-          {/* Ô nhập số điện thoại mới thêm */}
           <div className="relative group">
             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5 group-focus-within:text-black transition-colors" />
             <input type="tel" placeholder="Phone Number" required

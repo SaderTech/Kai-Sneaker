@@ -55,7 +55,30 @@ const Profile = () => {
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    if (passwords.newPassword !== passwords.confirmPassword) {
+    const { oldPassword, newPassword, confirmPassword } = passwords;
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      return toast.error("Bạn vui lòng điền đầy đủ thông tin nhé!");
+    }
+
+    if (newPassword.length < 8) {
+      return toast.error("Mật khẩu mới phải có ít nhất 8 ký tự!");
+    }
+
+    const hasUpperCase = /[A-Z]/.test(newPassword);
+    const hasLowerCase = /[a-z]/.test(newPassword);
+    const hasNumbers = /\d/.test(newPassword);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+
+    if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
+      return toast.error("Mật khẩu mới phải chứa: 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt!");
+    }
+
+    if (oldPassword === newPassword) {
+      return toast.error("Mật khẩu mới không được giống mật khẩu cũ !");
+    }
+
+    if (newPassword !== confirmPassword) {
       return toast.error("Mật khẩu xác nhận không khớp!");
     }
     setLoading(true);

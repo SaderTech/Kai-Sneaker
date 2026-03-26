@@ -390,9 +390,9 @@ const AdminUsers = () => {
               <div className="bg-indigo-900 text-white p-10 rounded-[40px] flex gap-6 items-center shadow-2xl shadow-indigo-200">
                 <ShieldAlert className="w-12 h-12 text-indigo-300 flex-shrink-0" />
                 <div>
-                  <h4 className="font-black text-lg uppercase italic tracking-widest mb-1">Vùng kiểm soát tối cao</h4>
+                  <h4 className="font-black text-lg uppercase italic tracking-widest mb-1">Cảnh báo !</h4>
                   <p className="text-xs text-indigo-200 font-medium leading-relaxed opacity-80">
-                    Sếp đang xem dữ liệu nhạy cảm của khách hàng. Mọi hành động Thay đổi quyền hoặc Khóa tài khoản sẽ được ghi lại trong nhật ký hệ thống của sếp. Hãy cân nhắc kỹ trước khi thực hiện.
+                    Bạn đang xem dữ liệu nhạy cảm của khách hàng. Mọi hành động Thay đổi quyền hoặc Khóa tài khoản sẽ được ghi lại trong nhật ký hệ thống của bạn. Hãy cân nhắc kỹ trước khi thực hiện.
                   </p>
                 </div>
               </div>

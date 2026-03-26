@@ -49,7 +49,7 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-
+ 
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<Search />} />
         <Route path="/profile" element={<Profile/>}/>

@@ -18,11 +18,16 @@ const ForgotPassword = () => {
     if (!email.trim()) { toast.error("Nhập email sếp ơi!"); return; }
     setLoading(true);
     try {
-      await api.post('/auth/forgot-password', { email });
+      await api.post('/kaisneaker/auth/forgot-password', { email });
       toast.success("Mã OTP đã được gửi vào Inbox!");
       setStep(2);
     } catch (error) {
-      toast.error(error.response?.data || "Email không tồn tại!");
+      const message = error.response?.data?.message || error.response?.data || "Đã có lỗi xảy ra!";
+    
+    // Nếu nó vẫn là object (vì lý do nào đó), ta ép nó về String
+    toast.error(typeof message === 'object' ? JSON.stringify(message) : message);
+    
+    console.error("Lỗi chi tiết sếp soi ở đây:", error.response?.data);
     } finally { setLoading(false); }
   };
 
@@ -34,11 +39,16 @@ const ForgotPassword = () => {
     
     setLoading(true);
     try {
-      await api.post('/auth/reset-password', { email, otp, newPassword });
+      await api.post('/kaisneaker/auth/reset-password', { email, otp, newPassword });
       toast.success("Mật khẩu mới đã được kích hoạt!");
       navigate('/login');
     } catch (error) {
-      toast.error(error.response?.data || "OTP sai hoặc hết hạn!");
+      const message = error.response?.data?.message || error.response?.data || "Đã có lỗi xảy ra!";
+    
+    // Nếu nó vẫn là object (vì lý do nào đó), ta ép nó về String
+    toast.error(typeof message === 'object' ? JSON.stringify(message) : message);
+    
+    console.error("Lỗi chi tiết sếp soi ở đây:", error.response?.data);
     } finally { setLoading(false); }
   };
 
