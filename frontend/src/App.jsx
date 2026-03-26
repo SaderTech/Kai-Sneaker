@@ -18,7 +18,7 @@ import ProductDetail from './pages/client/ProductDetail';
 import Cart from './pages/client/Cart';
 import Checkout from './pages/client/Checkout';
 import Dashboard from './pages/admin/Dashboard';
-
+import ContactWidget from './components/ContactWidget';
 import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -40,7 +40,7 @@ function AppContent() {
   return (
     <>
       <ScrollToTop />
-      
+      <ContactWidget />
       {!shouldHide && <Navbar />}
 
       <Routes>

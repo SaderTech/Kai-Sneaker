@@ -25,14 +25,14 @@ const ScrollToTop = () => {
   };
 
   return (
-    <div className="fixed bottom-10 right-10 z-50">
+    <div className="fixed bottom-6 right-6 z-[998]"> {/* Để z-index thấp hơn Contact một chút */}
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="bg-black text-white p-4 rounded-full shadow-2xl hover:bg-gray-800 transition-all duration-300 hover:scale-110 active:scale-95 border border-white/20 group mb-12"
+          className="bg-black text-white p-3.5 rounded-full shadow-xl hover:bg-gray-800 transition-all duration-300 hover:scale-110 active:scale-95 border border-white/10 group"
           title="Lên đầu trang"
         >
-          <ChevronUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform" />
+          <ChevronUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
         </button>
       )}
     </div>
