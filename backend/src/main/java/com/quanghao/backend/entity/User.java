@@ -89,4 +89,6 @@ public class User {
     @Builder.Default
     @ManyToMany(mappedBy = "users")
     private Set<Product> products = new LinkedHashSet<>();
+    private String otp;
+    private Instant otpExpiry;
 }

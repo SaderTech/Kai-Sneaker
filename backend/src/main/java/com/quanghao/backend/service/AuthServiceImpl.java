@@ -8,12 +8,17 @@ import com.quanghao.backend.entity.Role;
 import com.quanghao.backend.entity.User;
 import com.quanghao.backend.repository.RoleRepository;
 import com.quanghao.backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final JavaMailSender mailSender;
 
     @Override
     public String register(RegisterRequestDTO requestDTO) {
@@ -49,32 +55,64 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponseDTO login(LoginRequestDTO request) {
-        // 1. Tìm user theo email
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại trong hệ thống!"));
 
-        // 2. Kiểm tra mật khẩu
         boolean isPasswordMatch = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
         if (!isPasswordMatch) {
             throw new RuntimeException("Sai mật khẩu! Vui lòng thử lại.");
         }
 
-        // 3. LẤY DANH SÁCH ROLES (Dạng List<String> đúng như JwtUtil yêu cầu)
         List<String> roles = user.getRoles().stream()
                 .map(Role::getName)
                 .toList();
 
-        // 4. Sinh token (Ném Email và List Roles vào đây)
         String token = jwtUtil.generateToken(user.getEmail(), roles);
 
-        // 5. Lấy cái Role đầu tiên để trả về cho React lưu LocalStorage (để điều hướng trang)
         String primaryRole = roles.isEmpty() ? "USER" : roles.get(0);
 
-        // 6. Trả về DTO
         return AuthResponseDTO.builder()
                 .token(token)
                 .message("Đăng nhập thành công! Chào mừng " + user.getFullName())
                 .role(primaryRole)
                 .build();
+    }
+
+    public void sendOtp(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Email không tồn tại!"));
+
+        String otp = String.valueOf(new Random().nextInt(899999) + 100000);
+        user.setOtp(otp);
+        user.setOtpExpiry(Instant.now().plus(5, ChronoUnit.MINUTES));
+        userRepository.save(user);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Mã OTP Quên mật khẩu - KAI SNEAKER");
+        message.setText("Mã OTP của bạn là: " + otp + ". Hiệu lực trong 5 phút.");
+        mailSender.send(message);
+    }
+
+    @Transactional
+    @Override
+    public String resetPassword(String email, String otp, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Email không tồn tại!"));
+
+        if (user.getOtp() == null || !user.getOtp().equals(otp)) {
+            throw new RuntimeException("Mã OTP không chính xác!");
+        }
+
+        if (user.getOtpExpiry().isBefore(Instant.now())) {
+            throw new RuntimeException("Mã OTP đã hết hạn!");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        user.setOtp(null);
+        user.setOtpExpiry(null);
+        userRepository.save(user);
+
+        return "Đổi mật khẩu thành công!";
     }
 }

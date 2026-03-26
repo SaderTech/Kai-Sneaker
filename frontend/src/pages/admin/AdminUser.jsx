@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, Search, Loader2, ArrowLeft, ShieldCheck, 
-  User, Lock, Unlock, Mail, Phone, ChevronLeft, ChevronRight, 
+  Lock, Unlock, Mail, Phone, ChevronLeft, ChevronRight, 
   Eye, X, MapPin, Calendar, UserCircle, ShieldAlert, Settings2,
-  Fingerprint, Hash, Bookmark, Navigation
+  Fingerprint, Hash, Info, Navigation
 } from 'lucide-react';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
@@ -382,10 +382,6 @@ const AdminUsers = () => {
                         <p className="text-[9px] font-black text-gray-400 uppercase italic mb-1">Số nhà</p>
                         <p className="font-bold text-gray-800 text-sm">{selectedUser.houseNumberStreet || 'N/A'}</p>
                       </div>
-                    </div>
-                    <div className="pt-4 border-t border-red-100 flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-red-500 animate-bounce" />
-                      <p className="text-[10px] font-black text-red-600 uppercase tracking-tighter leading-tight italic">Tọa độ nhận hàng chính thức</p>
                     </div>
                   </div>
                 </div>

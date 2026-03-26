@@ -1,14 +1,13 @@
-// src/api/axios.js
+
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080', // Cổng backend của sếp
+  baseURL: 'http://localhost:8080', 
 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   
-  // 👉 CHỈ GẮN TOKEN KHI CÓ TOKEN THẬT, KHÔNG PHẢI CHỮ "null" HOẶC "undefined"
   if (token && token !== 'null' && token !== 'undefined') {
     config.headers.Authorization = `Bearer ${token}`;
   }
