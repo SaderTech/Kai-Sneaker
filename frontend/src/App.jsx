@@ -1,8 +1,6 @@
-// src/App.jsx
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-// Imports Pages
 import Login from './pages/client/Login';
 import Register from './pages/client/Register';
 import ForgotPassword from './pages/client/ForgotPassword';
@@ -21,45 +19,37 @@ import Cart from './pages/client/Cart';
 import Checkout from './pages/client/Checkout';
 import Dashboard from './pages/admin/Dashboard';
 
-// Imports Components
 import ScrollToTop from './components/ScrollToTop';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import AdminRoute from './components/AdminRoute';
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminBrands from './pages/admin/AdminBrands';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminUser from './pages/admin/AdminUser';
 
-// 👉 COMPONENT CHỨA LOGIC HIỂN THỊ
 function AppContent() {
   const location = useLocation();
 
-  // 1. Danh sách các đường dẫn muốn ẨN Navbar và Footer
   const hideLayoutRoutes = ['/login', '/register', '/forgot-password'];
   
-  // 2. Kiểm tra trang hiện tại:
-  // - Có nằm trong mảng trên không?
-  // - Hoặc có bắt đầu bằng '/admin' không?
+
   const shouldHide = hideLayoutRoutes.includes(location.pathname) || location.pathname.startsWith('/admin');
 
   return (
     <>
       <ScrollToTop />
       
-      {/* ✅ Chỉ hiện Navbar nếu không thuộc diện "cấm" */}
       {!shouldHide && <Navbar />}
 
       <Routes>
-        {/* Mặc định vào sẽ đá sang Login */}
         <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Routes Authentication (Không hiện Navbar/Footer) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* Routes Client (Hiện Navbar/Footer) */}
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<Search />} />
         <Route path="/profile" element={<Profile/>}/>
@@ -74,19 +64,17 @@ function AppContent() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
 
-        {/* Routes Admin */}
-        <Route path="/admin/dashboard" element={<Dashboard />} />
-        <Route path="/admin/products" element={<AdminProducts />} />
-        <Route path="/admin/orders" element={<AdminOrders />} />
-        <Route path="/admin/brands" element={<AdminBrands />} />
-        <Route path="/admin/categories" element={<AdminCategories/>} />
-        <Route path="/admin/users" element={<AdminUser/>} />
-
-        {/* Mặc định nếu lạc đường thì về Login */}
+        <Route path="/admin">
+          <Route path="dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
+          <Route path="products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+          <Route path="orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+          <Route path="brands" element={<AdminRoute><AdminBrands /></AdminRoute>} />
+          <Route path="categories" element={<AdminRoute><AdminCategories /></AdminRoute>} />
+          <Route path="users" element={<AdminRoute><AdminUser /></AdminRoute>} />
+        </Route>
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
 
-      {/* ✅ Chỉ hiện Footer nếu không thuộc diện "cấm" */}
       {!shouldHide && <Footer />}
     </>
   );
