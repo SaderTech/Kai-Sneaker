@@ -15,11 +15,6 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // Tìm tất cả giày theo thương hiệu (Nike, Adidas...)
-    List<Product> findByBrandId(Long brandId);
-
-    // Tìm giày theo danh mục (Running, Lifestyle...)
-    List<Product> findByCategoryId(Long categoryId);
 
     Optional<Product> findById(Long id);
 
@@ -34,7 +29,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByNameContainingIgnoreCaseAndIsDeletedFalse(String name, Pageable pageable);
 
     @Query("SELECT DISTINCT p FROM Product p " +
-            "JOIN p.variants v " +
+            "LEFT JOIN p.variants v " +
             "WHERE p.brand.id = :brandId " +
             "AND (:catId IS NULL OR p.category.id = :catId) " +
             "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
@@ -70,7 +65,7 @@ List<Product> findRelatedProducts(
 
     Page<Product> findByIsDeletedFalse(Pageable pageable);
 
-    @Query("SELECT DISTINCT p FROM Product p JOIN p.variants v WHERE p.category.id = :categoryId AND p.isDeleted = false " +
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN p.variants v WHERE p.category.id = :categoryId AND p.isDeleted = false " +
             "AND (:size IS NULL OR v.size = :size) " +
             "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR p.price <= :maxPrice)")

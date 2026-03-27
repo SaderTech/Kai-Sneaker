@@ -37,8 +37,20 @@ public class AdminProductController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductDetailDTO> updateProduct(@PathVariable Long id, @ModelAttribute ProductRequestDTO request) {
+    @PostMapping("/update/{id}")
+    public ResponseEntity<ProductDetailDTO> updateProduct(
+            @PathVariable Long id,
+            @ModelAttribute ProductRequestDTO request) {
+
+        // Cắm camera theo dõi xem Spring Boot có nhận được data không
+        System.out.println("=== KIỂM TRA DỮ LIỆU UPDATE SẾP HÀO ===");
+        System.out.println("Tên Sản phẩm: " + request.getName());
+        if (request.getImages() != null) {
+            System.out.println("Số lượng file ảnh gửi lên: " + request.getImages().size());
+        } else {
+            System.out.println("ẢNH BỊ NULL RỒI SẾP ƠI!");
+        }
+
         Product updatedProduct = productService.updateProduct(id, request);
         ProductDetailDTO responseDTO = productService.getProductDetail(updatedProduct.getId());
         return ResponseEntity.ok(responseDTO);

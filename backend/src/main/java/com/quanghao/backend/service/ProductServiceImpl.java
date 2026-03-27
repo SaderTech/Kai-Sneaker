@@ -282,6 +282,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public Product updateProduct(Long productId, ProductRequestDTO request) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm có ID: " + productId));
@@ -296,6 +297,41 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(request.getPrice());
         product.setBrand(brand);
         product.setCategory(category);
+
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+
+            if (product.getImages() != null && !product.getImages().isEmpty()) {
+                imageRepository.deleteAll(product.getImages());
+                product.getImages().clear();
+            }
+
+            String projectDir = System.getProperty("user.dir");
+            Path rootPath = Paths.get(projectDir, "uploads");
+
+            try {
+                if (!Files.exists(rootPath)) {
+                    Files.createDirectories(rootPath);
+                }
+
+                for (MultipartFile file : request.getImages()) {
+                    if (file.isEmpty()) continue;
+
+                    String originalFilename = file.getOriginalFilename();
+                    String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                    String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
+
+                    Path filePath = rootPath.resolve(uniqueFilename);
+                    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                    Image imageEntity = new Image();
+                    imageEntity.setImageUrl("/uploads/" + uniqueFilename);
+                    Image savedImage = imageRepository.save(imageEntity);
+                    product.getImages().add(savedImage);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Lỗi nghiêm trọng khi lưu file ảnh update: " + e.getMessage());
+            }
+        }
 
         return productRepository.save(product);
     }
@@ -427,11 +463,9 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        // Gọi DB lấy dữ liệu
         Page<Product> products = productRepository.findProductsWithFilters(
                 categoryId, brandId, size, minPrice, maxPrice, pageable);
 
-        // Map sang DTO và gắp tim đỏ (isFavorite)
         return products.map(this::convertToProductListDTO);
     }
 

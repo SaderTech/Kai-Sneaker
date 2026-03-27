@@ -161,8 +161,8 @@ const AdminProducts = () => {
     }
 
     try {
-      const url = isEditing ? `/kaisneaker/admin/products/${editId}` : '/kaisneaker/admin/products';
-      const method = isEditing ? 'put' : 'post';
+      const url = isEditing ? `/kaisneaker/admin/products/update/${editId}` : '/kaisneaker/admin/products';
+      const method = 'post';
       await api[method](url, submitData, { headers: { 'Content-Type': 'multipart/form-data' } });
       toast.success(isEditing ? "Đã cập nhật!" : "Đã thêm giày mới!");
       setIsModalOpen(false);
@@ -329,7 +329,7 @@ const AdminProducts = () => {
                   <input
                     type="file"
                     multiple
-                    onChange={e => setFormData({ ...formData, images: e.target.files })}
+                    onChange={e => setFormData({...formData, images: e.target.files})}
                     className="w-full text-xs font-medium text-gray-400 
         file:mr-6 file:py-3 file:px-6 
         file:rounded-2xl file:border-0 
