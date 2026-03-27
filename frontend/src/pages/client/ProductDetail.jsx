@@ -122,108 +122,99 @@ const ProductDetail = () => {
         <Breadcrumb items={[{ label: product.name }]} />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mt-8">
-
-          <div className="lg:col-span-7 space-y-6">
-            <div className="aspect-square bg-[#f8f8f8] rounded-[40px] overflow-hidden p-12 group flex items-center justify-center border border-gray-100">
-              <img src={getImageUrl(product.imageUrls[activeImage])} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-700" alt={product.name} />
-            </div>
-            <div className="grid grid-cols-5 gap-4">
-              {product.imageUrls.map((img, idx) => (
-                <div key={idx} onClick={() => setActiveImage(idx)} className={`aspect-square bg-[#f8f8f8] rounded-2xl p-2 cursor-pointer border-2 transition-all hover:border-gray-300 ${activeImage === idx ? 'border-black' : 'border-transparent opacity-60'}`}>
-                  <img src={getImageUrl(img)} className="w-full h-full object-contain mix-blend-multiply" />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="lg:col-span-5 flex flex-col gap-10">
-
-            <div className="space-y-4">
-              <p className="text-gray-400 font-bold tracking-[0.2em] text-[10px] uppercase">{product.brandName}</p>
-              <h1 className="text-4xl font-[900] tracking-tight text-gray-900 leading-tight uppercase">{product.name}</h1>
-              <div className="flex items-center gap-6 pt-2">
-                <span className="text-3xl font-black text-red-600">{product.price?.toLocaleString('vi-VN')} đ</span>
-                <div className="flex items-center gap-1.5 bg-gray-50 px-4 py-1.5 rounded-full text-sm font-bold border border-gray-100">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span>{product.averageRating} <span className="text-gray-400 font-medium text-xs ml-1">({product.reviews?.length || 0})</span></span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100">
-              <div className="flex items-center justify-between mb-5">
-                <h4 className="font-bold uppercase tracking-widest text-xs text-gray-900">Chọn Kích Cỡ</h4>
-                <button
-                  onClick={() => setShowSizeGuide(true)}
-                  className="group flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-black transition-all"
-                >
-                  <Ruler className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
-                  <span className="border-b border-gray-300 group-hover:border-black transition-colors pb-0.5">Bảng Size</span>
-                </button>
-              </div>
-              <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
-                {product.variants.map((v) => (
-                  <button
-                    key={v.id} disabled={v.quantity === 0}
-                    onClick={() => setSelectedSize(v.size)}
-                    className={`py-3.5 rounded-xl text-sm font-bold transition-all border-2 ${selectedSize === v.size ? 'bg-black text-white border-black shadow-md scale-[1.02]' : 'bg-white text-gray-500 border-gray-100 hover:border-gray-300 hover:text-black'} ${v.quantity === 0 ? 'opacity-40 cursor-not-allowed bg-gray-100 grayscale' : ''}`}
-                  >
-                    {v.size}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex items-center justify-between border-2 border-gray-100 rounded-2xl px-2 py-1 bg-white sm:w-32">
-                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-3 text-gray-400 hover:text-black transition-colors"><Minus className="w-4 h-4" /></button>
-                <span className="w-8 text-center font-black text-lg">{quantity}</span>
-                <button onClick={() => setQuantity(q => q + 1)} className="p-3 text-gray-400 hover:text-black transition-colors"><Plus className="w-4 h-4" /></button>
-              </div>
-              <button
-                onClick={handleAddToCart}
-                disabled={isAdding}
-                className="flex-1 bg-black text-white py-5 rounded-2xl font-bold tracking-widest flex items-center justify-center gap-3 hover:bg-gray-800 transition-all shadow-xl shadow-gray-200 uppercase disabled:opacity-70"
-              >
-                {isAdding ? <Loader2 className="animate-spin" /> : <ShoppingCart className="w-5 h-5" />} THÊM VÀO GIỎ
-              </button>
-            </div>
-
-            <div className="pt-8 border-t border-gray-100 space-y-8">
-              <div>
-                <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
-                  <Info className="w-4 h-4 text-gray-400" /> Thông số sản phẩm
-                </h4>
-                <div className="bg-white rounded-2xl p-6 space-y-4 border border-gray-100 shadow-sm">
-                  <div className="flex justify-between border-b border-gray-50 pb-3">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Thương hiệu</span>
-                    <span className="text-black text-[10px] font-black uppercase tracking-widest">{product.brandName}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-gray-50 pb-3">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Dòng (Category)</span>
-                    <span className="text-black text-[10px] font-black uppercase tracking-widest">{product.categoryName}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Màu sắc</span>
-                    <span className="text-black text-[10px] font-black uppercase tracking-widest">{getUniqueColors()}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
-                  <Tag className="w-4 h-4 text-gray-400" /> Mô tả chi tiết
-                </h4>
-                <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
-                  <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line font-medium">
-                    {product.description || "Đôi giày tuyệt vời dành cho bạn. Nhanh tay chốt đơn ngay hôm nay!"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-          </div>
+  {/* CỘT TRÁI: ẢNH SẢN PHẨM (GIỮ NGUYÊN) */}
+  <div className="lg:col-span-7 space-y-6">
+    <div className="aspect-square bg-[#f8f8f8] rounded-[40px] overflow-hidden p-12 group flex items-center justify-center border border-gray-100">
+      <img src={getImageUrl(product.imageUrls[activeImage])} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-700" alt={product.name} />
+    </div>
+    <div className="grid grid-cols-5 gap-4">
+      {product.imageUrls.map((img, idx) => (
+        <div key={idx} onClick={() => setActiveImage(idx)} className={`aspect-square bg-[#f8f8f8] rounded-2xl p-2 cursor-pointer border-2 transition-all hover:border-gray-300 ${activeImage === idx ? 'border-black' : 'border-transparent opacity-60'}`}>
+          <img src={getImageUrl(img)} className="w-full h-full object-contain mix-blend-multiply" />
         </div>
+      ))}
+    </div>
+  </div>
+
+  {/* CỘT PHẢI: THÔNG TIN, CHỌN SIZE, NÚT MUA VÀ THÔNG SỐ (GIỮ NGUYÊN) */}
+  <div className="lg:col-span-5 flex flex-col gap-10">
+    {/* Tên & Giá */}
+    <div className="space-y-4">
+      <p className="text-gray-400 font-bold tracking-[0.2em] text-[10px] uppercase">{product.brandName}</p>
+      <h1 className="text-4xl font-[900] tracking-tight text-gray-900 leading-tight uppercase">{product.name}</h1>
+      <div className="flex items-center gap-6 pt-2">
+        <span className="text-3xl font-black text-red-600">{product.price?.toLocaleString('vi-VN')} đ</span>
+        <div className="flex items-center gap-1.5 bg-gray-50 px-4 py-1.5 rounded-full text-sm font-bold border border-gray-100">
+          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          <span>{product.averageRating} <span className="text-gray-400 font-medium text-xs ml-1">({product.reviews?.length || 0})</span></span>
+        </div>
+      </div>
+    </div>
+
+    {/* Chọn Size */}
+    <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100">
+      <div className="flex items-center justify-between mb-5">
+        <h4 className="font-bold uppercase tracking-widest text-xs text-gray-900">Chọn Kích Cỡ</h4>
+        <button onClick={() => setShowSizeGuide(true)} className="group flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-black transition-all">
+          <Ruler className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+          <span className="border-b border-gray-300 group-hover:border-black transition-colors pb-0.5">Bảng Size</span>
+        </button>
+      </div>
+      <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+        {product.variants.map((v) => (
+          <button key={v.id} disabled={v.quantity === 0} onClick={() => setSelectedSize(v.size)} className={`py-3.5 rounded-xl text-sm font-bold transition-all border-2 ${selectedSize === v.size ? 'bg-black text-white border-black shadow-md scale-[1.02]' : 'bg-white text-gray-500 border-gray-100 hover:border-gray-300 hover:text-black'} ${v.quantity === 0 ? 'opacity-40 cursor-not-allowed bg-gray-100 grayscale' : ''}`}>
+            {v.size}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {/* Số lượng & Nút thêm vào giỏ */}
+    <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex items-center justify-between border-2 border-gray-100 rounded-2xl px-2 py-1 bg-white sm:w-32">
+        <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-3 text-gray-400 hover:text-black transition-colors"><Minus className="w-4 h-4" /></button>
+        <span className="w-8 text-center font-black text-lg">{quantity}</span>
+        <button onClick={() => setQuantity(q => q + 1)} className="p-3 text-gray-400 hover:text-black transition-colors"><Plus className="w-4 h-4" /></button>
+      </div>
+      <button onClick={handleAddToCart} disabled={isAdding} className="flex-1 bg-black text-white py-5 rounded-2xl font-bold tracking-widest flex items-center justify-center gap-3 hover:bg-gray-800 transition-all shadow-xl shadow-gray-200 uppercase disabled:opacity-70">
+        {isAdding ? <Loader2 className="animate-spin" /> : <ShoppingCart className="w-5 h-5" />} THÊM VÀO GIỎ
+      </button>
+    </div>
+
+    {/* Thông số sản phẩm (Vẫn nằm ở cột phải) */}
+    <div className="pt-8 border-t border-gray-100">
+      <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
+        <Info className="w-4 h-4 text-gray-400" /> Thông số sản phẩm
+      </h4>
+      <div className="bg-white rounded-2xl p-6 space-y-4 border border-gray-100 shadow-sm">
+        <div className="flex justify-between border-b border-gray-50 pb-3">
+          <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Thương hiệu</span>
+          <span className="text-black text-[10px] font-black uppercase tracking-widest">{product.brandName}</span>
+        </div>
+        <div className="flex justify-between border-b border-gray-50 pb-3">
+          <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Dòng (Category)</span>
+          <span className="text-black text-[10px] font-black uppercase tracking-widest">{product.categoryName}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Màu sắc</span>
+          <span className="text-black text-[10px] font-black uppercase tracking-widest">{getUniqueColors()}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* PHẦN MÔ TẢ: BÂY GIỜ NẰM NGANG DƯỚI CẢ 2 CỘT (FULL WIDTH) */}
+  <div className="lg:col-span-12 pt-8 border-t border-gray-100">
+    <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
+      <Tag className="w-4 h-4 text-gray-400" /> Mô tả chi tiết
+    </h4>
+    <div className="bg-gray-50/50 rounded-3xl p-8 border border-gray-100">
+      <p className="text-gray-600 text-base leading-relaxed whitespace-pre-line font-medium">
+        {product.description || "Đôi giày tuyệt vời dành cho bạn. Nhanh tay chốt đơn ngay hôm nay!"}
+      </p>
+    </div>
+  </div>
+</div>
 
         <section id="reviews" className="mt-24 border-t border-gray-100 pt-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
