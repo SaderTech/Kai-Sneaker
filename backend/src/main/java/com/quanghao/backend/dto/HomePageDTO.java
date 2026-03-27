@@ -14,12 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HomePageDTO {
-// Dữ liệu cho Narbar
     private List<BrandDTO> navbarBrands;
     private List<CategoryDTO> navbarCategories;
-//Dữ liệu cho các List sản phẩm gợi ý
     private List<ProductListDTO> featuredProducts;
     private List<ProductListDTO> newArrivals;
-//Dữ liệu cho các List sản phẩm của các brand
     private List<HomeBrandSectionDTO> brandSections;
 }

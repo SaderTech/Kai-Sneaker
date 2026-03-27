@@ -42,13 +42,11 @@ public class AdminProductController {
             @PathVariable Long id,
             @ModelAttribute ProductRequestDTO request) {
 
-        // Cắm camera theo dõi xem Spring Boot có nhận được data không
-        System.out.println("=== KIỂM TRA DỮ LIỆU UPDATE SẾP HÀO ===");
         System.out.println("Tên Sản phẩm: " + request.getName());
         if (request.getImages() != null) {
             System.out.println("Số lượng file ảnh gửi lên: " + request.getImages().size());
         } else {
-            System.out.println("ẢNH BỊ NULL RỒI SẾP ƠI!");
+            System.out.println("ẢNH BỊ NULL !");
         }
 
         Product updatedProduct = productService.updateProduct(id, request);
@@ -78,7 +76,7 @@ public class AdminProductController {
     @PutMapping("/variants/{variantId}/inventory")
     public ResponseEntity<?> updateInventory(
             @PathVariable Long variantId,
-            @RequestBody java.util.Map<String, Integer> request // Dùng Map hứng JSON luôn cho lẹ
+            @RequestBody java.util.Map<String, Integer> request
     ) {
         try {
             Integer newQuantity = request.get("quantity");
@@ -96,7 +94,7 @@ public class AdminProductController {
 
     @PatchMapping("/{id}/restore")
     public ResponseEntity<String> restoreProduct(@PathVariable Long id) {
-        productService.restoreProduct(id); // Hàm này mình vừa bàn ở trên
-        return ResponseEntity.ok("Siêu phẩm đã quay trở lại kệ hàng!");
+        productService.restoreProduct(id);
+        return ResponseEntity.ok("Sản phẩm đã quay trở lại kệ hàng!");
     }
 }

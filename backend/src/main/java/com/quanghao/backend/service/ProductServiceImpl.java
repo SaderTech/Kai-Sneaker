@@ -45,16 +45,14 @@ public class ProductServiceImpl implements ProductService {
         List<HomeBrandSectionDTO> brandSections = brands.stream().map(brand -> {
             List<Product> productsByBrand = productRepository.findTop8ByBrandIdAndIsDeletedFalseOrderByCreatedAtDesc(brand.getId());
             return HomeBrandSectionDTO.builder()
-                    .brand(convertToBrandDTO(brand)) // Dùng lại hàm convert Brand
+                    .brand(convertToBrandDTO(brand))
                     .products(productsByBrand.stream().map(this::convertToProductListDTO).collect(Collectors.toList()))
                     .build();
         }).collect(Collectors.toList());
 
         return HomePageDTO.builder()
-                //Navbar
                 .navbarBrands(brands.stream().map(this::convertToBrandDTO).collect(Collectors.toList()))
                 .navbarCategories(categories.stream().map(this::convertToCategoryDTO).collect(Collectors.toList()))
-                //San pham moi , san pham noi bat
                 .newArrivals(newArrival.stream().map(this::convertToProductListDTO).collect(Collectors.toList()))
                 .featuredProducts(featuredProducts.stream().map(this::convertToProductListDTO).collect(Collectors.toList()))
                 .brandSections(brandSections)
@@ -205,7 +203,6 @@ public class ProductServiceImpl implements ProductService {
         try {
             Long userId = SecurityUtils.getCurrentUserId();
             if (userId != null) {
-                // Gọi câu Query anh em mình vừa viết ở trên
                 canReview = orderRepository.existsCompletedOrder(userId, productId);
             }
         } catch (Exception e) {
@@ -427,7 +424,7 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productPage = productRepository.findProductsByCategoryAndFilters(
                 categoryId, size, minPrice, maxPrice, pageable);
 
-        List<String> availableSizes = Arrays.asList("36", "37", "38", "39", "40", "41", "42", "43", "44", "45");
+        List<String> availableSizes = Arrays.asList("36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46");
         List<PriceRangeOption> priceFilters = Arrays.asList(
                 new PriceRangeOption("Dưới 1 triệu", "Dưới 1 triệu"),
                 new PriceRangeOption("1 - 3 triệu", "1 - 3 triệu"),

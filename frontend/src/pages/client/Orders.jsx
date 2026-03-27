@@ -30,7 +30,7 @@ const Orders = () => {
   }, []);
 
   const handleCancel = async (orderId) => {
-    if (window.confirm("Sếp có chắc chắn muốn hủy đơn hàng này không?")) {
+    if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
       try {
         await api.put(`/kaisneaker/orders/${orderId}/cancel`);
         toast.success("Đã hủy đơn hàng thành công!");

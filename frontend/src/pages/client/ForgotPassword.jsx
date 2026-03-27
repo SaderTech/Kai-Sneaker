@@ -24,7 +24,6 @@ const ForgotPassword = () => {
     } catch (error) {
       const message = error.response?.data?.message || error.response?.data || "Đã có lỗi xảy ra!";
     
-    // Nếu nó vẫn là object (vì lý do nào đó), ta ép nó về String
     toast.error(typeof message === 'object' ? JSON.stringify(message) : message);
     
     console.error("Lỗi chi tiết sếp soi ở đây:", error.response?.data);
@@ -45,7 +44,6 @@ const ForgotPassword = () => {
     } catch (error) {
       const message = error.response?.data?.message || error.response?.data || "Đã có lỗi xảy ra!";
     
-    // Nếu nó vẫn là object (vì lý do nào đó), ta ép nó về String
     toast.error(typeof message === 'object' ? JSON.stringify(message) : message);
     
     console.error("Lỗi chi tiết sếp soi ở đây:", error.response?.data);

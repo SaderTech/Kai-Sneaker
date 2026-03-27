@@ -29,7 +29,7 @@ public class AdminBrandController {
     @PutMapping("/{id}")
     public ResponseEntity<BrandDTO> updateBrand(
             @PathVariable Long id,
-            @ModelAttribute BrandRequestDTO request) { // Vẫn dùng ModelAttribute để hứng form-data
+            @ModelAttribute BrandRequestDTO request) {
         return ResponseEntity.ok(brandService.updateBrand(id, request));
     }
 

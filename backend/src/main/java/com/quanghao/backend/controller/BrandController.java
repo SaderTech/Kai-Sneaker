@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/kaisneaker/brands")
 @RequiredArgsConstructor
-@CrossOrigin("*") // Để React gọi được API
+@CrossOrigin("*")
 public class BrandController {
 
     private final BrandService brandService;

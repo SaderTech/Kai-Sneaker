@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final ProductRepository productRepository; // Gọi thêm anh bạn này để dò mìn
+    private final ProductRepository productRepository;
 
     public List<CategoryDTO> getAllCategories() {
         return categoryRepository.findAll().stream()

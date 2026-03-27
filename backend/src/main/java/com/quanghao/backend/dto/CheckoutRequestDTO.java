@@ -17,7 +17,7 @@ public class CheckoutRequestDTO {
     @NotBlank(message = "Vui lòng nhập địa chỉ giao hàng!")
     private String shippingAddress;
 
-    private String note; // Ghi chú thì có thể để trống, không cần @NotBlank
+    private String note;
 
     @NotNull(message = "Vui lòng chọn phương thức thanh toán!")
     private Long paymentMethodId;

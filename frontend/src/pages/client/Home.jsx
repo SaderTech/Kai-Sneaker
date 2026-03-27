@@ -16,21 +16,21 @@ const ProductSlider = ({ products }) => {
   useEffect(() => {
     if (products && products.length > 0) {
       const initialIds = products
-        .filter(p => p.favorite === true) 
+        .filter(p => p.favorite === true)
         .map(p => p.id);
-      
+
       setLikedIds(initialIds);
     }
   }, [products]);
 
 
   const handleToggleWishlist = async (productId) => {
-    if (isProcessing) return; 
-    
+    if (isProcessing) return;
+
     setIsProcessing(true);
     try {
       await api.post(`/kaisneaker/wishlist/${productId}`);
-      
+
       setLikedIds(prev => {
         const isCurrentlyLiked = prev.includes(productId);
         if (isCurrentlyLiked) {
@@ -56,7 +56,7 @@ const ProductSlider = ({ products }) => {
 
   return (
     <div className="relative group/slider overflow-hidden px-2 py-4 -mx-2">
-      
+
       {products.length > 4 && (
         <>
           <button onClick={prev} className="absolute left-2 top-[35%] z-30 p-3 bg-white border border-gray-100 shadow-xl rounded-full opacity-0 group-hover/slider:opacity-100 transition-all hover:bg-black hover:text-white hover:scale-110">
@@ -71,21 +71,21 @@ const ProductSlider = ({ products }) => {
       <div className="flex  transition-transform duration-500 ease-out" style={{ transform: `translateX(-${currentIndex * 25}%)` }}>
         {products.map(shoe => (
           <div key={shoe.id} className="w-1/4 flex-shrink-0 px-4 h-auto">
-         <ProductCard 
-      key={shoe.id} 
-      product={shoe} 
-      isLiked={likedIds.includes(shoe.id)} 
-      onToggleWishlist={handleToggleWishlist} 
-    />
-    </div>
+            <ProductCard
+              key={shoe.id}
+              product={shoe}
+              isLiked={likedIds.includes(shoe.id)}
+              onToggleWishlist={handleToggleWishlist}
+            />
+          </div>
         ))}
       </div>
-      
+
       {products.length > 4 && (
         <div className="flex justify-center mt-12">
           <div className="w-48 h-[2px] bg-gray-100 overflow-hidden">
-            <div 
-              className="h-full bg-black transition-all duration-500 ease-out" 
+            <div
+              className="h-full bg-black transition-all duration-500 ease-out"
               style={{ width: `${((currentIndex + 1) / (maxIndex + 1)) * 100}%` }}
             ></div>
           </div>
@@ -95,10 +95,10 @@ const ProductSlider = ({ products }) => {
   );
 };
 
-  const getImageUrl = (url) => {
+const getImageUrl = (url) => {
   if (!url) return "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?q=80&w=2000";
   if (url.startsWith('http')) return url;
-  
+
   const cleanUrl = url.startsWith('/') ? url : `/${url}`;
   return `http://localhost:8080${cleanUrl}`;
 };
@@ -106,7 +106,7 @@ const ProductSlider = ({ products }) => {
 const Home = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  
+
 
 
   const [homeData, setHomeData] = useState({
@@ -121,7 +121,7 @@ const Home = () => {
 
     const fetchHomeData = async () => {
       try {
-        const response = await api.get('/kaisneaker/home'); 
+        const response = await api.get('/kaisneaker/home');
         setHomeData(response.data);
       } catch (error) {
         console.error("Lỗi khi tải trang chủ:", error);
@@ -137,7 +137,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-white text-black font-sans">
-      
+
 
       <header className="relative h-[70vh] flex items-center justify-center overflow-hidden bg-gray-950">
         <img src="https://sneakercollector.vn/wp-content/uploads/2025/10/Banner-Website-10-1.png" className="absolute inset-0 w-full h-full object-cover opacity-60" alt="Banner" />
@@ -154,7 +154,7 @@ const Home = () => {
           </div>
         ) : (
           <div className="space-y-32">
-            
+
             {homeData.newArrivals?.length > 0 && (
               <section className="px-10 max-w-[1600px] mx-auto mt-20">
                 <div className="flex justify-between items-end mb-10 border-b border-gray-100 pb-5">
@@ -176,11 +176,11 @@ const Home = () => {
             {homeData.brandSections?.map((section, index) => (
               <section key={index} className="w-full">
                 <div className="w-full h-[50vh] relative">
-                  <img 
-  src={getImageUrl(section.brand.imageUrl)} 
-  className="w-full h-full object-cover" 
-  alt={`${section.brand.name} Cover`} 
-/>
+                  <img
+                    src={getImageUrl(section.brand.imageUrl)}
+                    className="w-full h-full object-cover"
+                    alt={`${section.brand.name} Cover`}
+                  />
                   <div className="absolute inset-0 bg-black/30"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <h2 className="text-white text-7xl font-[900] tracking-tighter drop-shadow-xl uppercase">
@@ -188,7 +188,7 @@ const Home = () => {
                     </h2>
                   </div>
                 </div>
-                
+
                 <div className="px-10 max-w-[1600px] mx-auto mt-12">
                   <div className="max-w-3xl mx-auto text-center mb-16">
                     <p className="text-sm font-medium text-gray-500 leading-relaxed">
@@ -201,16 +201,16 @@ const Home = () => {
                       VIEW ALL {section.brand.name}
                     </Link>
                   </div>
-                  
+
                   <ProductSlider products={section.products} />
                 </div>
               </section>
             ))}
 
             {!homeData.newArrivals?.length && !homeData.featuredProducts?.length && !homeData.brandSections?.length && (
-               <div className="text-center text-gray-400 py-20 font-medium tracking-wide">
-                 Hệ thống đang cập nhật dữ liệu sản phẩm. Vui lòng quay lại sau!
-               </div>
+              <div className="text-center text-gray-400 py-20 font-medium tracking-wide">
+                Hệ thống đang cập nhật dữ liệu sản phẩm. Vui lòng quay lại sau!
+              </div>
             )}
 
           </div>

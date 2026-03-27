@@ -37,7 +37,7 @@ public class AdminOrderController {
             @PathVariable Long id,
             @RequestBody Map<String, String> request) {
         String status = request.get("status");
-        orderService.updatePaymentStatus(id, status); // Mình sẽ viết hàm này ở dưới
+        orderService.updatePaymentStatus(id, status);
         return ResponseEntity.ok("Đã cập nhật trạng thái thanh toán: " + status);
     }
 }

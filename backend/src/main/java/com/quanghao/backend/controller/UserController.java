@@ -54,31 +54,27 @@ public class UserController {
     public ResponseEntity<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
         try {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            System.out.println("DEBUG: Đang upload cho user: " + email); // Kiểm tra xem email có đúng không
+            System.out.println("DEBUG: Đang upload cho user: " + email);
 
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng!"));
 
-            // 1. Lưu file vào ổ cứng (Sếp đã làm tốt phần này)
             Path uploadPath = Paths.get("uploads/");
             if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
             String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // 2. Tạo URL
             String avatarUrl = "http://localhost:8080/uploads/" + fileName;
 
-            // 3. CẬP NHẬT VÀ LƯU VÀO DATABASE
             user.setAvatarUrl(avatarUrl);
-            User savedUser = userRepository.save(user); // 👉 Lưu và hứng lại kết quả
-
+            User savedUser = userRepository.save(user);
             System.out.println("DEBUG: Đã lưu vào DB thành công cho user: " + savedUser.getEmail());
             System.out.println("DEBUG: Link ảnh trong DB là: " + savedUser.getAvatarUrl());
             return ResponseEntity.ok(avatarUrl);
 
         } catch (Exception e) {
-            e.printStackTrace(); // 👉 In lỗi ra Console IntelliJ để sếp nhìn thấy nó báo lỗi gì
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Lỗi: " + e.getMessage());
         }
     }

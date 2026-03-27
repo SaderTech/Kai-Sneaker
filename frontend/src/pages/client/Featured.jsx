@@ -82,7 +82,7 @@ const Featured = () => {
 
   const handleToggleWishlist = async (productId) => {
     if (!isLoggedIn) {
-      toast.error("Sếp vui lòng đăng nhập để thả tim nhé!");
+      toast.error("Bạn vui lòng đăng nhập để thả tim nhé!");
       return;
     }
     if (isProcessing) return;

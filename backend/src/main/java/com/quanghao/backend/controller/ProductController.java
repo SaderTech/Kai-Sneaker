@@ -23,7 +23,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductDetail(id));
     }
 
-    // 1. SẢN PHẨM MỚI NHẤT
     @GetMapping("/new-arrivals")
     public ResponseEntity<Page<ProductListDTO>> getNewArrivals(
             @RequestParam(required = false) Long categoryId,
@@ -33,12 +32,10 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int sizePage) {
 
-        // Sort theo ngày tạo mới nhất
         Pageable pageable = PageRequest.of(page, sizePage, Sort.by("createdAt").descending());
         return ResponseEntity.ok(productService.getFilteredProducts(categoryId, brandId, priceRange, size, pageable));
     }
 
-    // 2. SẢN PHẨM NỔI BẬT
     @GetMapping("/featured")
     public ResponseEntity<Page<ProductListDTO>> getFeaturedProducts(
             @RequestParam(required = false) Long categoryId,
@@ -48,7 +45,6 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int sizePage) {
 
-        // Sort theo giá giảm dần (hoặc lượt view, lượt mua tùy sếp)
         Pageable pageable = PageRequest.of(page, sizePage, Sort.by("price").descending());
         return ResponseEntity.ok(productService.getFilteredProducts(categoryId, brandId, priceRange, size, pageable));
     }

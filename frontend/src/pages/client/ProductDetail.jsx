@@ -83,7 +83,7 @@ const ProductDetail = () => {
   };
 
   const handleSubmitReview = async () => {
-    if (!newComment.trim()) return toast.error("Bạn chưa nhập bình luận kìa!");
+    if (!newComment.trim()) return toast.error("Bạn chưa nhập bình luận !");
     setSubmitting(true);
     try {
       await api.post(`/kaisneaker/reviews`, {
@@ -95,7 +95,7 @@ const ProductDetail = () => {
       setNewComment("");
       setNewRating(5);
     } catch (error) {
-      const msg = error.response?.data?.message || error.response?.data || "Lỗi rồi sếp!";
+      const msg = error.response?.data?.message || error.response?.data || "Lỗi rồi !";
       toast.error(msg);
     } finally {
       setSubmitting(false);
@@ -136,9 +136,7 @@ const ProductDetail = () => {
     </div>
   </div>
 
-  {/* CỘT PHẢI: THÔNG TIN, CHỌN SIZE, NÚT MUA VÀ THÔNG SỐ (GIỮ NGUYÊN) */}
   <div className="lg:col-span-5 flex flex-col gap-10">
-    {/* Tên & Giá */}
     <div className="space-y-4">
       <p className="text-gray-400 font-bold tracking-[0.2em] text-[10px] uppercase">{product.brandName}</p>
       <h1 className="text-4xl font-[900] tracking-tight text-gray-900 leading-tight uppercase">{product.name}</h1>
@@ -151,7 +149,6 @@ const ProductDetail = () => {
       </div>
     </div>
 
-    {/* Chọn Size */}
     <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100">
       <div className="flex items-center justify-between mb-5">
         <h4 className="font-bold uppercase tracking-widest text-xs text-gray-900">Chọn Kích Cỡ</h4>
@@ -169,7 +166,6 @@ const ProductDetail = () => {
       </div>
     </div>
 
-    {/* Số lượng & Nút thêm vào giỏ */}
     <div className="flex flex-col sm:flex-row gap-4">
       <div className="flex items-center justify-between border-2 border-gray-100 rounded-2xl px-2 py-1 bg-white sm:w-32">
         <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-3 text-gray-400 hover:text-black transition-colors"><Minus className="w-4 h-4" /></button>
@@ -181,7 +177,6 @@ const ProductDetail = () => {
       </button>
     </div>
 
-    {/* Thông số sản phẩm (Vẫn nằm ở cột phải) */}
     <div className="pt-8 border-t border-gray-100">
       <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
         <Info className="w-4 h-4 text-gray-400" /> Thông số sản phẩm
@@ -203,7 +198,6 @@ const ProductDetail = () => {
     </div>
   </div>
 
-  {/* PHẦN MÔ TẢ: BÂY GIỜ NẰM NGANG DƯỚI CẢ 2 CỘT (FULL WIDTH) */}
   <div className="lg:col-span-12 pt-8 border-t border-gray-100">
     <h4 className="font-bold uppercase tracking-widest text-xs mb-5 flex items-center gap-2">
       <Tag className="w-4 h-4 text-gray-400" /> Mô tả chi tiết

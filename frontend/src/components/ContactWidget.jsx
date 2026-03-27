@@ -9,7 +9,6 @@ const ContactWidget = () => {
                 href="https://zalo.me/0369335908"
                 target="_blank"
                 rel="noopener noreferrer"
-                /* 👉 BỎ HẾT rounded-full, bg, shadow... CHỈ GIỮ LẠI LỚP PHỦ HOVER */
                 className="group relative flex items-center justify-center transition-transform duration-300 hover:scale-110"
             >
                 <div className="absolute right-full mr-3 px-2 py-1 bg-black text-white text-[10px] rounded opacity-0 group-hover:opacity-100 whitespace-nowrap">

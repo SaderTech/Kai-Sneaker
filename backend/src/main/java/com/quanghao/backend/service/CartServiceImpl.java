@@ -78,11 +78,10 @@ public class CartServiceImpl implements CartService{
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại!"));
 
-        // 👉 TÌM GIỎ HÀNG, KHÔNG THẤY THÌ TRẢ VỀ RỖNG, KHÔNG ĐƯỢC NÉM LỖI
         Optional<Cart> cartOpt = cartRepository.findByUserId(user.getId());
         if (cartOpt.isEmpty()) {
             return CartDTO.builder()
-                    .items(new ArrayList<>()) // Trả về mảng rỗng
+                    .items(new ArrayList<>())
                     .totalItems(0)
                     .totalPrice(BigDecimal.ZERO)
                     .build();
@@ -97,7 +96,7 @@ public class CartServiceImpl implements CartService{
         for (CartItem item : cart.getCartItems()){
             ProductVariant variant = item.getVariant();
             if (variant == null || variant.getProduct() == null) {
-                continue; // Bỏ qua món đồ lỗi, không tính tiền nó nữa
+                continue;
             }
             BigDecimal price = variant.getProduct().getPrice();
             BigDecimal subTotal = price.multiply(BigDecimal.valueOf(item.getQuantity()));

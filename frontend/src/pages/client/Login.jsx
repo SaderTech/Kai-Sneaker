@@ -68,7 +68,7 @@ const Login = () => {
 
 
       if (role === 'ADMIN' || role === 'ROLE_ADMIN') {
-        toast.success("Chào Boss đã trở lại! 🚀");
+        toast.success("Chào Bạn đã trở lại! ");
         navigate('/admin/dashboard');
       } else {
         toast.success("Chào mừng đến với Kai Sneaker!");

@@ -63,7 +63,7 @@ const res = await api.get(`/kaisneaker/brands/${id}`, { params: cleanFilters });
 
   const handleToggleWishlist = async (productId) => {
     if (!isLoggedIn) {
-      toast.error("Sếp vui lòng đăng nhập để thả tim nhé!");
+      toast.error("Bạn vui lòng đăng nhập để tim nhé!");
       return;
     }
     if (isProcessing) return;
@@ -246,7 +246,7 @@ const res = await api.get(`/kaisneaker/brands/${id}`, { params: cleanFilters });
 </div>
           ) : (
              <div className="text-center py-32 text-gray-400 font-medium tracking-wide">
-               Không tìm thấy sản phẩm nào phù hợp sếp ơi!
+               Không tìm thấy sản phẩm nào phù hợp !
              </div>
           )}
 

@@ -88,7 +88,7 @@ const AdminBrands = () => {
   };
 
   const handleDelete = async (id, name) => {
-    if (window.confirm(`Xóa hãng "${name}" hả sếp? Lưu ý: Hãng phải không có sản phẩm nào mới xóa được.`)) {
+    if (window.confirm(`Xóa hãng "${name}" ? Lưu ý: Hãng phải không có sản phẩm nào mới xóa được.`)) {
       try {
         await api.delete(`/kaisneaker/admin/brands/${id}`);
         toast.success("Đã xóa thương hiệu!");

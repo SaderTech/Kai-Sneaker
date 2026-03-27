@@ -7,5 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class BrandRequestDTO {
     private String name;
     private String description;
-    private MultipartFile image; // 👉 Nhận file ảnh bìa của Brand ở đây
+    private MultipartFile image;
 }

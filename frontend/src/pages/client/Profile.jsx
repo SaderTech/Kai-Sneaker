@@ -155,7 +155,6 @@ const Profile = () => {
           </div>
         </aside>
 
-        {/* NỘI DUNG CHÍNH BÊN PHẢI */}
         <section className="flex-grow">
           <div className="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm min-h-[600px]">
             {activeTab === 'info' ? (

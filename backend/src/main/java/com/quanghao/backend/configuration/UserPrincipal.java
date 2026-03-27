@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
-    private Long id; // 👉 Biến id này để SecurityUtils gọi .getId()
+    private Long id;
     private String email;
     @JsonIgnore
     private String password;

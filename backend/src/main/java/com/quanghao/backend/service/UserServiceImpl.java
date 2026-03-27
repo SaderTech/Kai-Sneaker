@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
     public void updateUserStatus(Long userId, String status) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
-        user.setStatus(status); // Truyền vào "ACTIVE" hoặc "INACTIVE"
+        user.setStatus(status);
         userRepository.save(user);
     }
 

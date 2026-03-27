@@ -101,16 +101,16 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại!"));
         if (user.getOtp() == null || !user.getOtp().equals(request.getOtp())) {
-            throw new RuntimeException("Mã OTP không chính xác sếp ơi!");
+            throw new RuntimeException("Mã OTP không chính xác !");
         }
         if (user.getOtpExpiry().isBefore(Instant.now())) {
-            throw new RuntimeException("Mã OTP này 'hết đát' rồi, sếp lấy mã mới đi!");
+            throw new RuntimeException("Mã OTP này 'hết hạn' rồi!");
         }
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         user.setOtp(null);
         user.setOtpExpiry(null);
         userRepository.save(user);
-        return "Mật khẩu mới của sếp đã được kích hoạt! Chúc mừng sếp! 🚀";
+        return "Mật khẩu mới của bạn đã được kích hoạt! Chúc mừng bạn! ";
     }
 
     @Transactional

@@ -25,7 +25,7 @@ const ScrollToTop = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[998]"> {/* Để z-index thấp hơn Contact một chút */}
+    <div className="fixed bottom-6 right-6 z-[998]">
       {isVisible && (
         <button
           onClick={scrollToTop}
